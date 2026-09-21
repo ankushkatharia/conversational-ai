@@ -1,0 +1,212 @@
+import type { Product } from "@/lib/types";
+
+/** Deterministic placeholder image for a product seed. */
+function img(seed: string): string {
+  return `https://picsum.photos/seed/${seed}/640/640`;
+}
+
+/**
+ * Mock Under Armour catalog. Intentionally varied: some products omit optional
+ * fields (rating, originalPrice, sizes, image) so the UI's graceful fallbacks
+ * are exercised.
+ */
+export const MOCK_PRODUCTS: Product[] = [
+  {
+    id: "ua-hovr-phantom-3",
+    name: "UA HOVR Phantom 3 Running Shoes",
+    description:
+      "Zero-gravity feel maintains energy return that helps eliminate impact. Engineered mesh upper is breathable and lightweight.",
+    brand: "Under Armour",
+    price: 89.99,
+    originalPrice: 149.99,
+    currency: "USD",
+    imageUrl: img("ua-phantom-3"),
+    productUrl: "https://www.underarmour.com/en-us/p/ua-hovr-phantom-3",
+    availability: "In stock",
+    availableSizes: ["7", "8", "9", "10", "11", "12"],
+    availableColors: ["Black", "White", "Red"],
+    rating: 4.6,
+    reviewCount: 1284,
+  },
+  {
+    id: "ua-charged-assert-10",
+    name: "UA Charged Assert 10 Running Shoes",
+    description:
+      "Lightweight mesh upper with durable leather overlays for stability and breathability. Charged Cushioning midsole.",
+    brand: "Under Armour",
+    price: 64.99,
+    originalPrice: 79.99,
+    currency: "USD",
+    imageUrl: img("ua-assert-10"),
+    productUrl: "https://www.underarmour.com/en-us/p/ua-charged-assert-10",
+    availability: "In stock",
+    availableSizes: ["8", "9", "10", "10.5", "11"],
+    availableColors: ["Black", "Grey"],
+    rating: 4.4,
+    reviewCount: 932,
+  },
+  {
+    id: "ua-flow-velociti-elite",
+    name: "UA Flow Velociti Elite Running Shoes",
+    description:
+      "Our fastest race-day shoe. UA Flow cushioning is lightweight and grippy so you can go faster with no rubber outsole.",
+    brand: "Under Armour",
+    price: 159.99,
+    currency: "USD",
+    imageUrl: img("ua-velociti-elite"),
+    productUrl: "https://www.underarmour.com/en-us/p/ua-flow-velociti-elite",
+    availability: "Low stock",
+    availableSizes: ["9", "10", "11"],
+    availableColors: ["Black", "Yellow"],
+    rating: 4.8,
+    reviewCount: 214,
+  },
+  {
+    id: "ua-tribase-reign-6",
+    name: "UA TriBase Reign 6 Training Shoes",
+    description:
+      "Built for the box. TriBase technology maximizes ground contact for stability during heavy lifts.",
+    brand: "Under Armour",
+    price: 109.99,
+    currency: "USD",
+    imageUrl: img("ua-reign-6"),
+    productUrl: "https://www.underarmour.com/en-us/p/ua-tribase-reign-6",
+    availability: "In stock",
+    availableSizes: ["8", "9", "10", "11", "12", "13"],
+    availableColors: ["Black", "White"],
+    rating: 4.7,
+    reviewCount: 456,
+  },
+  {
+    id: "ua-coldgear-mock",
+    name: "UA ColdGear Armour Fitted Mock",
+    description:
+      "Dual-layer fabric traps heat to keep you warm, while wicking sweat during cold-weather training.",
+    brand: "Under Armour",
+    price: 45.0,
+    originalPrice: 55.0,
+    currency: "USD",
+    imageUrl: img("ua-coldgear-mock"),
+    productUrl: "https://www.underarmour.com/en-us/p/ua-coldgear-armour-mock",
+    availability: "In stock",
+    availableSizes: ["S", "M", "L", "XL"],
+    availableColors: ["Black", "Navy", "White"],
+    rating: 4.5,
+    reviewCount: 780,
+  },
+  {
+    id: "ua-storm-launch-jacket",
+    name: "UA Storm Launch Running Jacket",
+    description:
+      "UA Storm technology repels water without sacrificing breathability. Perfect for winter runs.",
+    brand: "Under Armour",
+    price: 74.99,
+    originalPrice: 99.99,
+    currency: "USD",
+    imageUrl: img("ua-storm-launch"),
+    productUrl: "https://www.underarmour.com/en-us/p/ua-storm-launch-jacket",
+    availability: "In stock",
+    availableSizes: ["S", "M", "L", "XL", "XXL"],
+    availableColors: ["Black", "Grey"],
+    rating: 4.3,
+    reviewCount: 321,
+  },
+  {
+    id: "ua-tech-tee",
+    name: "UA Tech 2.0 Short Sleeve T-Shirt",
+    description:
+      "Signature Moisture Transport System wicks sweat and dries fast. Anti-odor technology.",
+    brand: "Under Armour",
+    price: 25.0,
+    currency: "USD",
+    imageUrl: img("ua-tech-tee"),
+    productUrl: "https://www.underarmour.com/en-us/p/ua-tech-2-0-tee",
+    availability: "In stock",
+    availableSizes: ["S", "M", "L", "XL"],
+    availableColors: ["Black", "Red", "Blue", "Grey"],
+    rating: 4.7,
+    reviewCount: 5210,
+  },
+  {
+    id: "ua-rival-fleece-hoodie",
+    name: "UA Rival Fleece Hoodie",
+    description:
+      "Soft, brushed inner layer traps warmth. Ribbed cuffs and hem keep the cold out.",
+    brand: "Under Armour",
+    price: 50.0,
+    originalPrice: 60.0,
+    currency: "USD",
+    imageUrl: img("ua-rival-fleece"),
+    productUrl: "https://www.underarmour.com/en-us/p/ua-rival-fleece-hoodie",
+    availability: "In stock",
+    availableSizes: ["S", "M", "L", "XL", "XXL"],
+    availableColors: ["Black", "Grey", "Maroon"],
+    rating: 4.6,
+    reviewCount: 2140,
+  },
+  {
+    id: "ua-hovr-machina-3",
+    name: "UA HOVR Machina 3 Running Shoes",
+    description:
+      "Connected running shoe with UA HOVR cushioning and a supportive Pebax plate for propulsion.",
+    brand: "Under Armour",
+    price: 99.99,
+    originalPrice: 139.99,
+    currency: "USD",
+    imageUrl: img("ua-machina-3"),
+    productUrl: "https://www.underarmour.com/en-us/p/ua-hovr-machina-3",
+    availability: "In stock",
+    availableSizes: ["8", "9", "10", "11", "12"],
+    availableColors: ["Black", "White", "Orange"],
+    rating: 4.5,
+    reviewCount: 640,
+  },
+  {
+    id: "ua-launch-shorts",
+    name: "UA Launch 5'' Running Shorts",
+    description:
+      "Ultra-light woven fabric with mesh panels for ventilation. Built-in brief for support.",
+    brand: "Under Armour",
+    price: 30.0,
+    currency: "USD",
+    imageUrl: img("ua-launch-shorts"),
+    productUrl: "https://www.underarmour.com/en-us/p/ua-launch-shorts",
+    availability: "In stock",
+    availableSizes: ["S", "M", "L", "XL"],
+    availableColors: ["Black", "Blue"],
+    rating: 4.4,
+    reviewCount: 410,
+  },
+  {
+    id: "ua-project-rock-tank",
+    name: "Project Rock Terry Tank",
+    description:
+      "Heavyweight terry fabric for a premium feel. Made for the hardest workouts.",
+    brand: "Under Armour",
+    price: 40.0,
+    currency: "USD",
+    imageUrl: img("ua-project-rock-tank"),
+    productUrl: "https://www.underarmour.com/en-us/p/project-rock-terry-tank",
+    availability: "Out of stock",
+    availableSizes: ["M", "L", "XL"],
+    availableColors: ["Black", "White"],
+    rating: 4.9,
+    reviewCount: 188,
+  },
+  {
+    id: "ua-cold-beanie",
+    name: "UA Halftime Cuff Beanie",
+    description: "Soft knit beanie with a warm fleece band. One size fits most.",
+    brand: "Under Armour",
+    price: 22.0,
+    currency: "USD",
+    // Intentionally no image to test the fallback rendering.
+    productUrl: "https://www.underarmour.com/en-us/p/ua-halftime-beanie",
+    availability: "In stock",
+    availableColors: ["Black", "Grey"],
+  },
+];
+
+export const MOCK_PRODUCTS_BY_ID: Record<string, Product> = Object.fromEntries(
+  MOCK_PRODUCTS.map((p) => [p.id, p]),
+);
