@@ -25,7 +25,7 @@
 
 import http from 'node:http';
 
-import { Agent, ChatTurn, createAgent, SearchFilterState } from './agent.js';
+import { Agent, ChatTurn, createAgent, RequestAuthContext, SearchFilterState } from './agent.js';
 
 const PORT = Number.parseInt(process.env.API_PORT ?? '8787', 10);
 
@@ -58,6 +58,44 @@ function defaultSessionId(): string | null {
 	const cfg = process.env.AGENT_DEFAULT_SESSION;
 	if (cfg === 'off') return null;
 	return cfg && cfg.trim() ? cfg.trim() : 'default';
+}
+
+/** Returns the first value of a (possibly repeated) request header, trimmed. */
+function headerValue(req: http.IncomingMessage, name: string): string | undefined {
+	const raw = req.headers[name];
+	const value = Array.isArray(raw) ? raw[0] : raw;
+	const trimmed = value?.trim();
+	return trimmed ? trimmed : undefined;
+}
+
+/**
+ * Extracts the per-request shopper auth + locale from the incoming headers.
+ *
+ * - `Authorization: Bearer <token>` -> the shopper's UACAPI token (guest or
+ *   logged-in). The scheme prefix is stripped; UACAPI client re-adds it.
+ * - `x-ua-locale: <lang>-<site>` (e.g. "en-us") -> split into UACAPI's
+ *   `ua-language-code` ("en") and `ua-site-code` ("US"). Explicit
+ *   `x-ua-site-code` / `x-ua-language-code` headers, if present, take precedence.
+ *
+ * Returns `undefined` when nothing relevant is present, so the server falls back
+ * to its static startup token/context (useful for Postman/no-auth testing).
+ */
+function parseAuthContext(req: http.IncomingMessage): RequestAuthContext | undefined {
+	const authorization = headerValue(req, 'authorization');
+	const bearerToken = authorization?.replace(/^bearer\s+/i, '').trim() || undefined;
+
+	let languageCode = headerValue(req, 'x-ua-language-code');
+	let siteCode = headerValue(req, 'x-ua-site-code');
+
+	const locale = headerValue(req, 'x-ua-locale');
+	if (locale && (!languageCode || !siteCode)) {
+		const [lang, site] = locale.split('-');
+		if (!languageCode && lang) languageCode = lang.toLowerCase();
+		if (!siteCode && site) siteCode = site.toUpperCase();
+	}
+
+	if (!bearerToken && !languageCode && !siteCode) return undefined;
+	return { bearerToken, languageCode, siteCode };
 }
 
 /** Reads and JSON-parses a request body (empty body -> {}). */
@@ -126,6 +164,8 @@ async function handle(
 
 	if (method === 'POST' && path === '/agent') {
 		const body = await readJsonBody(req);
+		// Shopper auth + locale from request headers (guest or logged-in token).
+		const authContext = parseAuthContext(req);
 
 		const explicitSessionId =
 			typeof body.sessionId === 'string' && body.sessionId.trim()
@@ -179,7 +219,7 @@ async function handle(
 		const effectiveHistory = [...(stored?.history ?? []), ...history];
 		const initialFilters = stored?.filters ?? {};
 
-		const result = await agent.runAgent(prompt, effectiveHistory, initialFilters);
+		const result = await agent.runAgent(prompt, effectiveHistory, initialFilters, authContext);
 
 		if (sessionId) {
 			const updatedHistory: ChatTurn[] = [
@@ -218,7 +258,7 @@ async function handle(
 			sendJson(res, 400, { error: 'Provide at least one of "query" or "categoryId".' });
 			return;
 		}
-		const result = await agent.callTool('search_products', args);
+		const result = await agent.callTool('search_products', args, parseAuthContext(req));
 		sendJson(res, 200, result);
 		return;
 	}

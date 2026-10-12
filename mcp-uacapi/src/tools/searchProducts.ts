@@ -96,6 +96,21 @@ export const searchProductsInputSchema = {
 				'type; this clears previously applied filters (price/color/gender). Leave unset ' +
 				'when refining the current search.',
 		),
+	/**
+	 * Per-request auth + locale context. This is NOT a model-facing field: it is
+	 * injected by the agent from the HTTP request headers (Authorization +
+	 * x-ua-locale) and stripped from the schema advertised to the LLM, so the
+	 * model never sees or fills it. The token identifies the shopper (guest or
+	 * logged-in); site/language localize the UACAPI results.
+	 */
+	auth: z
+		.object({
+			bearerToken: z.string().optional(),
+			siteCode: z.string().optional(),
+			languageCode: z.string().optional(),
+		})
+		.optional()
+		.describe('Internal: shopper auth/locale injected by the server; not model-facing.'),
 };
 
 /** Inferred TypeScript type for the validated tool input. */
@@ -110,6 +125,16 @@ export type SearchProductsInput = {
 	gender?: string;
 	/** Agent-level hint to clear accumulated filters; ignored by the tool itself. */
 	reset?: boolean;
+	/**
+	 * Per-request shopper auth + locale, injected by the agent from the HTTP
+	 * request (never provided by the LLM). Overrides the server's static token
+	 * and context headers so the search runs as the current shopper and locale.
+	 */
+	auth?: {
+		bearerToken?: string;
+		siteCode?: string;
+		languageCode?: string;
+	};
 };
 
 /** UACAPI attribute id for the color-group refinement. */
@@ -478,7 +503,19 @@ export async function runSearchProducts(
 		`[search_products] -> UACAPI operation "search" variables: ${JSON.stringify(variables)}`,
 	);
 
-	const data = await client.request<SearchProductsData>(SEARCH_PRODUCTS_QUERY, variables);
+	// Translate the injected per-request auth/locale into UACAPI client overrides:
+	// the shopper's bearer token (guest or logged-in) and the site/language
+	// context headers UACAPI uses to localize results. Absent values fall back to
+	// the server's static startup config inside `client.request`.
+	const contextHeaders: Record<string, string> = {};
+	if (input.auth?.siteCode) contextHeaders['ua-site-code'] = input.auth.siteCode;
+	if (input.auth?.languageCode) contextHeaders['ua-language-code'] = input.auth.languageCode;
+	const overrides =
+		input.auth?.bearerToken || Object.keys(contextHeaders).length > 0
+			? { bearerToken: input.auth?.bearerToken, contextHeaders }
+			: undefined;
+
+	const data = await client.request<SearchProductsData>(SEARCH_PRODUCTS_QUERY, variables, overrides);
 	const connection = data.search;
 
 	return {

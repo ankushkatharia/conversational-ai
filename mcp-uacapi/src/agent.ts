@@ -245,6 +245,19 @@ export interface ChatTurn {
 	content: string;
 }
 
+/**
+ * Per-request shopper auth + locale, derived from the HTTP request headers by
+ * `http.ts` (Authorization + x-ua-locale). It is injected into each MCP tool
+ * call so UACAPI runs as the current shopper (guest or logged-in) and locale.
+ * It is deliberately kept out of the LLM-facing tool schema and all telemetry
+ * so the bearer token is never sent to the model or logged.
+ */
+export interface RequestAuthContext {
+	bearerToken?: string;
+	siteCode?: string;
+	languageCode?: string;
+}
+
 /** A connected agent with a shared MCP client + model client. */
 export interface Agent {
 	/**
@@ -256,9 +269,10 @@ export interface Agent {
 		prompt: string,
 		history?: ChatTurn[],
 		initialFilters?: SearchFilterState,
+		auth?: RequestAuthContext,
 	): Promise<AgentRunResult>;
 	/** Calls an MCP tool directly (no LLM); returns the tool result payload. */
-	callTool(name: string, args: Record<string, unknown>): Promise<unknown>;
+	callTool(name: string, args: Record<string, unknown>, auth?: RequestAuthContext): Promise<unknown>;
 	/** Shuts down the MCP server connection. */
 	close(): Promise<void>;
 }
@@ -272,6 +286,17 @@ function toOpenAITools(mcpTools: McpToolDescriptor[]): ChatCompletionTool[] {
 			...(tool.inputSchema ?? { type: 'object', properties: {} }),
 		};
 		delete parameters.$schema;
+		// `auth` is a server-injected passthrough (shopper token + locale), not a
+		// model input. Hide it from the LLM so it never sees or tries to fill it;
+		// the agent injects it directly at the mcp.callTool boundary instead.
+		if (parameters.properties && typeof parameters.properties === 'object') {
+			const properties = { ...(parameters.properties as Record<string, unknown>) };
+			delete properties.auth;
+			parameters.properties = properties;
+		}
+		if (Array.isArray(parameters.required)) {
+			parameters.required = (parameters.required as string[]).filter((k) => k !== 'auth');
+		}
 		return {
 			type: 'function',
 			function: {
@@ -333,6 +358,7 @@ export async function createAgent(): Promise<Agent> {
 		prompt: string,
 		history: ChatTurn[] = [],
 		initialFilters: SearchFilterState = {},
+		auth?: RequestAuthContext,
 	): Promise<AgentRunResult> {
 		// Build a fresh client each run using the current .env credentials, so an
 		// expired Bedrock token can be refreshed without restarting the process.
@@ -450,9 +476,12 @@ export async function createAgent(): Promise<Agent> {
 
 				let resultText: string;
 				try {
+					// Inject the shopper auth/locale ONLY at the call boundary — never
+					// into `toolCalls`/`messages`/logs above — so the token stays out of
+					// telemetry and is never exposed to the model.
 					const result = (await mcp.callTool({
 						name,
-						arguments: effectiveArgs,
+						arguments: auth ? { ...effectiveArgs, auth } : effectiveArgs,
 					})) as McpToolResult;
 					resultText = stringifyToolResult(result);
 					// Capture structured products so the UI can render consistent cards.
@@ -484,8 +513,15 @@ export async function createAgent(): Promise<Agent> {
 		};
 	}
 
-	async function callTool(name: string, args: Record<string, unknown>): Promise<unknown> {
-		const result = (await mcp.callTool({ name, arguments: args })) as McpToolResult;
+	async function callTool(
+		name: string,
+		args: Record<string, unknown>,
+		auth?: RequestAuthContext,
+	): Promise<unknown> {
+		const result = (await mcp.callTool({
+			name,
+			arguments: auth ? { ...args, auth } : args,
+		})) as McpToolResult;
 		return result.structuredContent ?? result;
 	}
 

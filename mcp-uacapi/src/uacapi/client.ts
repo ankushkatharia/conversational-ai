@@ -43,13 +43,31 @@ function debugLog(
 	];
 	for (const line of lines) console.error(line);
 
+	writeDebugFile(lines);
+}
+
+/**
+ * Writes an opt-in debug line for the UACAPI response (status + body), so
+ * failures like HTTP 401 "jwt malformed" are visible in the debug log instead
+ * of only surfacing as an MCP tool error. Enabled by `DEBUG_UACAPI=1`; mirrors
+ * to `DEBUG_UACAPI_FILE` when set. Never logs the request's bearer token.
+ */
+function debugLogResponse(endpoint: string, status: number, bodyText: string): void {
+	if (process.env.DEBUG_UACAPI !== '1') return;
+
+	const lines = [`[uacapi] <- ${status} ${endpoint}`, `[uacapi] response: ${bodyText}`];
+	for (const line of lines) console.error(line);
+	writeDebugFile(lines);
+}
+
+/** Appends debug lines to `DEBUG_UACAPI_FILE` when configured. */
+function writeDebugFile(lines: string[]): void {
 	const file = process.env.DEBUG_UACAPI_FILE?.trim();
-	if (file) {
-		try {
-			appendFileSync(file, `${new Date().toISOString()} ${lines.join('\n')}\n`);
-		} catch (err) {
-			console.error(`[uacapi] could not write DEBUG_UACAPI_FILE: ${String(err)}`);
-		}
+	if (!file) return;
+	try {
+		appendFileSync(file, `${new Date().toISOString()} ${lines.join('\n')}\n`);
+	} catch (err) {
+		console.error(`[uacapi] could not write DEBUG_UACAPI_FILE: ${String(err)}`);
 	}
 }
 
@@ -98,10 +116,19 @@ export class UacapiClient {
 	 * @typeParam TData - the expected shape of `data` in the response.
 	 * @param query - a static GraphQL document string (no interpolated input).
 	 * @param variables - the operation variables; the only place user input flows.
+	 * @param overrides - optional per-request auth/context. When present, the
+	 *   `bearerToken` replaces the configured static token (so each request can
+	 *   act as the calling shopper — guest or logged-in), and `contextHeaders`
+	 *   are merged over the configured defaults (so locale/site follow the
+	 *   shopper). Absent fields fall back to the static startup config.
 	 * @returns the `data` payload from the response.
 	 * @throws {UacapiRequestError} on network failure, non-2xx status, or GraphQL errors.
 	 */
-	public async request<TData>(query: string, variables: object): Promise<TData> {
+	public async request<TData>(
+		query: string,
+		variables: object,
+		overrides?: { bearerToken?: string; contextHeaders?: Record<string, string> },
+	): Promise<TData> {
 		const controller = new AbortController();
 		const timeout = setTimeout(() => controller.abort(), this.config.timeoutMs);
 
@@ -109,10 +136,15 @@ export class UacapiClient {
 			'content-type': 'application/json',
 			accept: 'application/json',
 			// Context headers (site/locale/client) drive UACAPI search results.
+			// Per-request overrides (from the caller's locale) win over static config.
 			...this.config.contextHeaders,
+			...(overrides?.contextHeaders ?? {}),
 		};
-		if (this.config.bearerToken) {
-			headers.authorization = `Bearer ${this.config.bearerToken}`;
+		// A per-request shopper token (guest or logged-in) takes precedence over
+		// the static startup token; fall back to the configured token otherwise.
+		const bearerToken = overrides?.bearerToken ?? this.config.bearerToken;
+		if (bearerToken) {
+			headers.authorization = `Bearer ${bearerToken}`;
 		}
 
 		const body = JSON.stringify({ query, variables });
@@ -139,12 +171,15 @@ export class UacapiClient {
 
 		if (!response.ok) {
 			const bodyText = await response.text().catch(() => '');
+			debugLogResponse(this.config.endpoint, response.status, bodyText);
 			throw new UacapiRequestError(
 				`UACAPI returned HTTP ${response.status} ${response.statusText}. ${bodyText}`.trim(),
 			);
 		}
 
-		const payload = (await response.json()) as GraphQLResponse<TData>;
+		const rawBody = await response.text();
+		debugLogResponse(this.config.endpoint, response.status, rawBody);
+		const payload = JSON.parse(rawBody) as GraphQLResponse<TData>;
 
 		if (payload.errors?.length) {
 			const summary = payload.errors.map((e) => e.message).join('; ');
