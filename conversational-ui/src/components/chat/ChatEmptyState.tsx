@@ -8,7 +8,7 @@ const STARTERS = [
   "Find black running shoes under $100",
   "Show me lightweight training shoes",
   "Show me trendy t-shirts",
-  "Show me Shoes available in size 10",
+  "Show me T-shirts available in size M",
 ];
 
 export function ChatEmptyState({

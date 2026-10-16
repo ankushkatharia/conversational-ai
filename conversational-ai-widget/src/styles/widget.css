@@ -125,6 +125,14 @@
     opacity: 1;
   }
 
+  .ua-cai input,
+  .ua-cai textarea,
+  .ua-cai select {
+    color: var(--ua-cai-foreground);
+    caret-color: var(--ua-cai-foreground);
+    -webkit-text-fill-color: var(--ua-cai-foreground);
+  }
+
   .ua-cai img,
   .ua-cai svg,
   .ua-cai video,
@@ -294,6 +302,36 @@
     opacity: 1;
     transform: scale(1);
   }
+}
+
+/*
+  Unlayered overrides: host apps (e.g. Seabiscuit) ship unlayered global
+  resets for form controls that beat Tailwind's layered base styles. Keeping
+  these rules outside @layer ensures the widget's form controls always render
+  with the white-on-dark theme regardless of host overrides.
+*/
+.ua-cai input,
+.ua-cai textarea,
+.ua-cai select,
+.ua-cai [contenteditable="true"] {
+  color: var(--ua-cai-foreground) !important;
+  caret-color: var(--ua-cai-foreground) !important;
+  -webkit-text-fill-color: var(--ua-cai-foreground) !important;
+  background-color: transparent;
+}
+
+.ua-cai input::placeholder,
+.ua-cai textarea::placeholder {
+  color: var(--ua-cai-muted-foreground) !important;
+  -webkit-text-fill-color: var(--ua-cai-muted-foreground) !important;
+  opacity: 1 !important;
+}
+
+.ua-cai input:-webkit-autofill,
+.ua-cai textarea:-webkit-autofill {
+  -webkit-text-fill-color: var(--ua-cai-foreground) !important;
+  caret-color: var(--ua-cai-foreground) !important;
+  box-shadow: 0 0 0 1000px var(--ua-cai-surface-muted) inset !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

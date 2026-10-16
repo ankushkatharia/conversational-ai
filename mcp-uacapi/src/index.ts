@@ -20,6 +20,7 @@ import {
 	searchProductsInputSchema,
 	SearchProductsInput,
 } from './tools/searchProducts.js';
+import { runGetOrders, getOrdersInputSchema, GetOrdersInput } from './tools/getOrders.js';
 
 async function main(): Promise<void> {
 	const config = loadConfig();
@@ -76,9 +77,52 @@ async function main(): Promise<void> {
 		},
 	);
 
+	server.registerTool(
+		'get_orders',
+		{
+			title: 'Get UACAPI orders',
+			description:
+				'Read-only order history lookup against UACAPI. Returns the shopper\'s most ' +
+				'recent orders (default 3) with order number, date, status, totals, and line ' +
+				'items. Use this for requests like "my last 3 orders" or "order history". ' +
+				'The shopper identity and site are injected by the server; only "limit" is ' +
+				'model-controlled.',
+			inputSchema: getOrdersInputSchema,
+			annotations: {
+				readOnlyHint: true,
+				openWorldHint: true,
+			},
+		},
+		async (input: GetOrdersInput) => {
+			try {
+				const result = await runGetOrders(client, input);
+				return {
+					structuredContent: result as unknown as Record<string, unknown>,
+					content: [
+						{
+							type: 'text' as const,
+							text: JSON.stringify(result, null, 2),
+						},
+					],
+				};
+			} catch (err) {
+				const message =
+					err instanceof UacapiRequestError || err instanceof Error
+						? err.message
+						: String(err);
+				return {
+					isError: true,
+					content: [{ type: 'text' as const, text: message }],
+				};
+			}
+		},
+	);
+
 	const transport = new StdioServerTransport();
 	await server.connect(transport);
-	console.error('mcp-uacapi server started (stdio). Tool: search_products [read-only].');
+	console.error(
+		'mcp-uacapi server started (stdio). Tools: search_products, get_orders [read-only].',
+	);
 }
 
 main().catch((err) => {

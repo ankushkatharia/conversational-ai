@@ -95,6 +95,10 @@ export function useChat(client: McpClient) {
                 ensureAssistant();
                 patchMessage(assistantId, { products: evt.products });
                 break;
+              case "orders":
+                ensureAssistant();
+                patchMessage(assistantId, { orders: evt.orders });
+                break;
               case "suggestions":
                 ensureAssistant();
                 patchMessage(assistantId, { suggestions: evt.suggestions });

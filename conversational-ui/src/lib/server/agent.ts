@@ -145,7 +145,7 @@ async function callBackend(
       suggestions: [
         "Show me more like this",
         "Compare these products",
-        "Filter under $100",
+        "Filter under $50",
       ],
       refinements: sanitizeSuggestions(agentData.suggestions),
       filters: agentData.filters,

@@ -21,6 +21,7 @@ export function ChatbotWidget({
   className,
   title = "Shopping assistant",
   userName,
+  userAvatarUrl,
   getAuthToken,
   locale,
 }: ChatbotWidgetProps) {
@@ -42,6 +43,7 @@ export function ChatbotWidget({
             client={client}
             title={title}
             userName={userName}
+            userAvatarUrl={userAvatarUrl}
             onClose={() => setOpen(false)}
           />
         )}

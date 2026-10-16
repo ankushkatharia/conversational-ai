@@ -16,13 +16,21 @@ export function ProductDetailDrawer({
   product,
   open,
   onClose,
+  contained = false,
 }: {
   product: Product | null;
   open: boolean;
   onClose: () => void;
+  /** Render inside the chat panel (scoped to its container) instead of the viewport. */
+  contained?: boolean;
 }) {
   return (
-    <Drawer open={open && !!product} onClose={onClose} title="Product details">
+    <Drawer
+      open={open && !!product}
+      onClose={onClose}
+      title="Product details"
+      contained={contained}
+    >
       {product && <DrawerBody product={product} />}
     </Drawer>
   );
@@ -122,9 +130,9 @@ function DrawerBody({ product }: { product: Product }) {
         {product.productUrl && (
           <ProductLink
             href={product.productUrl}
-            className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-brand px-5 text-sm font-semibold uppercase tracking-wide text-brand-foreground hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-accent px-5 text-sm font-semibold uppercase tracking-wide text-accent-foreground hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            View on underarmour.com <ExternalLink className="h-4 w-4" />
+            More details <ExternalLink className="h-4 w-4" />
           </ProductLink>
         )}
         {onAddToCart ? (

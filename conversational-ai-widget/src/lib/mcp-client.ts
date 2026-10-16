@@ -12,6 +12,7 @@ import type {
   AppliedFilters,
   ChatMessage,
   ChatStreamEvent,
+  OrderSummary,
   Product,
   RefinementSuggestions,
   SendMessageResponse,
@@ -21,7 +22,7 @@ import { makeId } from "./utils";
 const DEFAULT_SUGGESTIONS = [
   "Show me more like this",
   "Compare these products",
-  "Filter under $100",
+  "Filter under $50",
 ];
 
 type PriceBand = { min?: number; max?: number } | null;
@@ -41,6 +42,7 @@ type BackendProduct = {
 type AgentResponse = {
   answer?: string;
   products?: unknown[];
+  orders?: unknown[];
   suggestions?: unknown;
   filters?: AppliedFilters;
 };
@@ -48,6 +50,7 @@ type AgentResponse = {
 type AgentReply = {
   content: string;
   products: Product[];
+  orders: OrderSummary[];
   suggestions: string[];
   refinements?: RefinementSuggestions;
   filters?: AppliedFilters;
@@ -100,6 +103,22 @@ function mapBackendProduct(raw: unknown): Product | null {
     availability: p.orderable === false ? "Out of stock" : "In stock",
     availableColors: colors,
   };
+}
+
+function sanitizeOrders(raw: unknown): OrderSummary[] {
+  if (!Array.isArray(raw)) return [];
+  return raw.filter((o): o is OrderSummary => {
+    if (!o || typeof o !== "object") return false;
+    const order = o as Partial<OrderSummary>;
+    return (
+      typeof order.orderNo === "string" &&
+      typeof order.creationDate === "string" &&
+      typeof order.status === "string" &&
+      typeof order.currency === "string" &&
+      !!order.totals &&
+      Array.isArray(order.items)
+    );
+  });
 }
 
 /** Keeps only well-formed refinement chips (defensive against shape drift). */
@@ -188,10 +207,12 @@ export class McpClient {
     const products = (Array.isArray(data.products) ? data.products : [])
       .map(mapBackendProduct)
       .filter((p): p is Product => p !== null);
+    const orders = sanitizeOrders(data.orders);
     const content = (data.answer ?? "").trim() || "Here's what I found.";
     return {
       content,
       products,
+      orders,
       suggestions: DEFAULT_SUGGESTIONS,
       refinements: sanitizeSuggestions(data.suggestions),
       filters: data.filters,
@@ -211,6 +232,7 @@ export class McpClient {
       createdAt: new Date().toISOString(),
       status: "complete",
       products: reply.products,
+      orders: reply.orders,
       suggestions: reply.suggestions,
       refinements: reply.refinements,
       filters: reply.filters,
@@ -218,6 +240,7 @@ export class McpClient {
     return {
       message: assistantMessage,
       products: reply.products,
+      orders: reply.orders,
       suggestions: reply.suggestions,
       refinements: reply.refinements,
       filters: reply.filters,
@@ -244,6 +267,9 @@ export class McpClient {
     }
     if (reply.products.length) {
       onEvent({ type: "products", products: reply.products });
+    }
+    if (reply.orders.length) {
+      onEvent({ type: "orders", orders: reply.orders });
     }
     if (reply.suggestions.length) {
       onEvent({ type: "suggestions", suggestions: reply.suggestions });

@@ -14,7 +14,12 @@ export function ProductGrid({
   className?: string;
 }) {
   return (
-    <div className={cn("grid grid-cols-2 gap-3", className)}>
+    <div
+      className={cn(
+        "grid gap-3 grid-cols-[repeat(auto-fill,minmax(150px,1fr))]",
+        className,
+      )}
+    >
       {products.map((product) => (
         <ProductCard key={product.id} product={product} onSelect={onSelect} />
       ))}

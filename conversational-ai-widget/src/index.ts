@@ -3,6 +3,9 @@ export { ChatbotWidget } from "./components/ChatbotWidget";
 export type {
   ChatbotWidgetProps,
   Product,
+  OrderSummary,
+  OrderItem,
+  OrderTotals,
   ChatMessage,
   MessageRole,
   MessageStatus,

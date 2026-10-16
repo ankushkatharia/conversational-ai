@@ -100,8 +100,8 @@ export function ChatShell() {
         />
       </Drawer>
 
-      {/* Main column */}
-      <div className="flex min-w-0 flex-1 flex-col">
+      {/* Main column (positioned container so the product detail stays within it). */}
+      <div className="relative @container flex min-w-0 flex-1 flex-col">
         <div className="flex items-center gap-2 border-b border-border px-4 py-2">
           {/* Desktop: collapse/expand the persistent sidebar. */}
           <button
@@ -168,13 +168,15 @@ export function ChatShell() {
             </p>
           </div>
         </div>
-      </div>
 
-      <ProductDetailDrawer
-        product={selectedProduct}
-        open={detailOpen}
-        onClose={() => setDetailOpen(false)}
-      />
+        {/* Product detail opens within the chat area and adapts to its size. */}
+        <ProductDetailDrawer
+          product={selectedProduct}
+          open={detailOpen}
+          onClose={() => setDetailOpen(false)}
+          contained
+        />
+      </div>
     </div>
   );
 }

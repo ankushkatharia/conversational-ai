@@ -7,7 +7,7 @@ import {
   useState,
   type PointerEvent as ReactPointerEvent,
 } from "react";
-import { Maximize2, Minimize2, PenSquare, X } from "lucide-react";
+import { Bot, Maximize2, Minimize2, PenSquare, X } from "lucide-react";
 
 import type { Product } from "../lib/types";
 import type { McpClient } from "../lib/mcp-client";
@@ -46,11 +46,13 @@ export function ChatPanel({
   client,
   title,
   userName,
+  userAvatarUrl,
   onClose,
 }: {
   client: McpClient;
   title: string;
   userName?: string;
+  userAvatarUrl?: string;
   onClose: () => void;
 }) {
   const chat = useChat(client);
@@ -170,7 +172,7 @@ export function ChatPanel({
       role="dialog"
       aria-label={title}
       style={isDesktop ? { width: size.w, height: size.h } : undefined}
-      className="ua-cai-panel fixed inset-x-0 bottom-0 z-[999] flex h-[88vh] flex-col overflow-hidden rounded-t-3xl border border-border bg-surface shadow-[0_30px_80px_-20px_rgba(0,0,0,0.85)] ring-1 ring-white/5 sm:inset-x-auto sm:bottom-24 sm:right-6 sm:max-h-[calc(100vh-7.5rem)] sm:max-w-[calc(100vw-3rem)] sm:rounded-3xl"
+      className="ua-cai-panel @container fixed inset-x-0 bottom-0 z-[999] flex h-[88vh] flex-col overflow-hidden rounded-t-3xl border border-border bg-surface shadow-[0_30px_80px_-20px_rgba(0,0,0,0.85)] ring-1 ring-white/5 sm:inset-x-auto sm:bottom-24 sm:right-6 sm:max-h-[calc(100vh-7.5rem)] sm:max-w-[calc(100vw-3rem)] sm:rounded-3xl"
     >
       {isDesktop && (
         <>
@@ -207,13 +209,12 @@ export function ChatPanel({
         <div className="flex items-center gap-2.5">
           <span
             aria-hidden="true"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-accent text-[12px] font-extrabold tracking-wide text-accent-foreground shadow-[0_6px_16px_-4px_rgba(220,0,25,0.7)]"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-accent text-accent-foreground shadow-[0_6px_16px_-4px_rgba(220,0,25,0.7)]"
           >
-            UA
+            <Bot className="h-5 w-5" />
           </span>
           <div className="flex flex-col leading-tight">
             <span className="text-sm font-bold tracking-tight">{title}</span>
-            <span className="text-[11px] text-muted">Powered by Under Armour</span>
           </div>
         </div>
         <div className="flex items-center gap-1">
@@ -257,6 +258,7 @@ export function ChatPanel({
         pending={chat.pending}
         streamingId={chat.streamingId}
         userName={userName}
+        userAvatarUrl={userAvatarUrl}
         onSelectProduct={openProduct}
         onSuggestion={(p) => void chat.send(p)}
         onRetry={chat.retry}
@@ -282,6 +284,7 @@ export function ChatPanel({
         product={selectedProduct}
         open={detailOpen}
         onClose={() => setDetailOpen(false)}
+        contained
       />
     </div>
   );

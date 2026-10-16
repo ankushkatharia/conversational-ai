@@ -1,11 +1,12 @@
 "use client";
 
 import Markdown from "react-markdown";
-import { AlertTriangle, RefreshCw } from "lucide-react";
+import { AlertTriangle, Bot, RefreshCw } from "lucide-react";
 
 import type { ChatMessage as ChatMessageType, Product } from "../../lib/types";
 import { cn } from "../../lib/utils";
 import { ProductGrid } from "../products/ProductGrid";
+import { OrderList } from "../orders/OrderList";
 import { SuggestedPrompts } from "./SuggestedPrompts";
 import { RefinePanel } from "./RefinePanel";
 import { TypingIndicator } from "./TypingIndicator";
@@ -25,6 +26,7 @@ export function ChatMessage({
 }) {
   const isUser = message.role === "user";
   const products = message.products ?? [];
+  const orders = message.orders ?? [];
 
   if (isUser) {
     return (
@@ -40,9 +42,9 @@ export function ChatMessage({
     <div className="flex gap-3">
       <span
         aria-hidden="true"
-        className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-extrabold text-accent-foreground"
+        className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground"
       >
-        UA
+        <Bot className="h-4 w-4" />
       </span>
       <div className="min-w-0 flex-1 space-y-3">
         {message.status === "error" ? (
@@ -76,13 +78,21 @@ export function ChatMessage({
           </div>
         )}
 
+        {orders.length > 0 && (
+          <div>
+            <OrderList orders={orders} />
+          </div>
+        )}
+
         {products.length > 0 && (
           <div>
             <ProductGrid products={products} onSelect={onSelectProduct} />
           </div>
         )}
 
-        {!streaming && (
+        {/* Filter & refine and suggested prompts are product-search only; hide
+            them for order history / order detail responses. */}
+        {products.length > 0 && !streaming && (
           <RefinePanel
             filters={message.filters}
             refinements={message.refinements}
@@ -90,9 +100,12 @@ export function ChatMessage({
           />
         )}
 
-        {message.suggestions && message.suggestions.length > 0 && !streaming && (
-          <SuggestedPrompts prompts={message.suggestions} onSelect={onSuggestion} />
-        )}
+        {products.length > 0 &&
+          message.suggestions &&
+          message.suggestions.length > 0 &&
+          !streaming && (
+            <SuggestedPrompts prompts={message.suggestions} onSelect={onSuggestion} />
+          )}
       </div>
     </div>
   );

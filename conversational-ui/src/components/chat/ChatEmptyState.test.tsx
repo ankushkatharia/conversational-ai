@@ -18,8 +18,8 @@ describe("ChatEmptyState", () => {
     const user = userEvent.setup();
     render(<ChatEmptyState onSelect={onSelect} />);
     await user.click(
-      screen.getByRole("button", { name: /show me lightweight training shoes/i }),
+      screen.getByRole("button", { name: /Show me track pants for training/i }),
     );
-    expect(onSelect).toHaveBeenCalledWith("Show me lightweight training shoes");
+    expect(onSelect).toHaveBeenCalledWith("Show me track pants for training");
   });
 });

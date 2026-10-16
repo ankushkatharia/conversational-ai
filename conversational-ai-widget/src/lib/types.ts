@@ -4,6 +4,33 @@
  * backend/GraphQL types so the UI does not break when those evolve.
  */
 
+export type OrderItem = {
+  name: string;
+  sku: string;
+  quantity: number;
+  price: number;
+  fulfillmentStatus: string;
+  imageUrl?: string;
+};
+
+export type OrderTotals = {
+  subtotal: number;
+  shipping: number;
+  tax: number;
+  grandTotal: number;
+  discount: number;
+};
+
+export type OrderSummary = {
+  orderNo: string;
+  creationDate: string;
+  status: string;
+  orderType: string;
+  currency: string;
+  totals: OrderTotals;
+  items: OrderItem[];
+};
+
 export type Product = {
   id: string;
   name: string;
@@ -86,6 +113,8 @@ export type ChatMessage = {
   content: string;
   createdAt: string;
   products?: Product[];
+  /** Structured order summaries surfaced by order-related tool calls. */
+  orders?: OrderSummary[];
   suggestions?: string[];
   /** Dynamic guided-refinement chips derived from the latest search. */
   refinements?: RefinementSuggestions;
@@ -100,6 +129,7 @@ export type ChatMessage = {
 export type SendMessageResponse = {
   message: ChatMessage;
   products?: Product[];
+  orders?: OrderSummary[];
   suggestions?: string[];
   refinements?: RefinementSuggestions;
   filters?: AppliedFilters;
@@ -109,6 +139,7 @@ export type SendMessageResponse = {
 export type ChatStreamEvent =
   | { type: "token"; value: string }
   | { type: "products"; products: Product[] }
+  | { type: "orders"; orders: OrderSummary[] }
   | { type: "suggestions"; suggestions: string[] }
   | { type: "refinements"; refinements: RefinementSuggestions }
   | { type: "filters"; filters: AppliedFilters }
@@ -141,9 +172,15 @@ export type ChatbotWidgetProps = {
 
   /**
    * Display name of the signed-in shopper. When provided, the empty-state
-   * greeting personalizes to "Hi {firstName} —". Omit for a guest ("Hi there —").
+   * greeting personalizes to "Hi {firstName},". Omit for a guest ("Hi there,").
    */
   userName?: string;
+
+  /**
+   * URL of the signed-in shopper's profile picture. When provided, it replaces
+   * the default icon in the empty-state greeting. Omit for the default.
+   */
+  userAvatarUrl?: string;
 
   /**
    * Supplies the current authentication token for the MCP/UACAPI backend. The

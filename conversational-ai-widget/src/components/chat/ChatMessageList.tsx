@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { Bot } from "lucide-react";
 
 import type { ChatMessage as ChatMessageType, Product } from "../../lib/types";
 import { ChatMessage } from "./ChatMessage";
@@ -13,6 +14,7 @@ export function ChatMessageList({
   pending,
   streamingId,
   userName,
+  userAvatarUrl,
   onSelectProduct,
   onSuggestion,
   onRetry,
@@ -22,6 +24,7 @@ export function ChatMessageList({
   pending: boolean;
   streamingId: string | null;
   userName?: string;
+  userAvatarUrl?: string;
   onSelectProduct: (product: Product) => void;
   onSuggestion: (prompt: string) => void;
   onRetry: () => void;
@@ -33,7 +36,7 @@ export function ChatMessageList({
   }, [messages, pending]);
 
   if (messages.length === 0 && !pending) {
-    return <ChatEmptyState userName={userName} onSelect={onSuggestion} />;
+    return <ChatEmptyState userName={userName} userAvatarUrl={userAvatarUrl} onSelect={onSuggestion} />;
   }
 
   return (
@@ -59,15 +62,15 @@ export function ChatMessageList({
           <div className="flex gap-3">
             <span
               aria-hidden="true"
-              className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-extrabold text-accent-foreground"
+              className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground"
             >
-              UA
+              <Bot className="h-4 w-4" />
             </span>
             <div className="min-w-0 flex-1 space-y-3">
               <div className="inline-flex rounded-2xl rounded-tl-sm bg-surface-muted px-4 py-3">
                 <TypingIndicator />
               </div>
-              <ProductSkeletonGrid count={4} />
+              <ProductSkeletonGrid count={6} />
             </div>
           </div>
         )}

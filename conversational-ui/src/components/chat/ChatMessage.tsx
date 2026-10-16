@@ -82,7 +82,9 @@ export function ChatMessage({
           </div>
         )}
 
-        {!streaming && (
+        {/* Filter & refine and suggested prompts are product-search only; hide
+            them for order history / order detail (and non-product) responses. */}
+        {products.length > 0 && !streaming && (
           <RefinePanel
             filters={message.filters}
             refinements={message.refinements}
@@ -90,9 +92,12 @@ export function ChatMessage({
           />
         )}
 
-        {message.suggestions && message.suggestions.length > 0 && !streaming && (
-          <SuggestedPrompts prompts={message.suggestions} onSelect={onSuggestion} />
-        )}
+        {products.length > 0 &&
+          message.suggestions &&
+          message.suggestions.length > 0 &&
+          !streaming && (
+            <SuggestedPrompts prompts={message.suggestions} onSelect={onSuggestion} />
+          )}
       </div>
     </div>
   );

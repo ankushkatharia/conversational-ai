@@ -16,6 +16,10 @@
  *         last user turn is the current message, earlier turns are context)
  *   POST /search  { query?, categoryId?, limit?, sort? }
  *                                     -> stable search result     (tool only, no LLM)
+ *   POST /orders  { limit?, customerNo?, siteId? }
+ *                                     -> stable orders result      (tool only, no LLM)
+ *     Prefer sending the shopper's customer number via the `x-ua-customer-no`
+ *     header and the site via `x-ua-locale`/`x-ua-site-code`.
  *
  * Note: sessions live in process memory only (no DB); they are lost on restart
  * and not shared across instances. Fine for local/dev testing.
@@ -94,8 +98,11 @@ function parseAuthContext(req: http.IncomingMessage): RequestAuthContext | undef
 		if (!siteCode && site) siteCode = site.toUpperCase();
 	}
 
-	if (!bearerToken && !languageCode && !siteCode) return undefined;
-	return { bearerToken, languageCode, siteCode };
+	// Shopper's customer number for order-history lookups (e.g. get_orders).
+	const customerNo = headerValue(req, 'x-ua-customer-no');
+
+	if (!bearerToken && !languageCode && !siteCode && !customerNo) return undefined;
+	return { bearerToken, languageCode, siteCode, customerNo };
 }
 
 /** Reads and JSON-parses a request body (empty body -> {}). */
@@ -145,6 +152,8 @@ async function main(): Promise<void> {
 		);
 		// eslint-disable-next-line no-console
 		console.error('  POST /search  { "query": "...", "categoryId": "...", "limit": 10, "sort": "top-sellers" }');
+		// eslint-disable-next-line no-console
+		console.error('  POST /orders  { "limit": 3, "customerNo": "5454545454", "siteId": "US" }');
 	});
 }
 
@@ -259,6 +268,26 @@ async function handle(
 			return;
 		}
 		const result = await agent.callTool('search_products', args, parseAuthContext(req));
+		sendJson(res, 200, result);
+		return;
+	}
+
+	if (method === 'POST' && path === '/orders') {
+		const body = await readJsonBody(req);
+		const args: Record<string, unknown> = {};
+		if (typeof body.limit === 'number') args.limit = body.limit;
+
+		// Allow customerNo to be supplied in the body for direct testing; the
+		// header (x-ua-customer-no) still takes precedence when present.
+		const authContext = parseAuthContext(req) ?? {};
+		if (!authContext.customerNo && typeof body.customerNo === 'string') {
+			authContext.customerNo = body.customerNo.trim();
+		}
+		if (typeof body.siteId === 'string' && !authContext.siteCode) {
+			authContext.siteCode = body.siteId.trim().toUpperCase();
+		}
+
+		const result = await agent.callTool('get_orders', args, authContext);
 		sendJson(res, 200, result);
 		return;
 	}

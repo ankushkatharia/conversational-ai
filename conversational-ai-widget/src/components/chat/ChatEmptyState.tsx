@@ -18,12 +18,12 @@ const ACTIONS: QuickAction[] = [
   {
     icon: Sparkles,
     label: "Get recommendations",
-    prompt: "Show me lightweight training shoes",
+    prompt: "Show me track pants for training",
   },
   {
     icon: Ruler,
     label: "Find my size",
-    prompt: "Show me shoes available in size 10",
+    prompt: "Show me T-shirts available in size M",
   },
   {
     icon: Package,
@@ -34,18 +34,30 @@ const ACTIONS: QuickAction[] = [
 
 export function ChatEmptyState({
   userName,
+  userAvatarUrl,
   onSelect,
 }: {
   userName?: string;
+  userAvatarUrl?: string;
   onSelect: (prompt: string) => void;
 }) {
+  const firstName = userName?.split(" ")[0];
+
   return (
     <div className="flex flex-1 flex-col items-center justify-center px-5 py-8">
-      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-accent text-accent-foreground shadow-[0_8px_24px_-6px_rgba(220,0,25,0.7)]">
-        <Sparkles className="h-5 w-5" aria-hidden="true" />
-      </span>
+      {userAvatarUrl ? (
+        <img
+          src={userAvatarUrl}
+          alt={firstName ?? "Profile"}
+          className="h-12 w-12 rounded-full object-cover shadow-[0_8px_24px_-6px_rgba(220,0,25,0.7)]"
+        />
+      ) : (
+        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-accent text-accent-foreground shadow-[0_8px_24px_-6px_rgba(220,0,25,0.7)]">
+          <Sparkles className="h-5 w-5" aria-hidden="true" />
+        </span>
+      )}
       <h2 className="mt-4 text-center text-lg font-extrabold tracking-tight">
-        {userName ? `Hi ${userName.split(" ")[0]} —` : "Hi there —"} how can I help?
+        {firstName ? `Hi ${firstName},` : "Hi there,"} how can I help?
       </h2>
       <p className="mt-1.5 max-w-xs text-center text-sm text-muted">
         Pick a quick action or type your own question below.

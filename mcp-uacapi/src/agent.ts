@@ -31,6 +31,7 @@ import type {
 } from 'openai/resources/chat/completions';
 
 import type { Product, SearchSuggestions } from './tools/searchProducts.js';
+import type { Order } from './tools/getOrders.js';
 
 /** OpenAI/Bedrock credentials resolved from the .env file (fresh) or env. */
 interface OpenAiCredentials {
@@ -142,7 +143,18 @@ const SYSTEM_PROMPT = [
 	'  Use "price-low-high"/"price-high-low" for price intent, "newest" for new',
 	'  arrivals, "top-rated" for quality.',
 	'- Result count: if the user asks for a specific number (e.g. "top 5", "show 20"),',
-	'  use that as `limit`. Otherwise DEFAULT to `limit` = 10 (show at least 10).',
+	'  use that as `limit`. Otherwise DEFAULT to `limit` = 20 (show at least 20).',
+	'',
+	'Order history (get_orders tool):',
+	'- When the shopper asks about their past orders, order history, recent',
+	'  purchases, or "my last N orders", call the `get_orders` tool.',
+	'- Pass `limit` = the number of orders requested (e.g. "last 3 orders" ->',
+	'  limit: 3). If no number is given, default to 3.',
+	'- The server injects the shopper identity (customer number) and site/locale;',
+	'  never ask the user for a customer number and never invent orders. Use only',
+	'  data returned by the tool.',
+	'- Summarize the returned orders briefly in natural language (e.g. order number,',
+	'  date, status, and total). If none are returned, say so in one sentence.',
 	'',
 	'Stopping rules (important):',
 	'- Call `search_products` at most twice per user request.',
@@ -150,6 +162,10 @@ const SYSTEM_PROMPT = [
 	'  your final answer using those results. Do not keep refining.',
 	'- If a call returns zero products, you may retry ONCE with a broader `query`.',
 	'  If it is still empty, tell the user plainly and suggest how to refine.',
+	'- Call `get_orders` at most ONCE per user request. It takes only `limit` (do',
+	'  NOT pass site/locale/customerNo; the server injects those). After it returns,',
+	'  STOP calling tools and write your answer. If it returns an error or zero',
+	'  orders, tell the user plainly in one sentence; do NOT retry it.',
 	'',
 	'Presentation (CRITICAL): the app renders the product CARDS itself from',
 	'structured data. Your text reply must be ONLY a short conversational sentence',
@@ -233,6 +249,8 @@ export interface AgentRunResult {
 	 * each carrying a `delta` the UI can apply as a follow-up refinement.
 	 */
 	suggestions: SearchSuggestions;
+	/** Structured orders from the last successful `get_orders` call, for the UI. */
+	orders: Order[];
 	/** Tool calls the model made, in order (for debugging/telemetry). */
 	toolCalls: { name: string; arguments: unknown }[];
 	/** Accumulated structured filter state after this run (for session persistence). */
@@ -256,6 +274,8 @@ export interface RequestAuthContext {
 	bearerToken?: string;
 	siteCode?: string;
 	languageCode?: string;
+	/** Shopper's customer number, used by order-history tools (e.g. get_orders). */
+	customerNo?: string;
 }
 
 /** A connected agent with a shared MCP client + model client. */
@@ -371,6 +391,8 @@ export async function createAgent(): Promise<Agent> {
 		let collectedProducts: Product[] = [];
 		// Quick-reply chips from the most recent search (for guided refinement).
 		let collectedSuggestions: SearchSuggestions = { refinements: [], sorts: [] };
+		// Structured orders from the most recent get_orders call (for UI rendering).
+		let collectedOrders: Order[] = [];
 
 		// Keep only the most recent turns to bound tokens, and trim long assistant
 		// answers (they can contain big markdown product tables).
@@ -437,6 +459,7 @@ export async function createAgent(): Promise<Agent> {
 					answer: message.content ?? '',
 					products: collectedProducts,
 					suggestions: collectedSuggestions,
+					orders: collectedOrders,
 					toolCalls,
 					filters: filterState,
 				};
@@ -496,6 +519,12 @@ export async function createAgent(): Promise<Agent> {
 							collectedSuggestions = sc.suggestions;
 						}
 					}
+					if (name === 'get_orders') {
+						const sc = result.structuredContent as { orders?: Order[] } | undefined;
+						if (sc?.orders && sc.orders.length > 0) {
+							collectedOrders = sc.orders;
+						}
+					}
 				} catch (err) {
 					resultText = `Tool error: ${err instanceof Error ? err.message : String(err)}`;
 				}
@@ -508,6 +537,7 @@ export async function createAgent(): Promise<Agent> {
 			answer: `Stopped after ${MAX_TURNS} turns without a final answer.`,
 			products: collectedProducts,
 			suggestions: collectedSuggestions,
+			orders: collectedOrders,
 			toolCalls,
 			filters: filterState,
 		};

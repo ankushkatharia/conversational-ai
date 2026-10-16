@@ -15,13 +15,21 @@ export function ProductDetailDrawer({
   product,
   open,
   onClose,
+  contained = false,
 }: {
   product: Product | null;
   open: boolean;
   onClose: () => void;
+  /** Render inside the chat area (scoped to its container) instead of the viewport. */
+  contained?: boolean;
 }) {
   return (
-    <Drawer open={open && !!product} onClose={onClose} title="Product details">
+    <Drawer
+      open={open && !!product}
+      onClose={onClose}
+      title="Product details"
+      contained={contained}
+    >
       {product && <DrawerBody product={product} />}
     </Drawer>
   );
