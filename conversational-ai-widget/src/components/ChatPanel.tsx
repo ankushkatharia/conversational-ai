@@ -7,15 +7,18 @@ import {
   useState,
   type PointerEvent as ReactPointerEvent,
 } from "react";
-import { Bot, Maximize2, Minimize2, PenSquare, X } from "lucide-react";
+import { Bot, LifeBuoy, Maximize2, Minimize2, PenSquare, X } from "lucide-react";
 
-import type { OrderDetail, Product } from "../lib/types";
+import type { ChatMessage, OrderDetail, Product, SupportTicket } from "../lib/types";
 import type { McpClient } from "../lib/mcp-client";
+import { makeId } from "../lib/utils";
 import { useChat } from "../hooks/useChat";
 import { ChatMessageList } from "./chat/ChatMessageList";
 import { MessageComposer } from "./chat/MessageComposer";
 import { ProductDetailDrawer } from "./products/ProductDetailDrawer";
 import { OrderTrackingDrawer } from "./orders/OrderTrackingDrawer";
+import { OrderDetailDrawer } from "./orders/OrderDetailDrawer";
+import { HelpDrawer } from "./help/HelpDrawer";
 
 const SIZE_STORAGE_KEY = "ua-cai-panel-size";
 const DEFAULT_SIZE = { w: 400, h: 640 };
@@ -49,6 +52,7 @@ export function ChatPanel({
   userName,
   userAvatarUrl,
   userKey,
+  userEmail,
   onClose,
 }: {
   client: McpClient;
@@ -57,11 +61,14 @@ export function ChatPanel({
   userAvatarUrl?: string;
   /** Stable per-user id used to scope persisted chat history. */
   userKey?: string | null;
+  /** Signed-in shopper email; pre-fills the Help / Queries ticket form. */
+  userEmail?: string;
   onClose: () => void;
 }) {
   const chat = useChat(client, userKey);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
 
   // Order-tracking dialog state. `trackingOrderNo` is the order currently being
   // fetched (drives inline spinners on the order cards / entry form).
@@ -71,6 +78,10 @@ export function ChatPanel({
   const [trackingDetail, setTrackingDetail] = useState<OrderDetail | null>(null);
   const [trackingOrderNo, setTrackingOrderNo] = useState<string | null>(null);
   const trackingAbort = useRef<AbortController | null>(null);
+
+  // Order-detail dialog state (items/totals/address, no tracking).
+  const [orderDetailOpen, setOrderDetailOpen] = useState(false);
+  const [orderDetailData, setOrderDetailData] = useState<OrderDetail | null>(null);
 
   const [isDesktop, setIsDesktop] = useState(
     () =>
@@ -235,6 +246,32 @@ export function ChatPanel({
     setTrackingOpen(false);
   }, []);
 
+  // Opens the order-detail dialog with an already-loaded detail (no tracking).
+  const viewOrderDetail = useCallback((detail: OrderDetail) => {
+    setOrderDetailData(detail);
+    setOrderDetailOpen(true);
+  }, []);
+
+  // Records a Help / Queries ticket confirmation in the conversation so it
+  // persists in the transcript alongside everything else.
+  const handleTicketCreated = useCallback(
+    (ticket: SupportTicket) => {
+      const isCall = ticket.preferredContact === "call";
+      const confirmation: ChatMessage = {
+        id: makeId("msg"),
+        role: "assistant",
+        content: isCall
+          ? `Your call-back request is in. We'll ring you shortly. Reference **${ticket.ref}**.`
+          : `Your support ticket has been created. We'll follow up by email. Reference **${ticket.ref}**.`,
+        createdAt: new Date().toISOString(),
+        status: "complete",
+        supportTicket: ticket,
+      };
+      chat.appendMessage(confirmation);
+    },
+    [chat],
+  );
+
   const streaming = chat.streamingId !== null;
 
   return (
@@ -260,22 +297,20 @@ export function ChatPanel({
             onPointerDown={(e) => startResize(e, "y")}
             className="absolute inset-x-0 top-0 z-10 h-2 cursor-ns-resize touch-none"
           />
-          {/* Top-left corner: resize both. */}
+          {/* Top-left corner: resize both (invisible hit area). */}
           <div
             role="separator"
             aria-label="Resize chat panel"
             onPointerDown={(e) => startResize(e, "both")}
-            className="group absolute left-0 top-0 z-20 flex h-7 w-7 cursor-nwse-resize items-start justify-start p-1.5 touch-none"
-          >
-            <span className="h-3 w-3 rounded-tl-[4px] border-l-2 border-t-2 border-muted/80 transition-colors group-hover:border-foreground" />
-          </div>
+            className="absolute left-0 top-0 z-20 h-7 w-7 cursor-nwse-resize touch-none"
+          />
         </>
       )}
       {resizing && (
         <div className="fixed inset-0 z-[998] cursor-nwse-resize select-none" />
       )}
 
-      <div className="flex items-center justify-between border-b border-border bg-surface/70 px-4 py-3 backdrop-blur-xl">
+      <div className="shrink-0 flex items-center justify-between border-b border-border bg-surface/70 px-4 py-3 backdrop-blur-xl">
         <div className="flex items-center gap-2.5">
           <span
             aria-hidden="true"
@@ -288,6 +323,15 @@ export function ChatPanel({
           </div>
         </div>
         <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={() => setHelpOpen(true)}
+            aria-label="Help and queries"
+            title="Help & queries"
+            className="flex h-9 w-9 items-center justify-center rounded-full text-muted hover:bg-surface-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <LifeBuoy className="h-5 w-5" />
+          </button>
           <button
             type="button"
             onClick={chat.reset}
@@ -334,10 +378,12 @@ export function ChatPanel({
         onRetry={chat.retry}
         onTrackOrder={(orderNo) => void trackOrder(orderNo)}
         onViewTracking={viewTracking}
+        onViewOrderDetail={viewOrderDetail}
+        onOpenHelp={() => setHelpOpen(true)}
         trackingOrderNo={trackingOrderNo}
       />
 
-      <div className="border-t border-border bg-surface px-4 py-3">
+      <div className="shrink-0 border-t border-border bg-surface px-4 py-3">
         {chat.loadError && (
           <p role="alert" className="mb-2 text-sm text-accent">
             {chat.loadError}
@@ -348,9 +394,6 @@ export function ChatPanel({
           onCancel={chat.cancel}
           streaming={streaming}
         />
-        <p className="mt-2 text-center text-xs text-muted">
-          Recommendations only. Cart and checkout are coming soon.
-        </p>
       </div>
 
       <ProductDetailDrawer
@@ -367,6 +410,20 @@ export function ChatPanel({
         error={trackingError}
         detail={trackingDetail}
         orderNo={trackingOrderNo}
+      />
+
+      <OrderDetailDrawer
+        open={orderDetailOpen}
+        onClose={() => setOrderDetailOpen(false)}
+        detail={orderDetailData}
+      />
+
+      <HelpDrawer
+        open={helpOpen}
+        onClose={() => setHelpOpen(false)}
+        client={client}
+        userEmail={userEmail}
+        onTicketCreated={handleTicketCreated}
       />
     </div>
   );

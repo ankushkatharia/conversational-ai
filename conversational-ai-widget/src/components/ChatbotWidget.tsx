@@ -24,13 +24,14 @@ export function ChatbotWidget({
   userName,
   userAvatarUrl,
   userId,
+  userEmail,
   getAuthToken,
   locale,
 }: ChatbotWidgetProps) {
   const [open, setOpen] = useState(false);
   const client = useMemo(
-    () => new McpClient(mcpServerUrl, { getAuthToken, locale }),
-    [mcpServerUrl, getAuthToken, locale],
+    () => new McpClient(mcpServerUrl, { getAuthToken, locale, userEmail }),
+    [mcpServerUrl, getAuthToken, locale, userEmail],
   );
   const callbacks = useMemo(
     () => ({ onNavigate, onAddToCart }),
@@ -57,6 +58,7 @@ export function ChatbotWidget({
             userName={userName}
             userAvatarUrl={userAvatarUrl}
             userKey={userKey}
+            userEmail={userEmail}
             onClose={() => setOpen(false)}
           />
         )}

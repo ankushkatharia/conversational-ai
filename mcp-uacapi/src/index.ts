@@ -26,6 +26,16 @@ import {
 	getOrderDetailInputSchema,
 	GetOrderDetailInput,
 } from './tools/getOrderDetail.js';
+import {
+	runCreateSupportTicket,
+	createSupportTicketInputSchema,
+	CreateSupportTicketInput,
+} from './tools/supportTicket.js';
+import {
+	runRequestUserInput,
+	requestUserInputInputSchema,
+	RequestUserInputInput,
+} from './tools/userInput.js';
 
 async function main(): Promise<void> {
 	const config = loadConfig();
@@ -165,11 +175,101 @@ async function main(): Promise<void> {
 		},
 	);
 
+	server.registerTool(
+		'create_support_ticket',
+		{
+			title: 'Create a support ticket / contact request',
+			description:
+				'Create a help request for the Help / Queries flow. Use after the shopper has ' +
+				'chosen a category (order | payment | product | return_refund | other), ' +
+				'described the problem, and chosen how to be helped ("ticket" for an email ' +
+				'follow-up, or "call" for a phone call back). Collect "contactEmail" for a ' +
+				'ticket (falls back to the login email) or "contactPhone" for a call. ' +
+				'Generates a ticket reference and emails the support inbox. Only call this ' +
+				'with the user\'s explicit confirmation and their own details; the server ' +
+				'injects identity/site/login-email.',
+			inputSchema: createSupportTicketInputSchema,
+			annotations: {
+				readOnlyHint: false,
+				openWorldHint: true,
+			},
+		},
+		async (input: CreateSupportTicketInput) => {
+			try {
+				const result = await runCreateSupportTicket(input);
+				return {
+					structuredContent: result as unknown as Record<string, unknown>,
+					content: [
+						{
+							type: 'text' as const,
+							text: JSON.stringify(result, null, 2),
+						},
+					],
+				};
+			} catch (err) {
+				const message =
+					err instanceof UacapiRequestError || err instanceof Error
+						? err.message
+						: String(err);
+				return {
+					isError: true,
+					content: [{ type: 'text' as const, text: message }],
+				};
+			}
+		},
+	);
+
+	server.registerTool(
+		'request_user_input',
+		{
+			title: 'Request inline input from the shopper',
+			description:
+				'Render an inline interactive control inside the chat to drive a ' +
+				'conversational flow (primarily Help / Queries). Use "chips" to offer ' +
+				'tappable choices (e.g. a help category, or Ticket vs Call), "text_input" ' +
+				'to collect a single value inline (e.g. the shopper\'s email or phone), or ' +
+				'"confirm" to show a single button (e.g. "Create ticket"). Whatever the ' +
+				'shopper taps or types is sent back to you as their next message, so you ' +
+				'stay in control of every step. After calling this, write ONE short ' +
+				'sentence introducing the control and stop. Do not ask for the same ' +
+				'information in plain text as well.',
+			inputSchema: requestUserInputInputSchema,
+			annotations: {
+				readOnlyHint: true,
+				openWorldHint: false,
+			},
+		},
+		async (input: RequestUserInputInput) => {
+			try {
+				const result = await runRequestUserInput(input);
+				return {
+					structuredContent: result as unknown as Record<string, unknown>,
+					content: [
+						{
+							type: 'text' as const,
+							text: JSON.stringify(result, null, 2),
+						},
+					],
+				};
+			} catch (err) {
+				const message =
+					err instanceof UacapiRequestError || err instanceof Error
+						? err.message
+						: String(err);
+				return {
+					isError: true,
+					content: [{ type: 'text' as const, text: message }],
+				};
+			}
+		},
+	);
+
 	const transport = new StdioServerTransport();
 	await server.connect(transport);
 	console.error(
 		'mcp-uacapi server started (stdio). Tools: search_products, get_orders, ' +
-			'get_order_detail_by_order_number [read-only].',
+			'get_order_detail_by_order_number, create_support_ticket, request_user_input ' +
+			'[read-only + 1 action].',
 	);
 }
 

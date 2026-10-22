@@ -81,6 +81,11 @@ export function useChat(client: McpClient, userKey?: string | null) {
     abortRef.current?.abort();
   }, []);
 
+  /** Appends a fully-formed message (e.g. a Help wizard confirmation). */
+  const appendMessage = useCallback((message: ChatMessage) => {
+    setMessages((prev) => [...prev, message]);
+  }, []);
+
   const send = useCallback(
     async (text: string, opts: { retry?: boolean } = {}) => {
       const trimmed = text.trim();
@@ -149,6 +154,14 @@ export function useChat(client: McpClient, userKey?: string | null) {
               case "orderDetail":
                 ensureAssistant();
                 patchMessage(assistantId, { orderDetail: evt.orderDetail });
+                break;
+              case "supportTicket":
+                ensureAssistant();
+                patchMessage(assistantId, { supportTicket: evt.supportTicket });
+                break;
+              case "interaction":
+                ensureAssistant();
+                patchMessage(assistantId, { interaction: evt.interaction });
                 break;
               case "suggestions":
                 ensureAssistant();
@@ -242,6 +255,7 @@ export function useChat(client: McpClient, userKey?: string | null) {
     cancel,
     retry,
     reset,
+    appendMessage,
   };
 }
 

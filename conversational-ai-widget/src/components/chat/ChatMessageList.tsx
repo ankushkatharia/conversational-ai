@@ -24,6 +24,8 @@ export function ChatMessageList({
   onRetry,
   onTrackOrder,
   onViewTracking,
+  onViewOrderDetail,
+  onOpenHelp,
   trackingOrderNo,
 }: {
   messages: ChatMessageType[];
@@ -37,6 +39,9 @@ export function ChatMessageList({
   onRetry: () => void;
   onTrackOrder: (orderNo: string) => void;
   onViewTracking: (detail: OrderDetail) => void;
+  onViewOrderDetail: (detail: OrderDetail) => void;
+  /** Opens the Help / Queries wizard (from the empty-state entry). */
+  onOpenHelp: () => void;
   trackingOrderNo: string | null;
 }) {
   const endRef = useRef<HTMLDivElement>(null);
@@ -46,12 +51,19 @@ export function ChatMessageList({
   }, [messages, pending]);
 
   if (messages.length === 0 && !pending) {
-    return <ChatEmptyState userName={userName} userAvatarUrl={userAvatarUrl} onSelect={onSuggestion} />;
+    return (
+      <ChatEmptyState
+        userName={userName}
+        userAvatarUrl={userAvatarUrl}
+        onSelect={onSuggestion}
+        onOpenHelp={onOpenHelp}
+      />
+    );
   }
 
   return (
     <div
-      className="flex-1 overflow-y-auto"
+      className="min-h-0 flex-1 overflow-y-auto"
       role="log"
       aria-live="polite"
       aria-label="Conversation"
@@ -67,6 +79,7 @@ export function ChatMessageList({
             onRetry={message.status === "error" ? onRetry : undefined}
             onTrackOrder={onTrackOrder}
             onViewTracking={onViewTracking}
+            onViewOrderDetail={onViewOrderDetail}
             trackingOrderNo={trackingOrderNo}
           />
         ))}

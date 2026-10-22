@@ -103,9 +103,11 @@ function parseAuthContext(req: http.IncomingMessage): RequestAuthContext | undef
 
 	// Shopper's customer number for order-history lookups (e.g. get_orders).
 	const customerNo = headerValue(req, 'x-ua-customer-no');
+	// Shopper's login email, used as the ticket fallback by create_support_ticket.
+	const userEmail = headerValue(req, 'x-ua-user-email');
 
-	if (!bearerToken && !languageCode && !siteCode && !customerNo) return undefined;
-	return { bearerToken, languageCode, siteCode, customerNo };
+	if (!bearerToken && !languageCode && !siteCode && !customerNo && !userEmail) return undefined;
+	return { bearerToken, languageCode, siteCode, customerNo, userEmail };
 }
 
 /** Reads and JSON-parses a request body (empty body -> {}). */
@@ -159,6 +161,10 @@ async function main(): Promise<void> {
 		console.error('  POST /orders  { "limit": 3, "customerNo": "5454545454", "siteId": "US" }');
 		// eslint-disable-next-line no-console
 		console.error('  POST /order-detail  { "orderNumber": "US-DEVNA04-00392564", "siteId": "US" }');
+		// eslint-disable-next-line no-console
+		console.error(
+			'  POST /support-ticket  { "category": "order", "description": "...", "preferredContact": "ticket", "contactEmail": "..." }',
+		);
 	});
 }
 
@@ -318,6 +324,47 @@ async function handle(
 			{ orderNumber },
 			authContext,
 		);
+		sendJson(res, 200, result);
+		return;
+	}
+
+	if (method === 'POST' && path === '/support-ticket') {
+		const body = await readJsonBody(req);
+
+		const category = typeof body.category === 'string' ? body.category.trim() : '';
+		const description = typeof body.description === 'string' ? body.description.trim() : '';
+		const preferredContact =
+			typeof body.preferredContact === 'string' ? body.preferredContact.trim() : '';
+
+		if (!category || !description || !preferredContact) {
+			sendJson(res, 400, {
+				error: 'Body must include "category", "description", and "preferredContact".',
+			});
+			return;
+		}
+
+		const args: Record<string, unknown> = { category, description, preferredContact };
+		if (typeof body.orderNumber === 'string' && body.orderNumber.trim()) {
+			args.orderNumber = body.orderNumber.trim();
+		}
+		if (typeof body.contactEmail === 'string' && body.contactEmail.trim()) {
+			args.contactEmail = body.contactEmail.trim();
+		}
+		if (typeof body.contactPhone === 'string' && body.contactPhone.trim()) {
+			args.contactPhone = body.contactPhone.trim();
+		}
+
+		// Allow a login-email override in the body for direct testing; the
+		// header (x-ua-user-email) still takes precedence when present.
+		const authContext = parseAuthContext(req) ?? {};
+		if (!authContext.userEmail && typeof body.userEmail === 'string' && body.userEmail.trim()) {
+			authContext.userEmail = body.userEmail.trim();
+		}
+		if (typeof body.siteId === 'string' && !authContext.siteCode) {
+			authContext.siteCode = body.siteId.trim().toUpperCase();
+		}
+
+		const result = await agent.callTool('create_support_ticket', args, authContext);
 		sendJson(res, 200, result);
 		return;
 	}

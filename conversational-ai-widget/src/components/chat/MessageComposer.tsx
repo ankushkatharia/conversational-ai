@@ -66,7 +66,7 @@ export function MessageComposer({
           autoGrow();
         }}
         onKeyDown={onKeyDown}
-        placeholder="Ask about products…"
+        placeholder="Message..."
         className="max-h-40 flex-1 resize-none self-center bg-transparent py-2.5 text-[15px] leading-relaxed text-foreground placeholder:text-muted outline-none focus:outline-none focus-visible:outline-none"
       />
 

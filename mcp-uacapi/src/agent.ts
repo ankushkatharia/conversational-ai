@@ -33,6 +33,8 @@ import type {
 import type { Product, SearchSuggestions } from './tools/searchProducts.js';
 import type { Order } from './tools/getOrders.js';
 import type { OrderDetail } from './tools/getOrderDetail.js';
+import type { SupportTicket } from './tools/supportTicket.js';
+import type { ChatInteraction } from './tools/userInput.js';
 
 /** OpenAI/Bedrock credentials resolved from the .env file (fresh) or env. */
 interface OpenAiCredentials {
@@ -171,6 +173,43 @@ const SYSTEM_PROMPT = [
 	'  tracking link(s) in a short natural-language reply. If the order is not found',
 	'  (null), say so plainly in one sentence.',
 	'',
+	'Help / Queries (fast 4-step inline flow):',
+	'- Drive the entire flow with `request_user_input` (chips, text input) inside',
+	'  the chat. ONE step per turn, ONE short sentence alongside each tool call.',
+	'  After calling `request_user_input`, STOP calling tools and write one sentence.',
+	'',
+	'- Step 1 (category): when the shopper asks for help or has a problem, call',
+	'  `request_user_input` type "chips" with: Order issue (value "I have an order',
+	'  issue"), Payment issue, Product issue, Return/Refund, Something else. Skip',
+	'  this step if the category is already clear from their message.',
+	'',
+	'- Step 2 (order selection — order issues only): immediately call `get_orders`',
+	'  to fetch the shopper\'s recent orders. Then call `request_user_input` type',
+	'  "chips" where each chip label is a short order summary (e.g. "#00392564 –',
+	'  Oct 15") and the value is the full order number. Add one extra chip with',
+	'  label "Different order" and value "different_order". If the shopper picks',
+	'  "different_order", call `request_user_input` type "text_input" asking for',
+	'  the order number. Skip this step for non-order categories.',
+	'',
+	'- Step 3 (resolution attempt): call `get_order_detail_by_order_number` with',
+	'  the selected order number. Summarize the status and tracking info in one',
+	'  sentence. Then call `request_user_input` type "chips" with: "This resolved',
+	'  my issue" (value "resolved") and "I still need help" (value "need_help").',
+	'  If the shopper picks "resolved", end the flow with a friendly goodbye.',
+	'',
+	'- Step 4 (contact method + submit): call `request_user_input` type "chips"',
+	'  with: "Create a ticket" (value "Create a ticket") and "Call me back" (value',
+	'  "Please call me back"). For a ticket: if the auth context has `userEmail`,',
+	'  use it directly; otherwise call `request_user_input` type "text_input",',
+	'  inputType "email" to collect it. For a call: collect the phone number via',
+	'  `request_user_input` type "text_input", inputType "phone". Then call',
+	'  `create_support_ticket` immediately — no extra confirm step needed.',
+	'',
+	'- `create_support_ticket` needs: `category`, `description`, `preferredContact`',
+	'  ("ticket" | "call"), and `contactEmail` (ticket) or `contactPhone` (call).',
+	'  Call it at most once per request. After it returns, confirm the ticket',
+	'  reference in one short sentence; the app also shows a confirmation card.',
+	'',
 	'Stopping rules (important):',
 	'- Call `search_products` at most twice per user request.',
 	'- As soon as a call returns one or more products, STOP calling tools and write',
@@ -185,6 +224,9 @@ const SYSTEM_PROMPT = [
 	'  takes only `orderNumber` (the server injects site/locale/auth). After it',
 	'  returns, STOP calling tools and write your answer. If the order is null or it',
 	'  errors, tell the user plainly in one sentence; do NOT retry it.',
+	'- Call `request_user_input` at most ONCE per user request, and `create_support_ticket`',
+	'  at most ONCE. After calling `request_user_input`, STOP calling tools and write',
+	'  ONE short sentence; the control is shown by the app.',
 	'',
 	'Presentation (CRITICAL): the app renders the product CARDS itself from',
 	'structured data. Your text reply must be ONLY a short conversational sentence',
@@ -276,6 +318,17 @@ export interface AgentRunResult {
 	 * or not found.
 	 */
 	orderDetail: OrderDetail | null;
+	/**
+	 * Support ticket created during this run (Help / Queries flow), for the UI to
+	 * confirm the ticket reference. Null when none was created.
+	 */
+	supportTicket: SupportTicket | null;
+	/**
+	 * Inline interactive control the model asked the UI to render this run (chips,
+	 * a text input, or a confirm button) to drive a conversational flow. Null when
+	 * none was requested.
+	 */
+	interaction: ChatInteraction | null;
 	/** Tool calls the model made, in order (for debugging/telemetry). */
 	toolCalls: { name: string; arguments: unknown }[];
 	/** Accumulated structured filter state after this run (for session persistence). */
@@ -301,6 +354,8 @@ export interface RequestAuthContext {
 	languageCode?: string;
 	/** Shopper's customer number, used by order-history tools (e.g. get_orders). */
 	customerNo?: string;
+	/** Shopper's login email, used as the ticket fallback by create_support_ticket. */
+	userEmail?: string;
 }
 
 /** A connected agent with a shared MCP client + model client. */
@@ -421,6 +476,10 @@ export async function createAgent(): Promise<Agent> {
 		// Structured order detail (with tracking) from the most recent
 		// get_order_detail_by_order_number call (for UI rendering).
 		let collectedOrderDetail: OrderDetail | null = null;
+		// Support ticket created in this run (Help / Queries flow), for the UI.
+		let collectedSupportTicket: SupportTicket | null = null;
+		// Inline interactive control the model asked to render this run, if any.
+		let collectedInteraction: ChatInteraction | null = null;
 
 		// Keep only the most recent turns to bound tokens, and trim long assistant
 		// answers (they can contain big markdown product tables).
@@ -489,6 +548,8 @@ export async function createAgent(): Promise<Agent> {
 					suggestions: collectedSuggestions,
 					orders: collectedOrders,
 					orderDetail: collectedOrderDetail,
+					supportTicket: collectedSupportTicket,
+					interaction: collectedInteraction,
 					toolCalls,
 					filters: filterState,
 				};
@@ -560,6 +621,20 @@ export async function createAgent(): Promise<Agent> {
 							collectedOrderDetail = sc.order;
 						}
 					}
+					if (name === 'create_support_ticket') {
+						const sc = result.structuredContent as { ticket?: SupportTicket } | undefined;
+						if (sc?.ticket) {
+							collectedSupportTicket = sc.ticket;
+						}
+					}
+					if (name === 'request_user_input') {
+						const sc = result.structuredContent as
+							| { interaction?: ChatInteraction }
+							| undefined;
+						if (sc?.interaction) {
+							collectedInteraction = sc.interaction;
+						}
+					}
 				} catch (err) {
 					resultText = `Tool error: ${err instanceof Error ? err.message : String(err)}`;
 				}
@@ -574,6 +649,8 @@ export async function createAgent(): Promise<Agent> {
 			suggestions: collectedSuggestions,
 			orders: collectedOrders,
 			orderDetail: collectedOrderDetail,
+			supportTicket: collectedSupportTicket,
+			interaction: collectedInteraction,
 			toolCalls,
 			filters: filterState,
 		};

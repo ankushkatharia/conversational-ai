@@ -71,6 +71,76 @@ export type OrderDetail = {
   items: OrderItem[];
 };
 
+/** Help / Queries categories a shopper can pick (kept in sync with backend). */
+export type HelpCategory =
+  | "order"
+  | "payment"
+  | "product"
+  | "return_refund"
+  | "other";
+
+/** How the shopper wants to be helped. */
+export type HelpContactMethod = "ticket" | "call";
+
+/**
+ * A created support request, surfaced by the `create_support_ticket` tool /
+ * `/support-ticket` endpoint.
+ */
+export type SupportTicket = {
+  ref: string;
+  category: HelpCategory;
+  categoryLabel: string;
+  status: string;
+  preferredContact: HelpContactMethod;
+  description: string;
+  orderNumber?: string | null;
+  contactEmail?: string | null;
+  contactPhone?: string | null;
+  supportEmail: string;
+  createdAt: string;
+  /** Whether a real email transport accepted the message (false for log-only). */
+  delivered: boolean;
+};
+
+/** A tappable option within a "chips" interaction. */
+export type InteractionOption = {
+  label: string;
+  /** Message text sent back to the assistant when this chip is tapped. */
+  value: string;
+};
+
+/**
+ * An inline interactive control the assistant asked the UI to render in the
+ * chat transcript (drives the conversational Help / Queries flow). Whatever the
+ * shopper taps/types is sent back as their next message.
+ */
+export type ChatInteraction =
+  | { type: "chips"; prompt: string; options: InteractionOption[] }
+  | {
+      type: "text_input";
+      prompt: string;
+      inputType?: "email" | "phone" | "text";
+      placeholder?: string;
+      submitLabel?: string;
+    }
+  | {
+      type: "confirm";
+      prompt: string;
+      confirmLabel?: string;
+      /** Message text sent back when the button is tapped. */
+      confirmValue?: string;
+    };
+
+/** Payload the widget sends to create a support ticket / contact request. */
+export type SupportTicketRequest = {
+  category: HelpCategory;
+  description: string;
+  preferredContact: HelpContactMethod;
+  orderNumber?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+};
+
 export type Product = {
   id: string;
   name: string;
@@ -157,6 +227,10 @@ export type ChatMessage = {
   orders?: OrderSummary[];
   /** Full order detail (with tracking) when the user asked about a specific order. */
   orderDetail?: OrderDetail | null;
+  /** A support ticket confirmation when one was created in this turn. */
+  supportTicket?: SupportTicket | null;
+  /** An inline interactive control (chips / input / confirm) for this message. */
+  interaction?: ChatInteraction | null;
   suggestions?: string[];
   /** Dynamic guided-refinement chips derived from the latest search. */
   refinements?: RefinementSuggestions;
@@ -173,6 +247,8 @@ export type SendMessageResponse = {
   products?: Product[];
   orders?: OrderSummary[];
   orderDetail?: OrderDetail | null;
+  supportTicket?: SupportTicket | null;
+  interaction?: ChatInteraction | null;
   suggestions?: string[];
   refinements?: RefinementSuggestions;
   filters?: AppliedFilters;
@@ -184,6 +260,8 @@ export type ChatStreamEvent =
   | { type: "products"; products: Product[] }
   | { type: "orders"; orders: OrderSummary[] }
   | { type: "orderDetail"; orderDetail: OrderDetail }
+  | { type: "supportTicket"; supportTicket: SupportTicket }
+  | { type: "interaction"; interaction: ChatInteraction }
   | { type: "suggestions"; suggestions: string[] }
   | { type: "refinements"; refinements: RefinementSuggestions }
   | { type: "filters"; filters: AppliedFilters }
@@ -234,6 +312,13 @@ export type ChatbotWidgetProps = {
    * is deleted automatically.
    */
   userId?: string;
+
+  /**
+   * Email address of the signed-in shopper (their login id). Used by the
+   * Help / Queries flow to pre-fill the ticket email and as the server-side
+   * fallback recipient when the shopper does not type one. Omit for guests.
+   */
+  userEmail?: string;
 
   /**
    * Supplies the current authentication token for the MCP/UACAPI backend. The

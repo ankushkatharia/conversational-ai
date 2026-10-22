@@ -13,6 +13,8 @@ import { ProductGrid } from "../products/ProductGrid";
 import { OrderList } from "../orders/OrderList";
 import { OrderTrackingPanel } from "../orders/OrderTrackingPanel";
 import { OrderTrackingCard } from "../orders/OrderTrackingCard";
+import { SupportTicketCard } from "../help/SupportTicketCard";
+import { ChatInteraction } from "./ChatInteraction";
 import { SuggestedPrompts } from "./SuggestedPrompts";
 import { RefinePanel } from "./RefinePanel";
 import { TypingIndicator } from "./TypingIndicator";
@@ -24,6 +26,7 @@ export function ChatMessage({
   onRetry,
   onTrackOrder,
   onViewTracking,
+  onViewOrderDetail,
   trackingOrderNo,
   streaming,
 }: {
@@ -35,6 +38,8 @@ export function ChatMessage({
   onTrackOrder: (orderNo: string) => void;
   /** Open the tracking dialog with an already-loaded order detail. */
   onViewTracking: (detail: OrderDetail) => void;
+  /** Open the order-detail dialog (items/totals/address) for a loaded detail. */
+  onViewOrderDetail: (detail: OrderDetail) => void;
   /** Order number whose tracking is currently loading (for inline spinners). */
   trackingOrderNo: string | null;
   streaming?: boolean;
@@ -43,6 +48,9 @@ export function ChatMessage({
   const products = message.products ?? [];
   const orders = message.orders ?? [];
   const orderDetail = message.orderDetail ?? null;
+  const supportTicket = message.supportTicket ?? null;
+  const interaction = message.interaction ?? null;
+  const hasOrderContext = orders.length > 0 || orderDetail !== null;
 
   if (isUser) {
     return (
@@ -86,7 +94,24 @@ export function ChatMessage({
           <div className="rounded-2xl rounded-tl-sm bg-surface-muted px-4 py-3 text-sm">
             {message.content ? (
               <div className={cn("ua-prose")}>
-                <Markdown>{message.content}</Markdown>
+                <Markdown
+                  components={{
+                    a: ({ href, children }) => {
+                      const external = href?.startsWith("http");
+                      return (
+                        <a
+                          href={href}
+                          {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                          className="text-accent underline underline-offset-2 hover:text-accent/80"
+                        >
+                          {children}
+                        </a>
+                      );
+                    },
+                  }}
+                >
+                  {message.content}
+                </Markdown>
               </div>
             ) : streaming ? (
               <TypingIndicator />
@@ -108,9 +133,41 @@ export function ChatMessage({
           </div>
         )}
 
-        {orderDetail && (
+        {orderDetail && orders.length === 0 && (
           <div>
-            <OrderTrackingCard detail={orderDetail} onViewDetails={onViewTracking} />
+            <OrderTrackingCard
+              detail={orderDetail}
+              onViewDetails={onViewOrderDetail}
+              onTrack={onViewTracking}
+            />
+          </div>
+        )}
+
+        {supportTicket && (
+          <div>
+            <SupportTicketCard ticket={supportTicket} />
+          </div>
+        )}
+
+        {interaction && (
+          <div>
+            <ChatInteraction
+              interaction={interaction}
+              onSubmit={onSuggestion}
+              disabled={streaming}
+            />
+          </div>
+        )}
+
+        {hasOrderContext && !interaction && !streaming && (
+          <div>
+            <button
+              type="button"
+              onClick={() => onSuggestion("I need help with this order")}
+              className="inline-flex items-center rounded-full border border-border bg-surface px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-brand hover:text-brand-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              Need help with this order?
+            </button>
           </div>
         )}
 

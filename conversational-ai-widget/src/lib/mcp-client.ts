@@ -10,13 +10,19 @@
 
 import type {
   AppliedFilters,
+  ChatInteraction,
   ChatMessage,
   ChatStreamEvent,
+  HelpCategory,
+  HelpContactMethod,
+  InteractionOption,
   OrderDetail,
   OrderSummary,
   Product,
   RefinementSuggestions,
   SendMessageResponse,
+  SupportTicket,
+  SupportTicketRequest,
 } from "./types";
 import { makeId } from "./utils";
 
@@ -45,6 +51,8 @@ type AgentResponse = {
   products?: unknown[];
   orders?: unknown[];
   orderDetail?: unknown;
+  supportTicket?: unknown;
+  interaction?: unknown;
   suggestions?: unknown;
   filters?: AppliedFilters;
 };
@@ -54,6 +62,8 @@ type AgentReply = {
   products: Product[];
   orders: OrderSummary[];
   orderDetail: OrderDetail | null;
+  supportTicket: SupportTicket | null;
+  interaction: ChatInteraction | null;
   suggestions: string[];
   refinements?: RefinementSuggestions;
   filters?: AppliedFilters;
@@ -203,6 +213,93 @@ function sanitizeOrderDetail(raw: unknown): OrderDetail | null {
   };
 }
 
+const HELP_CATEGORIES: HelpCategory[] = [
+  "order",
+  "payment",
+  "product",
+  "return_refund",
+  "other",
+];
+
+/**
+ * Coerces a raw support-ticket payload (from the agent or `/support-ticket`)
+ * into the stable `SupportTicket` shape. Returns null when missing/malformed.
+ */
+function sanitizeSupportTicket(raw: unknown): SupportTicket | null {
+  if (!raw || typeof raw !== "object") return null;
+  const t = raw as Record<string, unknown>;
+  const str = (v: unknown): string | undefined =>
+    typeof v === "string" && v ? v : undefined;
+  const ref = str(t.ref);
+  const category = str(t.category) as HelpCategory | undefined;
+  const preferredContact = str(t.preferredContact) as
+    | HelpContactMethod
+    | undefined;
+  if (!ref || !category || !HELP_CATEGORIES.includes(category)) return null;
+  if (preferredContact !== "ticket" && preferredContact !== "call") return null;
+  return {
+    ref,
+    category,
+    categoryLabel: str(t.categoryLabel) ?? category,
+    status: str(t.status) ?? "received",
+    preferredContact,
+    description: str(t.description) ?? "",
+    orderNumber: str(t.orderNumber) ?? null,
+    contactEmail: str(t.contactEmail) ?? null,
+    contactPhone: str(t.contactPhone) ?? null,
+    supportEmail: str(t.supportEmail) ?? "",
+    createdAt: str(t.createdAt) ?? new Date().toISOString(),
+    delivered: t.delivered === true,
+  };
+}
+
+/**
+ * Coerces a raw interaction payload (from the agent) into the stable
+ * `ChatInteraction` shape. Returns null when missing/malformed.
+ */
+function sanitizeInteraction(raw: unknown): ChatInteraction | null {
+  if (!raw || typeof raw !== "object") return null;
+  const i = raw as Record<string, unknown>;
+  const str = (v: unknown): string | undefined =>
+    typeof v === "string" && v ? v : undefined;
+  const prompt = str(i.prompt);
+  if (!prompt) return null;
+
+  if (i.type === "chips") {
+    const options: InteractionOption[] = Array.isArray(i.options)
+      ? i.options
+          .filter((o): o is Record<string, unknown> => !!o && typeof o === "object")
+          .map((o) => ({ label: str(o.label), value: str(o.value) }))
+          .filter((o): o is InteractionOption => Boolean(o.label && o.value))
+      : [];
+    if (options.length === 0) return null;
+    return { type: "chips", prompt, options };
+  }
+
+  if (i.type === "text_input") {
+    const inputType = str(i.inputType);
+    return {
+      type: "text_input",
+      prompt,
+      inputType:
+        inputType === "email" || inputType === "phone" ? inputType : "text",
+      placeholder: str(i.placeholder),
+      submitLabel: str(i.submitLabel),
+    };
+  }
+
+  if (i.type === "confirm") {
+    return {
+      type: "confirm",
+      prompt,
+      confirmLabel: str(i.confirmLabel) ?? "Confirm",
+      confirmValue: str(i.confirmValue) ?? prompt,
+    };
+  }
+
+  return null;
+}
+
 /** Keeps only well-formed refinement chips (defensive against shape drift). */
 function sanitizeSuggestions(raw: unknown): RefinementSuggestions | undefined {
   if (!raw || typeof raw !== "object") return undefined;
@@ -240,12 +337,18 @@ export type McpClientOptions = {
     | Promise<string | null | undefined>;
   /** Current locale (e.g. "en-us"); forwarded as the `x-ua-locale` header. */
   locale?: string;
+  /**
+   * Signed-in shopper's login email; forwarded as `x-ua-user-email` so the
+   * Help / Queries flow can fall back to it as the ticket recipient.
+   */
+  userEmail?: string;
 };
 
 export class McpClient {
   private readonly baseUrl: string;
   private readonly getAuthToken?: McpClientOptions["getAuthToken"];
   private readonly locale?: string;
+  private readonly userEmail?: string;
 
   constructor(mcpServerUrl: string, options: McpClientOptions = {}) {
     // Accept either a root URL or one that already ends in `/agent`.
@@ -255,6 +358,7 @@ export class McpClient {
       .replace(/\/(agent|search)$/i, "");
     this.getAuthToken = options.getAuthToken;
     this.locale = options.locale;
+    this.userEmail = options.userEmail;
   }
 
   /**
@@ -268,6 +372,7 @@ export class McpClient {
     const token = this.getAuthToken ? await this.getAuthToken() : undefined;
     if (token) headers.authorization = `Bearer ${token}`;
     if (this.locale) headers["x-ua-locale"] = this.locale;
+    if (this.userEmail) headers["x-ua-user-email"] = this.userEmail;
     return headers;
   }
 
@@ -291,12 +396,16 @@ export class McpClient {
       .filter((p): p is Product => p !== null);
     const orders = sanitizeOrders(data.orders);
     const orderDetail = sanitizeOrderDetail(data.orderDetail);
+    const supportTicket = sanitizeSupportTicket(data.supportTicket);
+    const interaction = sanitizeInteraction(data.interaction);
     const content = (data.answer ?? "").trim() || "Here's what I found.";
     return {
       content,
       products,
       orders,
       orderDetail,
+      supportTicket,
+      interaction,
       suggestions: DEFAULT_SUGGESTIONS,
       refinements: sanitizeSuggestions(data.suggestions),
       filters: data.filters,
@@ -318,6 +427,8 @@ export class McpClient {
       products: reply.products,
       orders: reply.orders,
       orderDetail: reply.orderDetail,
+      supportTicket: reply.supportTicket,
+      interaction: reply.interaction,
       suggestions: reply.suggestions,
       refinements: reply.refinements,
       filters: reply.filters,
@@ -327,6 +438,8 @@ export class McpClient {
       products: reply.products,
       orders: reply.orders,
       orderDetail: reply.orderDetail,
+      supportTicket: reply.supportTicket,
+      interaction: reply.interaction,
       suggestions: reply.suggestions,
       refinements: reply.refinements,
       filters: reply.filters,
@@ -360,6 +473,39 @@ export class McpClient {
   }
 
   /**
+   * Creates a support ticket / contact request for the Help / Queries flow by
+   * calling the backend `POST /support-ticket` endpoint directly (no LLM), so
+   * the wizard is deterministic. Returns the created ticket, or throws on error.
+   */
+  async createSupportTicket(
+    request: SupportTicketRequest,
+    signal?: AbortSignal,
+  ): Promise<SupportTicket> {
+    const res = await fetch(`${this.baseUrl}/support-ticket`, {
+      method: "POST",
+      headers: await this.buildHeaders(),
+      body: JSON.stringify(request),
+      signal,
+    });
+    if (!res.ok) {
+      let message = "Could not submit your request right now.";
+      try {
+        const err = (await res.json()) as { error?: string };
+        if (err?.error) message = err.error;
+      } catch {
+        /* keep default */
+      }
+      throw new McpError(message, res.status);
+    }
+    const data = (await res.json()) as { ticket?: unknown };
+    const ticket = sanitizeSupportTicket(data.ticket);
+    if (!ticket) {
+      throw new McpError("The support service returned an unexpected response.", 502);
+    }
+    return ticket;
+  }
+
+  /**
    * Sends a message and invokes `onEvent` for each simulated streaming event.
    * Pass an `AbortSignal` to cancel generation.
    */
@@ -385,6 +531,12 @@ export class McpClient {
     }
     if (reply.orderDetail) {
       onEvent({ type: "orderDetail", orderDetail: reply.orderDetail });
+    }
+    if (reply.supportTicket) {
+      onEvent({ type: "supportTicket", supportTicket: reply.supportTicket });
+    }
+    if (reply.interaction) {
+      onEvent({ type: "interaction", interaction: reply.interaction });
     }
     if (reply.suggestions.length) {
       onEvent({ type: "suggestions", suggestions: reply.suggestions });
