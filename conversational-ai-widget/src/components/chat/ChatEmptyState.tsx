@@ -13,7 +13,7 @@ const ACTIONS: QuickAction[] = [
   {
     icon: Search,
     label: "Search for products",
-    prompt: "Find black running shoes under $100",
+    prompt: "Find running shoes under $100",
   },
   {
     icon: Sparkles,

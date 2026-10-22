@@ -3,7 +3,11 @@
 import { useEffect, useRef } from "react";
 import { Bot } from "lucide-react";
 
-import type { ChatMessage as ChatMessageType, Product } from "../../lib/types";
+import type {
+  ChatMessage as ChatMessageType,
+  OrderDetail,
+  Product,
+} from "../../lib/types";
 import { ChatMessage } from "./ChatMessage";
 import { ChatEmptyState } from "./ChatEmptyState";
 import { ProductSkeletonGrid } from "../products/ProductSkeleton";
@@ -18,6 +22,9 @@ export function ChatMessageList({
   onSelectProduct,
   onSuggestion,
   onRetry,
+  onTrackOrder,
+  onViewTracking,
+  trackingOrderNo,
 }: {
   messages: ChatMessageType[];
   /** True while waiting for the assistant before any tokens have streamed. */
@@ -28,6 +35,9 @@ export function ChatMessageList({
   onSelectProduct: (product: Product) => void;
   onSuggestion: (prompt: string) => void;
   onRetry: () => void;
+  onTrackOrder: (orderNo: string) => void;
+  onViewTracking: (detail: OrderDetail) => void;
+  trackingOrderNo: string | null;
 }) {
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -55,6 +65,9 @@ export function ChatMessageList({
             onSelectProduct={onSelectProduct}
             onSuggestion={onSuggestion}
             onRetry={message.status === "error" ? onRetry : undefined}
+            onTrackOrder={onTrackOrder}
+            onViewTracking={onViewTracking}
+            trackingOrderNo={trackingOrderNo}
           />
         ))}
 

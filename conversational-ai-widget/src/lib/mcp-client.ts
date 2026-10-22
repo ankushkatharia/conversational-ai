@@ -12,6 +12,7 @@ import type {
   AppliedFilters,
   ChatMessage,
   ChatStreamEvent,
+  OrderDetail,
   OrderSummary,
   Product,
   RefinementSuggestions,
@@ -43,6 +44,7 @@ type AgentResponse = {
   answer?: string;
   products?: unknown[];
   orders?: unknown[];
+  orderDetail?: unknown;
   suggestions?: unknown;
   filters?: AppliedFilters;
 };
@@ -51,6 +53,7 @@ type AgentReply = {
   content: string;
   products: Product[];
   orders: OrderSummary[];
+  orderDetail: OrderDetail | null;
   suggestions: string[];
   refinements?: RefinementSuggestions;
   filters?: AppliedFilters;
@@ -119,6 +122,85 @@ function sanitizeOrders(raw: unknown): OrderSummary[] {
       Array.isArray(order.items)
     );
   });
+}
+
+/**
+ * Coerces a raw order-detail payload (from the agent or `/order-detail`) into
+ * the stable `OrderDetail` shape. Returns null when the order is missing or
+ * malformed (e.g. not found / not owned by this customer).
+ */
+function sanitizeOrderDetail(raw: unknown): OrderDetail | null {
+  if (!raw || typeof raw !== "object") return null;
+  const o = raw as Record<string, unknown>;
+  if (typeof o.orderNo !== "string" || !o.orderNo) return null;
+
+  const num = (v: unknown): number =>
+    typeof v === "number" && !Number.isNaN(v) ? v : 0;
+  const str = (v: unknown): string | undefined =>
+    typeof v === "string" && v ? v : undefined;
+
+  const totalsRaw = (o.totals ?? {}) as Record<string, unknown>;
+  const totals = {
+    subtotal: num(totalsRaw.subtotal),
+    shipping: num(totalsRaw.shipping),
+    tax: num(totalsRaw.tax),
+    grandTotal: num(totalsRaw.grandTotal),
+    discount: num(totalsRaw.discount),
+  };
+
+  const mapAddress = (v: unknown): OrderDetail["shippingAddress"] => {
+    if (!v || typeof v !== "object") return null;
+    const a = v as Record<string, unknown>;
+    return {
+      firstName: str(a.firstName),
+      lastName: str(a.lastName),
+      address1: str(a.address1),
+      city: str(a.city),
+      stateCode: str(a.stateCode),
+      postalCode: str(a.postalCode),
+      countryCode: str(a.countryCode),
+    };
+  };
+
+  const shipments = Array.isArray(o.shipments)
+    ? o.shipments
+        .filter((s): s is Record<string, unknown> => !!s && typeof s === "object")
+        .map((s) => ({
+          trackingNumber: str(s.trackingNumber),
+          trackingLink: str(s.trackingLink),
+          status: str(s.status),
+          estimatedDelivery: str(s.estimatedDelivery),
+          dateShipped: str(s.dateShipped),
+          dateDelivered: str(s.dateDelivered),
+        }))
+        .filter((s) => s.trackingNumber || s.trackingLink || s.status)
+    : [];
+
+  const items = Array.isArray(o.items)
+    ? o.items
+        .filter((i): i is Record<string, unknown> => !!i && typeof i === "object")
+        .map((i) => ({
+          name: str(i.name) ?? "Item",
+          sku: str(i.sku) ?? "",
+          quantity: num(i.quantity),
+          price: num(i.price),
+          fulfillmentStatus: str(i.fulfillmentStatus) ?? "",
+          imageUrl: str(i.imageUrl),
+        }))
+    : [];
+
+  return {
+    orderNo: o.orderNo,
+    creationDate: str(o.creationDate) ?? "",
+    status: str(o.status) ?? "Unknown",
+    orderType: str(o.orderType),
+    currency: str(o.currency) ?? "USD",
+    totals,
+    shippingAddress: mapAddress(o.shippingAddress),
+    billingAddress: mapAddress(o.billingAddress),
+    shipments,
+    items,
+  };
 }
 
 /** Keeps only well-formed refinement chips (defensive against shape drift). */
@@ -208,11 +290,13 @@ export class McpClient {
       .map(mapBackendProduct)
       .filter((p): p is Product => p !== null);
     const orders = sanitizeOrders(data.orders);
+    const orderDetail = sanitizeOrderDetail(data.orderDetail);
     const content = (data.answer ?? "").trim() || "Here's what I found.";
     return {
       content,
       products,
       orders,
+      orderDetail,
       suggestions: DEFAULT_SUGGESTIONS,
       refinements: sanitizeSuggestions(data.suggestions),
       filters: data.filters,
@@ -233,6 +317,7 @@ export class McpClient {
       status: "complete",
       products: reply.products,
       orders: reply.orders,
+      orderDetail: reply.orderDetail,
       suggestions: reply.suggestions,
       refinements: reply.refinements,
       filters: reply.filters,
@@ -241,10 +326,37 @@ export class McpClient {
       message: assistantMessage,
       products: reply.products,
       orders: reply.orders,
+      orderDetail: reply.orderDetail,
       suggestions: reply.suggestions,
       refinements: reply.refinements,
       filters: reply.filters,
     };
+  }
+
+  /**
+   * Fetches full detail (including tracking) for a single order by its order
+   * number. Calls the backend `POST /order-detail` endpoint directly (no LLM),
+   * so order-tracking clicks are deterministic. Returns null when the order is
+   * not found or not owned by the current shopper.
+   */
+  async getOrderDetail(
+    orderNumber: string,
+    signal?: AbortSignal,
+  ): Promise<OrderDetail | null> {
+    const res = await fetch(`${this.baseUrl}/order-detail`, {
+      method: "POST",
+      headers: await this.buildHeaders(),
+      body: JSON.stringify({ orderNumber }),
+      signal,
+    });
+    if (!res.ok) {
+      throw new McpError(
+        "Could not load tracking for this order right now.",
+        res.status,
+      );
+    }
+    const data = (await res.json()) as { order?: unknown };
+    return sanitizeOrderDetail(data.order);
   }
 
   /**
@@ -270,6 +382,9 @@ export class McpClient {
     }
     if (reply.orders.length) {
       onEvent({ type: "orders", orders: reply.orders });
+    }
+    if (reply.orderDetail) {
+      onEvent({ type: "orderDetail", orderDetail: reply.orderDetail });
     }
     if (reply.suggestions.length) {
       onEvent({ type: "suggestions", suggestions: reply.suggestions });

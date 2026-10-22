@@ -20,6 +20,9 @@
  *                                     -> stable orders result      (tool only, no LLM)
  *     Prefer sending the shopper's customer number via the `x-ua-customer-no`
  *     header and the site via `x-ua-locale`/`x-ua-site-code`.
+ *   POST /order-detail { orderNumber, siteId? }
+ *                                     -> stable order detail + tracking (tool only)
+ *     Site comes from `x-ua-locale`/`x-ua-site-code` (or the `siteId` body field).
  *
  * Note: sessions live in process memory only (no DB); they are lost on restart
  * and not shared across instances. Fine for local/dev testing.
@@ -154,6 +157,8 @@ async function main(): Promise<void> {
 		console.error('  POST /search  { "query": "...", "categoryId": "...", "limit": 10, "sort": "top-sellers" }');
 		// eslint-disable-next-line no-console
 		console.error('  POST /orders  { "limit": 3, "customerNo": "5454545454", "siteId": "US" }');
+		// eslint-disable-next-line no-console
+		console.error('  POST /order-detail  { "orderNumber": "US-DEVNA04-00392564", "siteId": "US" }');
 	});
 }
 
@@ -288,6 +293,31 @@ async function handle(
 		}
 
 		const result = await agent.callTool('get_orders', args, authContext);
+		sendJson(res, 200, result);
+		return;
+	}
+
+	if (method === 'POST' && path === '/order-detail') {
+		const body = await readJsonBody(req);
+		const orderNumber =
+			typeof body.orderNumber === 'string' ? body.orderNumber.trim() : '';
+		if (!orderNumber) {
+			sendJson(res, 400, { error: 'Body must include a non-empty "orderNumber".' });
+			return;
+		}
+
+		// Site comes from headers (x-ua-locale / x-ua-site-code); allow a body
+		// override for direct testing when no header is present.
+		const authContext = parseAuthContext(req) ?? {};
+		if (typeof body.siteId === 'string' && !authContext.siteCode) {
+			authContext.siteCode = body.siteId.trim().toUpperCase();
+		}
+
+		const result = await agent.callTool(
+			'get_order_detail_by_order_number',
+			{ orderNumber },
+			authContext,
+		);
 		sendJson(res, 200, result);
 		return;
 	}

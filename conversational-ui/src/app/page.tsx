@@ -6,7 +6,7 @@ import { AppFooter } from "@/components/layout/AppFooter";
 import { publicConfig } from "@/lib/config";
 
 const EXAMPLE_PROMPTS = [
-  "Find black running shoes under $100",
+  "Find running shoes under $100",
   "What should I wear for winter training?",
   "Show me lightweight training gear",
 ];

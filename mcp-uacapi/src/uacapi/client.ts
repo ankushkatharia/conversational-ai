@@ -90,11 +90,14 @@ interface GraphQLResponse<TData> {
  */
 export class UacapiRequestError extends Error {
 	public readonly graphqlErrors?: GraphQLError[];
+	/** HTTP status when the failure was a non-2xx response (undefined otherwise). */
+	public readonly status?: number;
 
-	constructor(message: string, graphqlErrors?: GraphQLError[]) {
+	constructor(message: string, graphqlErrors?: GraphQLError[], status?: number) {
 		super(message);
 		this.name = 'UacapiRequestError';
 		this.graphqlErrors = graphqlErrors;
+		this.status = status;
 	}
 }
 
@@ -174,6 +177,8 @@ export class UacapiClient {
 			debugLogResponse(this.config.endpoint, response.status, bodyText);
 			throw new UacapiRequestError(
 				`UACAPI returned HTTP ${response.status} ${response.statusText}. ${bodyText}`.trim(),
+				undefined,
+				response.status,
 			);
 		}
 

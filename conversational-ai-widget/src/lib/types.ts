@@ -31,6 +31,46 @@ export type OrderSummary = {
   items: OrderItem[];
 };
 
+/** A postal address attached to an order (billing or shipping). */
+export type OrderAddress = {
+  firstName?: string;
+  lastName?: string;
+  address1?: string;
+  city?: string;
+  stateCode?: string;
+  postalCode?: string;
+  countryCode?: string;
+};
+
+/** A single shipment with its carrier tracking details. */
+export type OrderShipment = {
+  trackingNumber?: string;
+  /** Clickable carrier tracking URL, when available. */
+  trackingLink?: string;
+  /** Fulfillment status for this shipment (e.g. "Fulfilled", "In Progress"). */
+  status?: string;
+  estimatedDelivery?: string;
+  dateShipped?: string;
+  dateDelivered?: string;
+};
+
+/**
+ * Full detail for a single order, including tracking, surfaced by the
+ * `get_order_detail_by_order_number` tool / `/order-detail` endpoint.
+ */
+export type OrderDetail = {
+  orderNo: string;
+  creationDate: string;
+  status: string;
+  orderType?: string;
+  currency: string;
+  totals: OrderTotals;
+  shippingAddress?: OrderAddress | null;
+  billingAddress?: OrderAddress | null;
+  shipments: OrderShipment[];
+  items: OrderItem[];
+};
+
 export type Product = {
   id: string;
   name: string;
@@ -115,6 +155,8 @@ export type ChatMessage = {
   products?: Product[];
   /** Structured order summaries surfaced by order-related tool calls. */
   orders?: OrderSummary[];
+  /** Full order detail (with tracking) when the user asked about a specific order. */
+  orderDetail?: OrderDetail | null;
   suggestions?: string[];
   /** Dynamic guided-refinement chips derived from the latest search. */
   refinements?: RefinementSuggestions;
@@ -130,6 +172,7 @@ export type SendMessageResponse = {
   message: ChatMessage;
   products?: Product[];
   orders?: OrderSummary[];
+  orderDetail?: OrderDetail | null;
   suggestions?: string[];
   refinements?: RefinementSuggestions;
   filters?: AppliedFilters;
@@ -140,6 +183,7 @@ export type ChatStreamEvent =
   | { type: "token"; value: string }
   | { type: "products"; products: Product[] }
   | { type: "orders"; orders: OrderSummary[] }
+  | { type: "orderDetail"; orderDetail: OrderDetail }
   | { type: "suggestions"; suggestions: string[] }
   | { type: "refinements"; refinements: RefinementSuggestions }
   | { type: "filters"; filters: AppliedFilters }

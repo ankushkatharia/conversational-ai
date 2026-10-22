@@ -9,12 +9,13 @@ import {
 } from "react";
 import { Bot, Maximize2, Minimize2, PenSquare, X } from "lucide-react";
 
-import type { Product } from "../lib/types";
+import type { OrderDetail, Product } from "../lib/types";
 import type { McpClient } from "../lib/mcp-client";
 import { useChat } from "../hooks/useChat";
 import { ChatMessageList } from "./chat/ChatMessageList";
 import { MessageComposer } from "./chat/MessageComposer";
 import { ProductDetailDrawer } from "./products/ProductDetailDrawer";
+import { OrderTrackingDrawer } from "./orders/OrderTrackingDrawer";
 
 const SIZE_STORAGE_KEY = "ua-cai-panel-size";
 const DEFAULT_SIZE = { w: 400, h: 640 };
@@ -58,6 +59,15 @@ export function ChatPanel({
   const chat = useChat(client);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
+
+  // Order-tracking dialog state. `trackingOrderNo` is the order currently being
+  // fetched (drives inline spinners on the order cards / entry form).
+  const [trackingOpen, setTrackingOpen] = useState(false);
+  const [trackingLoading, setTrackingLoading] = useState(false);
+  const [trackingError, setTrackingError] = useState<string | null>(null);
+  const [trackingDetail, setTrackingDetail] = useState<OrderDetail | null>(null);
+  const [trackingOrderNo, setTrackingOrderNo] = useState<string | null>(null);
+  const trackingAbort = useRef<AbortController | null>(null);
 
   const [isDesktop, setIsDesktop] = useState(
     () =>
@@ -165,6 +175,63 @@ export function ChatPanel({
     setDetailOpen(true);
   }
 
+  // Fetches tracking detail for an order number (from a card click or the entry
+  // form) and opens the tracking dialog with a loading state.
+  const trackOrder = useCallback(
+    async (orderNo: string) => {
+      trackingAbort.current?.abort();
+      const controller = new AbortController();
+      trackingAbort.current = controller;
+
+      setTrackingOrderNo(orderNo);
+      setTrackingDetail(null);
+      setTrackingError(null);
+      setTrackingLoading(true);
+      setTrackingOpen(true);
+
+      try {
+        const detail = await client.getOrderDetail(orderNo, controller.signal);
+        if (controller.signal.aborted) return;
+        if (detail) {
+          setTrackingDetail(detail);
+        } else {
+          setTrackingError(
+            `We couldn't find tracking for order ${orderNo}. Check the number and try again.`,
+          );
+        }
+      } catch (err) {
+        if (controller.signal.aborted) return;
+        setTrackingError(
+          err instanceof Error
+            ? err.message
+            : "Could not load tracking for this order right now.",
+        );
+      } finally {
+        if (!controller.signal.aborted) {
+          setTrackingLoading(false);
+          setTrackingOrderNo(null);
+        }
+      }
+    },
+    [client],
+  );
+
+  // Opens the tracking dialog with an already-loaded detail (no fetch), used
+  // when the backend returned the order detail directly in a chat message.
+  const viewTracking = useCallback((detail: OrderDetail) => {
+    trackingAbort.current?.abort();
+    setTrackingDetail(detail);
+    setTrackingError(null);
+    setTrackingLoading(false);
+    setTrackingOrderNo(null);
+    setTrackingOpen(true);
+  }, []);
+
+  const closeTracking = useCallback(() => {
+    trackingAbort.current?.abort();
+    setTrackingOpen(false);
+  }, []);
+
   const streaming = chat.streamingId !== null;
 
   return (
@@ -262,6 +329,9 @@ export function ChatPanel({
         onSelectProduct={openProduct}
         onSuggestion={(p) => void chat.send(p)}
         onRetry={chat.retry}
+        onTrackOrder={(orderNo) => void trackOrder(orderNo)}
+        onViewTracking={viewTracking}
+        trackingOrderNo={trackingOrderNo}
       />
 
       <div className="border-t border-border bg-surface px-4 py-3">
@@ -285,6 +355,15 @@ export function ChatPanel({
         open={detailOpen}
         onClose={() => setDetailOpen(false)}
         contained
+      />
+
+      <OrderTrackingDrawer
+        open={trackingOpen}
+        onClose={closeTracking}
+        loading={trackingLoading}
+        error={trackingError}
+        detail={trackingDetail}
+        orderNo={trackingOrderNo}
       />
     </div>
   );

@@ -99,6 +99,10 @@ export function useChat(client: McpClient) {
                 ensureAssistant();
                 patchMessage(assistantId, { orders: evt.orders });
                 break;
+              case "orderDetail":
+                ensureAssistant();
+                patchMessage(assistantId, { orderDetail: evt.orderDetail });
+                break;
               case "suggestions":
                 ensureAssistant();
                 patchMessage(assistantId, { suggestions: evt.suggestions });

@@ -21,6 +21,11 @@ import {
 	SearchProductsInput,
 } from './tools/searchProducts.js';
 import { runGetOrders, getOrdersInputSchema, GetOrdersInput } from './tools/getOrders.js';
+import {
+	runGetOrderDetail,
+	getOrderDetailInputSchema,
+	GetOrderDetailInput,
+} from './tools/getOrderDetail.js';
 
 async function main(): Promise<void> {
 	const config = loadConfig();
@@ -118,10 +123,53 @@ async function main(): Promise<void> {
 		},
 	);
 
+	server.registerTool(
+		'get_order_detail_by_order_number',
+		{
+			title: 'Get UACAPI order detail by order number',
+			description:
+				'Read-only order tracking lookup against UACAPI. Given an order number (or ' +
+				'RMA number), returns that single order with status, totals, line items, ' +
+				'addresses, and per-shipment TRACKING NUMBERS and TRACKING LINKS. Use this ' +
+				'for requests like "track my order", "where is order <number>", or "tracking ' +
+				'for <order number>". The site/locale and auth are injected by the server; ' +
+				'only "orderNumber" is model-controlled.',
+			inputSchema: getOrderDetailInputSchema,
+			annotations: {
+				readOnlyHint: true,
+				openWorldHint: true,
+			},
+		},
+		async (input: GetOrderDetailInput) => {
+			try {
+				const result = await runGetOrderDetail(client, input);
+				return {
+					structuredContent: result as unknown as Record<string, unknown>,
+					content: [
+						{
+							type: 'text' as const,
+							text: JSON.stringify(result, null, 2),
+						},
+					],
+				};
+			} catch (err) {
+				const message =
+					err instanceof UacapiRequestError || err instanceof Error
+						? err.message
+						: String(err);
+				return {
+					isError: true,
+					content: [{ type: 'text' as const, text: message }],
+				};
+			}
+		},
+	);
+
 	const transport = new StdioServerTransport();
 	await server.connect(transport);
 	console.error(
-		'mcp-uacapi server started (stdio). Tools: search_products, get_orders [read-only].',
+		'mcp-uacapi server started (stdio). Tools: search_products, get_orders, ' +
+			'get_order_detail_by_order_number [read-only].',
 	);
 }
 

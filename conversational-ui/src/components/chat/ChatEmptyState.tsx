@@ -5,8 +5,8 @@ import { Sparkles } from "lucide-react";
 import { SuggestedPrompts } from "@/components/chat/SuggestedPrompts";
 
 const STARTERS = [
-  "Find black running shoes under $100",
-  "Show me lightweight training shoes",
+  "Find running shoes under $100",
+  "Show me track pants for training",
   "Show me trendy t-shirts",
   "Show me T-shirts available in size M",
 ];

@@ -3,10 +3,16 @@
 import Markdown from "react-markdown";
 import { AlertTriangle, Bot, RefreshCw } from "lucide-react";
 
-import type { ChatMessage as ChatMessageType, Product } from "../../lib/types";
+import type {
+  ChatMessage as ChatMessageType,
+  OrderDetail,
+  Product,
+} from "../../lib/types";
 import { cn } from "../../lib/utils";
 import { ProductGrid } from "../products/ProductGrid";
 import { OrderList } from "../orders/OrderList";
+import { OrderTrackingPanel } from "../orders/OrderTrackingPanel";
+import { OrderTrackingCard } from "../orders/OrderTrackingCard";
 import { SuggestedPrompts } from "./SuggestedPrompts";
 import { RefinePanel } from "./RefinePanel";
 import { TypingIndicator } from "./TypingIndicator";
@@ -16,17 +22,27 @@ export function ChatMessage({
   onSelectProduct,
   onSuggestion,
   onRetry,
+  onTrackOrder,
+  onViewTracking,
+  trackingOrderNo,
   streaming,
 }: {
   message: ChatMessageType;
   onSelectProduct: (product: Product) => void;
   onSuggestion: (prompt: string) => void;
   onRetry?: () => void;
+  /** Fetch + open tracking detail for an order number. */
+  onTrackOrder: (orderNo: string) => void;
+  /** Open the tracking dialog with an already-loaded order detail. */
+  onViewTracking: (detail: OrderDetail) => void;
+  /** Order number whose tracking is currently loading (for inline spinners). */
+  trackingOrderNo: string | null;
   streaming?: boolean;
 }) {
   const isUser = message.role === "user";
   const products = message.products ?? [];
   const orders = message.orders ?? [];
+  const orderDetail = message.orderDetail ?? null;
 
   if (isUser) {
     return (
@@ -79,8 +95,22 @@ export function ChatMessage({
         )}
 
         {orders.length > 0 && (
+          <div className="space-y-2.5">
+            <OrderList
+              orders={orders}
+              onTrack={onTrackOrder}
+              trackingOrderNo={trackingOrderNo}
+            />
+            <OrderTrackingPanel
+              onTrack={onTrackOrder}
+              busy={trackingOrderNo !== null}
+            />
+          </div>
+        )}
+
+        {orderDetail && (
           <div>
-            <OrderList orders={orders} />
+            <OrderTrackingCard detail={orderDetail} onViewDetails={onViewTracking} />
           </div>
         )}
 

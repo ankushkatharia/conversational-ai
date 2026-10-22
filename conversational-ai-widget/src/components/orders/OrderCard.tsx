@@ -1,64 +1,31 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, Package } from "lucide-react";
+import { ChevronDown, Package, Truck } from "lucide-react";
 
 import type { OrderSummary } from "../../lib/types";
 import { cn, formatPrice } from "../../lib/utils";
-
-type StatusTone = "success" | "info" | "warning" | "neutral";
-
-const STATUS_TONES: Record<string, StatusTone> = {
-  delivered: "success",
-  shipped: "info",
-  processing: "info",
-  allocated: "warning",
-  pending: "warning",
-  cancelled: "neutral",
-  returned: "neutral",
-};
-
-const TONE_CLASSES: Record<StatusTone, string> = {
-  success:
-    "bg-emerald-500/15 text-emerald-400 border border-emerald-500/25",
-  info: "bg-sky-500/15 text-sky-400 border border-sky-500/25",
-  warning: "bg-amber-500/15 text-amber-400 border border-amber-500/25",
-  neutral: "bg-surface-muted text-muted border border-border",
-};
-
-function statusTone(status: string): StatusTone {
-  return STATUS_TONES[status.toLowerCase()] ?? "info";
-}
-
-function formatDate(iso: string): string {
-  const parsed = new Date(iso);
-  if (Number.isNaN(parsed.getTime())) return iso;
-  try {
-    return parsed.toLocaleDateString(undefined, {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  } catch {
-    return parsed.toLocaleDateString();
-  }
-}
-
-function shortOrderNo(orderNo: string): string {
-  const parts = orderNo.split("-");
-  return parts[parts.length - 1] ?? orderNo;
-}
+import { StatusBadge, formatOrderDate, shortOrderNo } from "./orderStatus";
 
 function totalItemCount(order: OrderSummary): number {
   return order.items.reduce((sum, item) => sum + item.quantity, 0);
 }
 
-export function OrderCard({ order }: { order: OrderSummary }) {
+export function OrderCard({
+  order,
+  onTrack,
+  tracking = false,
+}: {
+  order: OrderSummary;
+  /** When provided, renders a "Track" action that fetches tracking detail. */
+  onTrack?: (orderNo: string) => void;
+  /** True while this order's tracking detail is being fetched. */
+  tracking?: boolean;
+}) {
   const [expanded, setExpanded] = useState(false);
   const primary = order.items[0];
   const itemCount = totalItemCount(order);
   const extraItems = order.items.length > 1 ? order.items.length - 1 : 0;
-  const tone = statusTone(order.status);
 
   return (
     <article className="ua-cai-order flex flex-col overflow-hidden rounded-2xl border border-border bg-surface transition-shadow duration-200 hover:shadow-[0_18px_40px_-18px_rgba(0,0,0,0.9)]">
@@ -74,14 +41,7 @@ export function OrderCard({ order }: { order: OrderSummary }) {
             #{shortOrderNo(order.orderNo)}
           </span>
         </div>
-        <span
-          className={cn(
-            "inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider",
-            TONE_CLASSES[tone],
-          )}
-        >
-          {order.status}
-        </span>
+        <StatusBadge status={order.status} />
       </header>
 
       <div className="flex items-center gap-3 px-4 py-3">
@@ -106,7 +66,7 @@ export function OrderCard({ order }: { order: OrderSummary }) {
             {primary?.name ?? "Order items"}
           </p>
           <p className="text-[11px] text-muted">
-            {formatDate(order.creationDate)}
+            {formatOrderDate(order.creationDate)}
             <span className="mx-1.5 text-muted/60" aria-hidden="true">
               •
             </span>
@@ -193,21 +153,46 @@ export function OrderCard({ order }: { order: OrderSummary }) {
         </div>
       )}
 
-      <button
-        type="button"
-        onClick={() => setExpanded((prev) => !prev)}
-        aria-expanded={expanded}
-        className="flex w-full items-center justify-center gap-1.5 border-t border-border px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-foreground transition-colors hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      <div
+        className={cn(
+          "grid border-t border-border",
+          onTrack ? "grid-cols-2" : "grid-cols-1",
+        )}
       >
-        {expanded ? "Show less" : "Show more"}
-        <ChevronDown
-          className={cn(
-            "h-3.5 w-3.5 transition-transform duration-200",
-            expanded && "rotate-180",
-          )}
-          aria-hidden="true"
-        />
-      </button>
+        <button
+          type="button"
+          onClick={() => setExpanded((prev) => !prev)}
+          aria-expanded={expanded}
+          className="flex items-center justify-center gap-1.5 px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-foreground transition-colors hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          {expanded ? "Show less" : "Show more"}
+          <ChevronDown
+            className={cn(
+              "h-3.5 w-3.5 transition-transform duration-200",
+              expanded && "rotate-180",
+            )}
+            aria-hidden="true"
+          />
+        </button>
+        {onTrack && (
+          <button
+            type="button"
+            onClick={() => onTrack(order.orderNo)}
+            disabled={tracking}
+            className="flex items-center justify-center gap-1.5 border-l border-border px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-accent transition-colors hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {tracking ? (
+              <span
+                aria-hidden="true"
+                className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent"
+              />
+            ) : (
+              <Truck className="h-3.5 w-3.5" aria-hidden="true" />
+            )}
+            Track
+          </button>
+        )}
+      </div>
     </article>
   );
 }

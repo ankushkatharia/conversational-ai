@@ -10,23 +10,13 @@
 import { z } from 'zod';
 
 import { UacapiClient } from '../uacapi/client.js';
+import { requestWithIntegrationToken } from '../uacapi/integrationToken.js';
 import { GET_ORDERS_QUERY, GetOrdersData, GetOrdersVariables, RawOrderNode } from '../uacapi/getOrders.js';
 
 /** Default number of recent orders to return. */
 const DEFAULT_LIMIT = 3;
 /** Upper bound on the number of orders to protect UACAPI from expensive queries. */
 const MAX_LIMIT = 50;
-
-/**
- * Normalizes a bearer token from env: strips an optional `Bearer ` prefix and
- * all internal whitespace (the client re-adds the scheme). Returns undefined
- * when empty so callers can fall back to the configured static token.
- */
-function sanitizeToken(raw: string | undefined): string | undefined {
-	if (!raw) return undefined;
-	const cleaned = raw.trim().replace(/^bearer\s+/i, '').replace(/\s+/g, '');
-	return cleaned || undefined;
-}
 
 /**
  * Zod schema for the tool input. Only `limit` is model-facing; `auth` carries
@@ -225,13 +215,11 @@ export async function runGetOrders(
 
 	// The `orders` query is shield-gated to INTEGRATION (machine) tokens; a
 	// per-shopper registered token is rejected with "Must have an integration
-	// token". So authenticate with the dedicated integration token and never with
-	// the injected shopper token. When UACAPI_INTEGRATION_TOKEN is unset, pass
-	// undefined so the client falls back to the static UACAPI_BEARER_TOKEN.
-	const integrationToken = sanitizeToken(process.env.UACAPI_INTEGRATION_TOKEN);
-	const overrides = { bearerToken: integrationToken, contextHeaders };
-
-	const data = await client.request<GetOrdersData>(GET_ORDERS_QUERY, variables, overrides);
+	// token". The token manager mints/refreshes an Auth0 client-credentials token
+	// (or uses the static UACAPI_INTEGRATION_TOKEN) and retries once on 401.
+	const data = await requestWithIntegrationToken<GetOrdersData>(client, GET_ORDERS_QUERY, variables, {
+		contextHeaders,
+	});
 	const connection = data.orders;
 
 	const orders = connection.edges.map((edge) => mapOrder(edge.node));

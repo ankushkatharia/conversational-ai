@@ -32,6 +32,7 @@ import type {
 
 import type { Product, SearchSuggestions } from './tools/searchProducts.js';
 import type { Order } from './tools/getOrders.js';
+import type { OrderDetail } from './tools/getOrderDetail.js';
 
 /** OpenAI/Bedrock credentials resolved from the .env file (fresh) or env. */
 interface OpenAiCredentials {
@@ -156,6 +157,20 @@ const SYSTEM_PROMPT = [
 	'- Summarize the returned orders briefly in natural language (e.g. order number,',
 	'  date, status, and total). If none are returned, say so in one sentence.',
 	'',
+	'Order tracking (get_order_detail_by_order_number tool):',
+	'- When the shopper asks to TRACK an order, where their order/package is, or for',
+	'  tracking info/number for a specific order, call the',
+	'  `get_order_detail_by_order_number` tool.',
+	'- Pass `orderNumber` = the exact order (or RMA) number from the user\'s message',
+	'  (e.g. "US-DEVNA04-00392564" or "00392564"). Do NOT guess an order number.',
+	'- If the user wants to track an order but did NOT provide an order number, call',
+	'  `get_orders` instead so they can pick from their recent orders (the app shows',
+	'  a clickable list plus an order-number box). Do not ask for the number in text.',
+	'- The server injects the site/locale and auth; never ask for a site or token.',
+	'- Summarize the order status and, when present, the tracking number(s) and',
+	'  tracking link(s) in a short natural-language reply. If the order is not found',
+	'  (null), say so plainly in one sentence.',
+	'',
 	'Stopping rules (important):',
 	'- Call `search_products` at most twice per user request.',
 	'- As soon as a call returns one or more products, STOP calling tools and write',
@@ -166,6 +181,10 @@ const SYSTEM_PROMPT = [
 	'  NOT pass site/locale/customerNo; the server injects those). After it returns,',
 	'  STOP calling tools and write your answer. If it returns an error or zero',
 	'  orders, tell the user plainly in one sentence; do NOT retry it.',
+	'- Call `get_order_detail_by_order_number` at most ONCE per user request. It',
+	'  takes only `orderNumber` (the server injects site/locale/auth). After it',
+	'  returns, STOP calling tools and write your answer. If the order is null or it',
+	'  errors, tell the user plainly in one sentence; do NOT retry it.',
 	'',
 	'Presentation (CRITICAL): the app renders the product CARDS itself from',
 	'structured data. Your text reply must be ONLY a short conversational sentence',
@@ -251,6 +270,12 @@ export interface AgentRunResult {
 	suggestions: SearchSuggestions;
 	/** Structured orders from the last successful `get_orders` call, for the UI. */
 	orders: Order[];
+	/**
+	 * Structured order detail (with tracking) from the last successful
+	 * `get_order_detail_by_order_number` call, for the UI. Null when not fetched
+	 * or not found.
+	 */
+	orderDetail: OrderDetail | null;
 	/** Tool calls the model made, in order (for debugging/telemetry). */
 	toolCalls: { name: string; arguments: unknown }[];
 	/** Accumulated structured filter state after this run (for session persistence). */
@@ -393,6 +418,9 @@ export async function createAgent(): Promise<Agent> {
 		let collectedSuggestions: SearchSuggestions = { refinements: [], sorts: [] };
 		// Structured orders from the most recent get_orders call (for UI rendering).
 		let collectedOrders: Order[] = [];
+		// Structured order detail (with tracking) from the most recent
+		// get_order_detail_by_order_number call (for UI rendering).
+		let collectedOrderDetail: OrderDetail | null = null;
 
 		// Keep only the most recent turns to bound tokens, and trim long assistant
 		// answers (they can contain big markdown product tables).
@@ -460,6 +488,7 @@ export async function createAgent(): Promise<Agent> {
 					products: collectedProducts,
 					suggestions: collectedSuggestions,
 					orders: collectedOrders,
+					orderDetail: collectedOrderDetail,
 					toolCalls,
 					filters: filterState,
 				};
@@ -525,6 +554,12 @@ export async function createAgent(): Promise<Agent> {
 							collectedOrders = sc.orders;
 						}
 					}
+					if (name === 'get_order_detail_by_order_number') {
+						const sc = result.structuredContent as { order?: OrderDetail | null } | undefined;
+						if (sc?.order) {
+							collectedOrderDetail = sc.order;
+						}
+					}
 				} catch (err) {
 					resultText = `Tool error: ${err instanceof Error ? err.message : String(err)}`;
 				}
@@ -538,6 +573,7 @@ export async function createAgent(): Promise<Agent> {
 			products: collectedProducts,
 			suggestions: collectedSuggestions,
 			orders: collectedOrders,
+			orderDetail: collectedOrderDetail,
 			toolCalls,
 			filters: filterState,
 		};
