@@ -227,6 +227,15 @@ export type ChatbotWidgetProps = {
   userAvatarUrl?: string;
 
   /**
+   * Stable identifier for the signed-in shopper (e.g. customerNo). Used only to
+   * scope the browser-persisted chat history per user so it never leaks between
+   * accounts. When omitted, `userName` is used; when both are omitted a shared
+   * guest bucket is used. On logout/account switch the previous user's history
+   * is deleted automatically.
+   */
+  userId?: string;
+
+  /**
    * Supplies the current authentication token for the MCP/UACAPI backend. The
    * host returns whichever token represents the active shopper: a guest token
    * when signed out, or the logged-in token after sign-in. It is called before

@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Sparkles, X } from "lucide-react";
 
 import type { ChatbotWidgetProps } from "../lib/types";
 import { cn } from "../lib/utils";
 import { McpClient } from "../lib/mcp-client";
+import { reconcileChatUser } from "../lib/chatStorage";
 import { WidgetCallbacksProvider } from "../context";
 import { ChatPanel } from "./ChatPanel";
 
@@ -22,6 +23,7 @@ export function ChatbotWidget({
   title = "Shopping assistant",
   userName,
   userAvatarUrl,
+  userId,
   getAuthToken,
   locale,
 }: ChatbotWidgetProps) {
@@ -35,6 +37,16 @@ export function ChatbotWidget({
     [onNavigate, onAddToCart],
   );
 
+  // Stable per-user id for scoping persisted chat history (prefer an explicit
+  // id; fall back to the display name; else a shared guest bucket).
+  const userKey = userId ?? userName ?? null;
+
+  // Clear the previous user's persisted history on login/logout/switch, even
+  // while the chat panel is closed (the panel, and its useChat, is unmounted).
+  useEffect(() => {
+    reconcileChatUser(userKey);
+  }, [userKey]);
+
   return (
     <WidgetCallbacksProvider value={callbacks}>
       <div className={cn("ua-cai", className)}>
@@ -44,6 +56,7 @@ export function ChatbotWidget({
             title={title}
             userName={userName}
             userAvatarUrl={userAvatarUrl}
+            userKey={userKey}
             onClose={() => setOpen(false)}
           />
         )}

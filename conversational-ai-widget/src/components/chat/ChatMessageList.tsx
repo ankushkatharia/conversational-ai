@@ -83,7 +83,7 @@ export function ChatMessageList({
               <div className="inline-flex rounded-2xl rounded-tl-sm bg-surface-muted px-4 py-3">
                 <TypingIndicator />
               </div>
-              <ProductSkeletonGrid count={6} />
+              <ProductSkeletonGrid />
             </div>
           </div>
         )}

@@ -48,15 +48,18 @@ export function ChatPanel({
   title,
   userName,
   userAvatarUrl,
+  userKey,
   onClose,
 }: {
   client: McpClient;
   title: string;
   userName?: string;
   userAvatarUrl?: string;
+  /** Stable per-user id used to scope persisted chat history. */
+  userKey?: string | null;
   onClose: () => void;
 }) {
-  const chat = useChat(client);
+  const chat = useChat(client, userKey);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
 
@@ -288,8 +291,8 @@ export function ChatPanel({
           <button
             type="button"
             onClick={chat.reset}
-            aria-label="New conversation"
-            title="New conversation"
+            aria-label="New conversation (clears saved history)"
+            title="New conversation · clears saved history"
             className="flex h-9 w-9 items-center justify-center rounded-full text-muted hover:bg-surface-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <PenSquare className="h-5 w-5" />
