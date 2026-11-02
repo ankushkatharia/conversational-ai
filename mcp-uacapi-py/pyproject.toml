@@ -1,0 +1,36 @@
+[project]
+name = "mcp-uacapi-py"
+version = "0.1.0"
+description = "FastAPI backend for the UA conversational shopping assistant (agent + tools + MCP)."
+requires-python = ">=3.12"
+dependencies = [
+    "anthropic[bedrock]>=2.3.0",
+    "fastapi>=0.162.0",
+    "httpx>=0.28.1",
+    "mcp>=2.3.0",
+    "openai>=3.42.0",
+    "pydantic-settings>=2.16.2",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+    "pytest-asyncio>=1.4.1",
+    "ruff>=0.17.3",
+]
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "ASYNC", "SIM", "RUF"]
+ignore = ["RUF001"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+pythonpath = ["."]
+filterwarnings = ["error::pytest.PytestUnraisableExceptionWarning"]
