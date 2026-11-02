@@ -217,6 +217,7 @@ export interface Product {
 	id: string | null;
 	style: string | null;
 	name: string | null;
+	description: string | null;
 	url: string | null;
 	orderable: boolean | null;
 	currency: string | null;
@@ -308,6 +309,7 @@ function mapProduct(node: RawSearchHitNode): Product {
 		id: node.id ?? null,
 		style: node.style ?? node.slicedProductId ?? null,
 		name: node.productName ?? null,
+		description: null,
 		url: node.url ?? null,
 		orderable: node.orderable ?? null,
 		currency: node.currency ?? null,

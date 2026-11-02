@@ -52,6 +52,9 @@ export function ChatInteraction({
     );
   }
 
+  // ticket_form is handled by TicketFormCard in ChatMessage, not here
+  if (interaction.type === "ticket_form") return null;
+
   // confirm
   return (
     <button

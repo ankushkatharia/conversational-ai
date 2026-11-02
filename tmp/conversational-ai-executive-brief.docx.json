@@ -1,0 +1,112 @@
+{
+  "title": "Conversational AI Shopping Assistant | Executive Demo Brief",
+  "metadata": {"title":"Conversational AI Shopping Assistant | Executive Demo Brief","subject":"Leadership demonstration and business case","creator":"Factory Droid","description":"Executive-ready overview of the Under Armour conversational commerce assistant","keywords":"conversational AI, commerce, Under Armour, MCP, UACAPI"},
+  "page": {"orientation":"portrait","margins":{"top":0.7,"right":0.75,"bottom":0.7,"left":0.75}},
+  "sections": [
+    {"children":[
+      {"type":"heading","level":1,"text":"Conversational AI Shopping Assistant"},
+      {"type":"paragraph","alignment":"center","runs":[{"text":"Executive Demo Brief | Under Armour Seabiscuit","bold":true,"color":"#C8102E","size":16},{"text":"\nA controlled, conversational commerce experience that helps shoppers discover products, make choices, manage orders, and get help.","italic":true,"color":"#4B5563"}]},
+      {"type":"heading","level":2,"text":"Executive message"},
+      {"type":"paragraph","text":"Conversational AI is moving from a novelty to a high-intent commerce surface. Our assistant brings that experience directly into the Seabiscuit storefront, combining natural-language guidance with live catalog, order, and support data. It is designed to improve shopper confidence while preserving enterprise control over credentials, data access, and transactional workflows."},
+      {"type":"heading","level":2,"text":"What leadership should remember"},
+      {"type":"paragraph","text":"One assistant, four high-value shopper moments: find the right product, compare options, track an order, and resolve an issue.","list":{"type":"bullet"}},
+      {"type":"paragraph","text":"AI interprets intent and communicates naturally; deterministic services retrieve data, enforce rules, and render the experience.","list":{"type":"bullet"}},
+      {"type":"paragraph","text":"The architecture is built for responsible rollout: read-only commerce tools, credential isolation, bounded memory, stable UI contracts, and deterministic ticket submission.","list":{"type":"bullet"}},
+      {"type":"heading","level":2,"text":"Recommended demo outcome"},
+      {"type":"paragraph","text":"Show a complete journey from discovery to post-purchase support in under seven minutes. The audience should leave with a simple conclusion: this is not a chatbot bolted onto a storefront; it is a governed digital shopping assistant connected to real commerce capabilities."}
+    ]},
+    {"children":[
+      {"type":"pageBreak"},{"type":"heading","level":1,"text":"Why now: the commerce benchmark is rising"},
+      {"type":"paragraph","text":"The most successful retail experiences are teaching customers to expect guided discovery, relevance, and immediate help. Amazon’s published adoption signals illustrate the category opportunity; they are market benchmarks, not results for this implementation."},
+      {"type":"table","widthPercent":100,"rows":[
+        [{"text":"Published market signal","shading":"#1F2937"},{"text":"What it indicates","shading":"#1F2937"}],
+        [{"text":"250M+ customers used Rufus this year; monthly users up 140% YoY; interactions up 210% YoY","shading":"#F3F4F6"},{"text":"Customers are adopting conversational shopping at scale","shading":"#F3F4F6"}],
+        [{"text":"Rufus users are 60%+ more likely to convert during a shopping journey","shading":"#FFFFFF"},{"text":"Guidance can be especially valuable at high-intent moments","shading":"#FFFFFF"}],
+        [{"text":"Nearly 20% of customers creating Interests added a recommended item to cart","shading":"#F3F4F6"},{"text":"Relevant recommendations can turn exploration into action","shading":"#F3F4F6"}],
+        [{"text":"Amazon Lens photo searches more than doubled since 2023; Lens Live increased engagement 13%","shading":"#FFFFFF"},{"text":"Shoppers increasingly expect richer, lower-friction discovery","shading":"#FFFFFF"}],
+        [{"text":"Alexa+ item exploration led to 3× more on-device purchases than classic Alexa","shading":"#F3F4F6"},{"text":"Deeper conversations can improve shopping outcomes","shading":"#F3F4F6"}]
+      ]},
+      {"type":"paragraph","runs":[{"text":"Leadership implication: ","bold":true},{"text":"Conversational assistance should be evaluated as a conversion, confidence, and service experience, not simply as a chat feature. Our pilot should measure product discovery success, assisted conversion, support containment, and customer satisfaction."}]},
+      {"type":"paragraph","runs":[{"text":"Source note: ","bold":true},{"text":"Amazon figures supplied for this presentation. Validate original public sources before external distribution."}]}
+    ]},
+    {"children":[
+      {"type":"pageBreak"},{"type":"heading","level":1,"text":"The customer story"},
+      {"type":"heading","level":2,"text":"From uncertainty to a confident next step"},
+      {"type":"table","widthPercent":100,"rows":[
+        [{"text":"Moment","shading":"#C8102E"},{"text":"Shopper need","shading":"#C8102E"},{"text":"Assistant response","shading":"#C8102E"},{"text":"Business value","shading":"#C8102E"}],
+        [{"text":"Discover","shading":"#FDE8EC"},{"text":"“Show me black running shoes under $100.”","shading":"#FDE8EC"},{"text":"Turns intent into live structured filters and product cards.","shading":"#FDE8EC"},{"text":"Reduces search effort; surfaces relevant inventory.","shading":"#FDE8EC"}],
+        [{"text":"Decide","shading":"#FFFFFF"},{"text":"“Which two are best for everyday running?”","shading":"#FFFFFF"},{"text":"Compares two to four products with differences, best-for guidance, and a concise verdict.","shading":"#FFFFFF"},{"text":"Builds confidence before purchase.","shading":"#FFFFFF"}],
+        [{"text":"Track","shading":"#FDE8EC"},{"text":"“Where is my order?”","shading":"#FDE8EC"},{"text":"Shows recent orders, fulfillment status, carrier, and tracking dates.","shading":"#FDE8EC"},{"text":"Improves post-purchase visibility; reduces effort.","shading":"#FDE8EC"}],
+        [{"text":"Resolve","shading":"#FFFFFF"},{"text":"“I need help with a return.”","shading":"#FFFFFF"},{"text":"Guides the customer, attempts resolution, then presents a controlled ticket or callback form.","shading":"#FFFFFF"},{"text":"Creates a reliable path to support.","shading":"#FFFFFF"}]
+      ]},
+      {"type":"heading","level":2,"text":"Designed for the way people shop"},
+      {"type":"paragraph","text":"The assistant uses product cards, filter chips, drawers, comparison views, order panels, and forms, not AI-generated interface markup. It also supports speech-to-text, context-aware suggested prompts, persisted chat history, and a resizable desktop panel."}
+    ]},
+    {"children":[
+      {"type":"pageBreak"},{"type":"heading","level":1,"text":"Architecture: intelligence with guardrails"},
+      {"type":"paragraph","text":"Seabiscuit embeds the React widget. The widget communicates over HTTPS with the mcp-uacapi Node backend. The backend orchestrates AWS Bedrock, MCP tools, validation, filter merging, and UACAPI GraphQL access. UACAPI remains the source of truth for catalog, pricing, availability, orders, and shopper identity."},
+      {"type":"table","widthPercent":100,"rows":[
+        [{"text":"Layer","shading":"#1D4ED8"},{"text":"Responsibility","shading":"#1D4ED8"},{"text":"Control point","shading":"#1D4ED8"}],
+        [{"text":"Seabiscuit host PWA","shading":"#EFF6FF"},{"text":"Mounts the assistant and supplies page, routing, cart, and shopper context.","shading":"#EFF6FF"},{"text":"Host owns the storefront experience.","shading":"#EFF6FF"}],
+        [{"text":"Conversational AI widget","shading":"#FFFFFF"},{"text":"Renders messages, product/order cards, drawers, chips, and forms.","shading":"#FFFFFF"},{"text":"Consumes stable structured output, never raw GraphQL.","shading":"#FFFFFF"}],
+        [{"text":"mcp-uacapi backend","shading":"#ECFDF5"},{"text":"Runs agent orchestration, validation, auth injection, MCP tools, and deterministic flows.","shading":"#ECFDF5"},{"text":"Policy and security boundary.","shading":"#ECFDF5"}],
+        [{"text":"UACAPI commerce API","shading":"#FFF7ED"},{"text":"Provides live catalog, orders, tracking, and identity data via GraphQL.","shading":"#FFF7ED"},{"text":"System of record.","shading":"#FFF7ED"}]
+      ]},
+      {"type":"heading","level":2,"text":"Request lifecycle"},
+      {"type":"paragraph","text":"1. Shopper asks in natural language.  2. Widget supplies authorized context and streams the request.  3. The model selects a read-only tool.  4. Server validates arguments, deterministically merges filters, and injects credentials only at the tool boundary.  5. UACAPI returns data.  6. The backend maps it to stable outputs.  7. The widget renders a purpose-built UI."}
+    ]},
+    {"children":[
+      {"type":"pageBreak"},{"type":"heading","level":1,"text":"Capability blueprint"},
+      {"type":"table","widthPercent":100,"rows":[
+        [{"text":"Capability","shading":"#C8102E"},{"text":"What the shopper sees","shading":"#C8102E"},{"text":"What makes it enterprise-ready","shading":"#C8102E"}],
+        [{"text":"Natural-language discovery","shading":"#FDE8EC"},{"text":"Search, price, color, gender, category, sort, and live refinement chips.","shading":"#FDE8EC"},{"text":"Zod-validated tool inputs and server-side filter state.","shading":"#FDE8EC"}],
+        [{"text":"Product comparison","shading":"#FFFFFF"},{"text":"AI analysis across two to four selected products.","shading":"#FFFFFF"},{"text":"Uses bounded product facts; short, low-temperature analysis.","shading":"#FFFFFF"}],
+        [{"text":"Orders and tracking","shading":"#FDE8EC"},{"text":"Order details, fulfillment status, carrier links, and dates.","shading":"#FDE8EC"},{"text":"Integration credential stays server-side; customer identity is required.","shading":"#FDE8EC"}],
+        [{"text":"Guided support","shading":"#FFFFFF"},{"text":"Interactive issue routing, resolution steps, ticket or callback options.","shading":"#FFFFFF"},{"text":"Ticket creation is a deterministic form, not an LLM action.","shading":"#FFFFFF"}],
+        [{"text":"Experience polish","shading":"#FDE8EC"},{"text":"Voice input, responsive panel, local history, suggestions, and page-aware greeting.","shading":"#FDE8EC"},{"text":"Graceful browser fallback and scoped local persistence.","shading":"#FDE8EC"}]
+      ]}
+    ]},
+    {"children":[
+      {"type":"pageBreak"},{"type":"heading","level":1,"text":"Responsible AI and security by design"},
+      {"type":"heading","level":2,"text":"Clear division of responsibility"},
+      {"type":"paragraph","text":"The LLM decides what information to request and how to communicate. Deterministic code decides how data is retrieved, validated, merged, and displayed. This distinction is central to the design."},
+      {"type":"table","widthPercent":100,"rows":[
+        [{"text":"Control","shading":"#1F2937"},{"text":"Implementation","shading":"#1F2937"}],
+        [{"text":"Read-only commerce access","shading":"#F3F4F6"},{"text":"MCP tools are marked read-only. The model cannot write directly to UACAPI.","shading":"#F3F4F6"}],
+        [{"text":"Credential isolation","shading":"#FFFFFF"},{"text":"Shopper token supports search; the orders integration token stays only on the backend; neither is presented to the LLM.","shading":"#FFFFFF"}],
+        [{"text":"Injection-resistant API use","shading":"#F3F4F6"},{"text":"Static GraphQL documents plus variables, never interpolated query strings.","shading":"#F3F4F6"}],
+        [{"text":"Deterministic support submission","shading":"#FFFFFF"},{"text":"The agent can trigger the ticket form but cannot create a ticket itself.","shading":"#FFFFFF"}],
+        [{"text":"Bounded memory and loop protection","shading":"#F3F4F6"},{"text":"Session history, tool calls, and model rounds are capped; retries and streaming failures have controlled fallbacks.","shading":"#F3F4F6"}],
+        [{"text":"Stable contracts","shading":"#FFFFFF"},{"text":"The UI uses mapped models, not raw UACAPI responses or LLM-produced markup.","shading":"#FFFFFF"}]
+      ]},
+      {"type":"paragraph","runs":[{"text":"Executive takeaway: ","bold":true},{"text":"the solution makes AI helpful at the experience layer while keeping business rules, data boundaries, and transaction controls in governed application code."}]}
+    ]},
+    {"children":[
+      {"type":"pageBreak"},{"type":"heading","level":1,"text":"Live demo script: seven minutes"},
+      {"type":"table","widthPercent":100,"rows":[
+        [{"text":"Time","shading":"#C8102E"},{"text":"Show","shading":"#C8102E"},{"text":"Say","shading":"#C8102E"}],
+        [{"text":"0:00–0:45","shading":"#FDE8EC"},{"text":"Open the assistant on a product or category page.","shading":"#FDE8EC"},{"text":"“This is an embedded shopping assistant, aware of the storefront context and connected to real commerce services.”","shading":"#FDE8EC"}],
+        [{"text":"0:45–2:15","shading":"#FFFFFF"},{"text":"Ask: “Show me black running shoes under $100.” Then tap “Men’s only” or “Sort by best sellers.”","shading":"#FFFFFF"},{"text":"“The model translates intent, but filters are merged and enforced on the server. Results are live product data rendered as cards.”","shading":"#FFFFFF"}],
+        [{"text":"2:15–3:30","shading":"#FDE8EC"},{"text":"Select two products and choose Compare.","shading":"#FDE8EC"},{"text":"“AI summarizes the shopper-relevant differences from a bounded product set to help a customer decide.”","shading":"#FDE8EC"}],
+        [{"text":"3:30–4:45","shading":"#FFFFFF"},{"text":"Ask: “Show my recent orders,” then open tracking.","shading":"#FFFFFF"},{"text":"“This is real order and carrier data. The sensitive integration credential never reaches the browser or model.”","shading":"#FFFFFF"}],
+        [{"text":"4:45–6:00","shading":"#FDE8EC"},{"text":"Open Help, select an order issue, and reach the support form.","shading":"#FDE8EC"},{"text":"“The conversation guides resolution, then a fixed form handles ticket creation so the final workflow is deterministic.”","shading":"#FDE8EC"}],
+        [{"text":"6:00–7:00","shading":"#FFFFFF"},{"text":"Return to architecture/security summary.","shading":"#FFFFFF"},{"text":"“This combines an intuitive customer experience with controlled data access and an implementation path we can measure and scale.”","shading":"#FFFFFF"}]
+      ]}
+    ]},
+    {"children":[
+      {"type":"pageBreak"},{"type":"heading","level":1,"text":"Pilot recommendation and success measures"},
+      {"type":"heading","level":2,"text":"Start focused, learn quickly, scale with evidence"},
+      {"type":"paragraph","text":"Launch with product discovery, comparison, order tracking, and guided support for a controlled audience or category. Instrument the journey end-to-end, establish a baseline, and expand based on measured shopper and operational outcomes."},
+      {"type":"table","widthPercent":100,"rows":[
+        [{"text":"Outcome","shading":"#1D4ED8"},{"text":"Indicative measures","shading":"#1D4ED8"}],
+        [{"text":"Discovery quality","shading":"#EFF6FF"},{"text":"Search-to-product-click rate, refinement completion, no-result recovery, product detail engagement.","shading":"#EFF6FF"}],
+        [{"text":"Commercial impact","shading":"#FFFFFF"},{"text":"Assisted add-to-cart rate, conversion rate, average order value, return rate by assisted cohort.","shading":"#FFFFFF"}],
+        [{"text":"Service efficiency","shading":"#EFF6FF"},{"text":"Order-tracking self-service rate, ticket deflection, ticket completeness, time to resolution.","shading":"#EFF6FF"}],
+        [{"text":"Experience trust","shading":"#FFFFFF"},{"text":"Customer satisfaction, repeat usage, response quality ratings, escalation rate.","shading":"#FFFFFF"}],
+        [{"text":"Operational readiness","shading":"#EFF6FF"},{"text":"Tool success/error rate, latency, fallback rate, security/control exceptions.","shading":"#EFF6FF"}]
+      ]},
+      {"type":"heading","level":2,"text":"Decision requested"},
+      {"type":"paragraph","text":"Approve a measured pilot and establish cross-functional ownership across digital product, commerce platform, customer care, security, and analytics. Use the pilot to validate customer value and operating model before broader rollout."}
+    ]}
+  ]
+}

@@ -1,0 +1,2278 @@
+{
+  "title": "Conversational AI Shopping Assistant — Presentation Script",
+  "metadata": {
+    "title": "Presentation Script — Conversational AI Shopping Assistant",
+    "subject": "Slide-by-slide demo script with storytelling narrative",
+    "creator": "Under Armour Digital Engineering",
+    "description": "Speaker script for the executive demo presentation",
+    "keywords": "demo, script, presentation, conversational AI"
+  },
+  "page": {
+    "orientation": "portrait",
+    "margins": { "top": 0.8, "right": 0.9, "bottom": 0.8, "left": 0.9 }
+  },
+  "sections": [
+    {
+      "children": [
+        {
+          "type": "paragraph",
+          "alignment": "center",
+          "runs": [
+            { "text": "UNDER ARMOUR", "bold": true, "size": 12, "color": "#E41E31" }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Presentation Script"
+        },
+        {
+          "type": "paragraph",
+          "alignment": "center",
+          "runs": [
+            { "text": "Conversational AI Shopping Assistant — Executive Demo", "size": 13, "color": "#555555" }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "alignment": "center",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "alignment": "center",
+          "runs": [
+            { "text": "Total presentation time: ~25-30 minutes (including live demo)", "size": 11, "color": "#999999", "italic": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 10 }]
+        },
+        {
+          "type": "table",
+          "widthPercent": 100,
+          "rows": [
+            [
+              { "text": "Section", "shading": "#1a1a1a", "paragraphs": [{ "runs": [{ "text": "Section", "bold": true, "color": "#FFFFFF", "size": 10 }] }] },
+              { "text": "Slides", "shading": "#1a1a1a", "paragraphs": [{ "runs": [{ "text": "Slides", "bold": true, "color": "#FFFFFF", "size": 10 }] }] },
+              { "text": "Time", "shading": "#1a1a1a", "paragraphs": [{ "runs": [{ "text": "Time", "bold": true, "color": "#FFFFFF", "size": 10 }] }] }
+            ],
+            [
+              { "text": "Opening & Market Imperative" },
+              { "text": "1-5" },
+              { "text": "4-5 min" }
+            ],
+            [
+              { "text": "What We Built" },
+              { "text": "6-8" },
+              { "text": "3-4 min" }
+            ],
+            [
+              { "text": "Feature Deep Dive" },
+              { "text": "9-14" },
+              { "text": "6-7 min" }
+            ],
+            [
+              { "text": "Architecture" },
+              { "text": "15-18" },
+              { "text": "3-4 min" }
+            ],
+            [
+              { "text": "Security" },
+              { "text": "19-20" },
+              { "text": "2-3 min" }
+            ],
+            [
+              { "text": "Live Demo" },
+              { "text": "21-22" },
+              { "text": "5-7 min" }
+            ],
+            [
+              { "text": "Vision & Close" },
+              { "text": "23-25" },
+              { "text": "2-3 min" }
+            ]
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 10 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "How to use this script: ", "bold": true, "size": 11 },
+            { "text": "Read the narrative naturally in your own voice. The script is written as a conversation with your audience, not a recitation. Pause at the places marked [PAUSE]. When you see [CLICK], advance to the next slide. Stage directions and tips are in italics.", "size": 11, "color": "#555555" }
+          ]
+        },
+
+        { "type": "pageBreak" },
+
+
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "SLIDE 1 — TITLE", "bold": true, "size": 10, "color": "#FFFFFF" }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 4 }]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Slide 1: Title — Conversational AI Shopping Assistant"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Display: ", "bold": true, "color": "#999999", "size": 10 },
+            { "text": "Dark slide with Under Armour branding. \"Conversational AI Shopping Assistant\" headline.", "color": "#999999", "size": 10, "italic": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"Thank you, everyone, for making the time today. I'm excited to share something with you that I believe could fundamentally change how our customers experience Under Armour online.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "But before I show you what we built, I want to start with a question.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[PAUSE — look at the room]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"When was the last time you walked into a store and had a great conversation with a salesperson? Someone who understood what you needed, remembered your preferences, and guided you to exactly the right product? That experience creates loyalty. It creates conversion. And until recently, it simply didn't exist online.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"That's what we set out to change. And we're not the only ones who see this opportunity.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[CLICK to Slide 2]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+
+        { "type": "pageBreak" },
+
+
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Slide 2: Agenda"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Display: ", "bold": true, "color": "#999999", "size": 10 },
+            { "text": "Seven-item agenda: Market Imperative, Solution Overview, Feature Deep Dive, Architecture, Security, Live Demo, Vision.", "color": "#999999", "size": 10, "italic": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"Here's how I'll walk you through this today.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "First, I'll share some numbers from the industry that tell us ", "size": 11 },
+            { "text": "why this matters right now", "bold": true, "size": 11 },
+            { "text": " — not next year, right now. Then I'll give you an overview of what we've built, walk you through each feature, explain how the architecture works, and how we've secured it. After that, I'll switch to a live demo on the Seabiscuit storefront so you can see it in action. And finally, we'll talk about where we go from here.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Let's start with the 'why.'\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[CLICK to Slide 3]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+
+        { "type": "pageBreak" },
+
+
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Slide 3: Section Divider — Why Conversational AI"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Display: ", "bold": true, "color": "#999999", "size": 10 },
+            { "text": "Red section divider with \"01\" and the line: \"The industry's largest players are proving that AI-powered shopping assistants drive conversion, engagement, and revenue at scale.\"", "color": "#999999", "size": 10, "italic": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"I want to be direct: this isn't a trend we're predicting. This is a shift that's already happening. The largest e-commerce company in the world has shared their numbers, and they're staggering.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[CLICK to Slide 4]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+
+        { "type": "pageBreak" },
+
+
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Slide 4: Amazon's AI Commerce Results"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Display: ", "bold": true, "color": "#999999", "size": 10 },
+            { "text": "Four stat cards: 250M+ users, 60%+ higher conversion, 210% interaction growth, 3x purchases with Alexa+.", "color": "#999999", "size": 10, "italic": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"Look at these numbers. Amazon's AI shopping assistant, Rufus, has been used by over ", "size": 11 },
+            { "text": "250 million customers", "bold": true, "size": 11 },
+            { "text": " this year alone. Monthly users are up 140 percent year over year. Total interactions are up 210 percent.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[PAUSE — let the numbers land]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"But here's the number that should matter most to everyone in this room: customers who use Rufus during their shopping journey are ", "size": 11 },
+            { "text": "60 percent more likely to convert", "bold": true, "color": "#E41E31", "size": 11 },
+            { "text": ". Think about that. Same products, same prices, same catalog. The only difference is ", "size": 11 },
+            { "text": "how they shop", "bold": true, "size": 11 },
+            { "text": ". A conversational interface changes the way people buy.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "And with Alexa+, when customers explore items through conversation, they make 3 times more purchases compared to the classic Alexa experience. Same customer, same device — just a smarter conversation.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[CLICK to Slide 5]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+
+        { "type": "pageBreak" },
+
+
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Slide 5: AI is Reshaping Every Shopping Touchpoint"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Display: ", "bold": true, "color": "#999999", "size": 10 },
+            { "text": "Six bullet points: review highlights, Hear the Highlights, photo search, sizing, Interests, Buy for Me. Red closing statement.", "color": "#999999", "size": 10, "italic": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"And it's not just the chat assistant. Amazon is applying AI to every touchpoint in the shopping experience.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Their AI-powered review highlights get hundreds of millions of impressions every week. Engaged customers doubled year over year. They launched a feature called 'Hear the Highlights' — audio summaries of reviews — and it went from hundreds of products to millions. Customers have streamed over 7 million minutes of it, and nearly half listen to the full episode.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Photo search in Amazon Lens has more than doubled since 2023. They generate billions of personalized size recommendations every month. Their 'Interests' feature drives 20 percent of customers to add a recommended item to their cart. And their newest agentic AI experience, 'Buy for Me,' went from 65,000 products at launch to over half a million.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[PAUSE — let the audience see the red closing statement on screen]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"The bottom line is on your screen: AI-powered shopping is no longer optional. It's the competitive baseline. Every major retailer is investing. And our customers are going to expect it.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "So the question for us isn't whether to build this. It's how fast we can bring it to our shoppers. And the good news is — we already have.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[CLICK to Slide 6]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+
+        { "type": "pageBreak" },
+
+
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Slide 6: Section Divider — What We Built"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Display: ", "bold": true, "color": "#999999", "size": 10 },
+            { "text": "Red divider. \"02 — What We Built.\" Subtitle: AI shopping assistant embedded in Seabiscuit.", "color": "#999999", "size": 10, "italic": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"Let me show you what our team has built.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "We've created a fully functional Conversational AI Shopping Assistant that lives inside the Seabiscuit storefront. It's not a prototype. It's not a concept deck. It's a working product that our customers can use today to find products, compare items, track their orders, and get support — all through a natural chat experience.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Think of it as putting a knowledgeable UA store associate inside every browser window.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[CLICK to Slide 7]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+
+        { "type": "pageBreak" },
+
+
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Slide 7: Solution at a Glance"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Display: ", "bold": true, "color": "#999999", "size": 10 },
+            { "text": "Six feature boxes in a grid: Product Search, Product Comparison, Order Tracking, Support Tickets, Voice Input, Real-Time Streaming.", "color": "#999999", "size": 10, "italic": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"Here are the six core capabilities we've delivered.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[Point to each box as you walk through them]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "First, ", "size": 11 },
+            { "text": "Natural Language Product Search", "bold": true, "size": 11 },
+            { "text": ". A customer can say 'show me black running shoes under a hundred dollars' and the assistant understands that instantly — no dropdowns, no filter menus. Filters accumulate naturally across the conversation.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Second, ", "size": 11 },
+            { "text": "AI-Powered Comparison", "bold": true, "size": 11 },
+            { "text": ". Select two to four products, and the AI generates a side-by-side analysis: key differences, who each product is best for, and a clear recommendation. This is the kind of advice you'd get from a great salesperson.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Third, ", "size": 11 },
+            { "text": "Order Tracking", "bold": true, "size": 11 },
+            { "text": ". Logged-in customers can say 'show my orders' and get their full history with real carrier tracking links — no need to navigate away from the conversation.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Fourth, ", "size": 11 },
+            { "text": "Support Tickets", "bold": true, "size": 11 },
+            { "text": ". The assistant guides customers through issue categorization conversationally and then hands off to a reliable, deterministic form for ticket submission. I'll explain why that handoff matters in a moment.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Fifth, ", "size": 11 },
+            { "text": "Voice Input", "bold": true, "size": 11 },
+            { "text": ". Customers can speak instead of type — using the browser's native speech recognition, no server calls needed.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "And sixth, ", "size": 11 },
+            { "text": "Real-Time Streaming", "bold": true, "size": 11 },
+            { "text": ". The response doesn't make you wait. Products appear the moment each tool call completes, and the text streams token by token. It feels instant.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[CLICK to Slide 8]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+
+        { "type": "pageBreak" },
+
+
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Slide 8: Design Principle"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Display: ", "bold": true, "color": "#999999", "size": 10 },
+            { "text": "Highlighted quote block with core principle. Two columns: \"AI Handles\" vs. \"Deterministic Code Handles.\"", "color": "#999999", "size": 10, "italic": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"Now, before I dive into each feature, I want to share the design philosophy that guided every decision we made. It's captured in this statement on screen.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[Read the quote]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "'The LLM decides ", "size": 11 },
+            { "text": "what", "bold": true, "size": 11 },
+            { "text": " to request and ", "size": 11 },
+            { "text": "how", "bold": true, "size": 11 },
+            { "text": " to respond. Deterministic server code decides how data is retrieved, validated, merged, and rendered.'", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "This is a critical distinction. We are ", "size": 11 },
+            { "text": "not", "bold": true, "size": 11 },
+            { "text": " letting the AI run wild. The AI is brilliant at understanding what a customer wants and responding naturally. But it's unreliable at things like data retrieval, authentication, and form submission. So we give each side what it's good at.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "On the left: what the AI handles — understanding intent, choosing the right tools, writing natural responses, analyzing products, guiding support conversations.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "On the right: what deterministic code handles — data retrieval through GraphQL, filter merging across conversation turns, authentication injection, ticket form rendering, and all UI rendering. The model never touches a credential, never constructs a query, never renders markup.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "This split is what makes the system both intelligent and reliable. You'll see this principle in action through every feature I'm about to show you.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[CLICK to Slide 9]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+
+        { "type": "pageBreak" },
+
+
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Slide 9: Section Divider — Feature Deep Dive"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Display: ", "bold": true, "color": "#999999", "size": 10 },
+            { "text": "Red divider. \"03 — Feature Deep Dive.\"", "color": "#999999", "size": 10, "italic": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"Let's go deeper into each feature. I'll walk through how the shopper experiences it and what's happening behind the scenes. Each feature is designed with one goal: reduce friction and help customers find what they need faster.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[CLICK to Slide 10]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+
+        { "type": "pageBreak" },
+
+
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Slide 10: Product Search and Discovery"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Display: ", "bold": true, "color": "#999999", "size": 10 },
+            { "text": "Two columns. Left: How It Works + Multi-Turn Refinement. Right: Search Capabilities (pill badges) + Sort Options.", "color": "#999999", "size": 10, "italic": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"Let's start with search, because this is where most shopping journeys begin.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Imagine a customer types: 'show me black running shoes under 100 dollars.' In a traditional experience, that's three separate actions — type a search, apply a color filter, set a price range. Here, it's one sentence.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "The AI extracts the intent — query, color, price ceiling — and the server calls our UACAPI with structured filters. The widget then renders a product grid with real product images, prices, ratings, available colors, and sizes. You can click 'View details' to open a full product drawer, or tap the link to go straight to UA.com.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "But here's the part I'm most proud of: ", "size": 11 },
+            { "text": "multi-turn refinement", "bold": true, "size": 11 },
+            { "text": ".", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "The customer says 'running shoes.' Then in the next message: 'under 100 dollars.' Then: 'only black.' Each filter ", "size": 11 },
+            { "text": "accumulates", "bold": true, "size": 11 },
+            { "text": ". The system remembers everything. And this is not the AI remembering — this is deterministic server-side filter merging. It's reliable every single time. After results appear, you'll also see dynamic refine chips — 'Show Black only,' 'Under $50,' 'Mens only' — generated from live UACAPI data, so customers can refine with one tap.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "On the right you can see the full range of search capabilities — free text, category browsing, color, gender, price ranges, and six different sort options from top sellers to newest arrivals.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[CLICK to Slide 11]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+
+        { "type": "pageBreak" },
+
+
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Slide 11: AI-Powered Product Comparison"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Display: ", "bold": true, "color": "#999999", "size": 10 },
+            { "text": "4-step timeline: Search → Select → Compare → AI Analysis. Two columns below: What the AI Generates + Technical Details.", "color": "#999999", "size": 10, "italic": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"Now, search gets the customer to the right products. But what happens when they're stuck between two or three options? That's where comparison comes in.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Follow the timeline at the top. The customer searches for products. They tap the plus button on two, three, or four product cards. A floating Compare Bar appears at the bottom with their selections. They hit 'Compare,' and a drawer opens with a side-by-side layout plus an AI-generated analysis.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "The AI analysis has three sections: ", "size": 11 },
+            { "text": "Key Differences", "bold": true, "size": 11 },
+            { "text": " — comparing material, cushioning, weight, and fit. ", "size": 11 },
+            { "text": "Best For", "bold": true, "size": 11 },
+            { "text": " — who each product suits, whether that's a marathon runner or someone who wants an everyday trainer. And a ", "size": 11 },
+            { "text": "Verdict", "bold": true, "size": 11 },
+            { "text": " — a clear recommendation.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "This is the digital equivalent of asking a knowledgeable store associate, 'Which one should I get?' And the customer gets that answer in seconds.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[CLICK to Slide 12]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+
+        { "type": "pageBreak" },
+
+
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Slide 12: Order History and Tracking"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Display: ", "bold": true, "color": "#999999", "size": 10 },
+            { "text": "Two columns. Left: Capabilities + Tracking Details. Right: Secure Data Flow diagram with Integration Token and Customer UUID.", "color": "#999999", "size": 10, "italic": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"The next feature addresses one of the most common reasons customers contact support: 'Where's my order?'", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "A logged-in customer simply says 'show my recent orders.' They instantly see their order history — status, items, totals. Each order card expands with a smooth animation to reveal item-level details, a full price breakdown including subtotal, shipping, tax, and discounts.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Hit 'Track' and you get real carrier data — the carrier name, tracking number, a clickable link that takes you directly to the carrier's tracking page, plus shipped, estimated delivery, and delivered dates. And if the customer has an order number handy, they can type it directly with 'Track another order.'", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Now, on the right side, you'll see how we handle this securely. Order data requires a server-side integration token that is ", "size": 11 },
+            { "text": "never", "bold": true, "size": 11 },
+            { "text": " exposed to the browser and ", "size": 11 },
+            { "text": "never", "bold": true, "size": 11 },
+            { "text": " seen by the AI model. The customer's identity is verified through their UUID in a secure header. I'll talk more about security later, but I want to flag now that we designed this from day one with data protection in mind.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[CLICK to Slide 13]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+
+        { "type": "pageBreak" },
+
+
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Slide 13: Help and Support — Hybrid AI + Deterministic"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Display: ", "bold": true, "color": "#999999", "size": 10 },
+            { "text": "Four-row table showing Steps 1-4 with \"Driven By\" column. Red callout box at bottom explaining why Step 4 is deterministic.", "color": "#999999", "size": 10, "italic": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"This slide tells one of the most interesting stories in this project, because it shows how we learned from the AI's limitations and turned that into a strength.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "The support flow has four steps. Look at the table. Steps one through three are driven by the AI with interactive chips. The customer picks a category — Order issue, Payment issue, Product issue. If it's an order issue, the AI fetches their recent orders and shows them as selectable chips. It then tries to resolve the issue by showing tracking data and asking, 'Did this help?'", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "But look at Step 4. The 'Driven By' column turns ", "size": 11 },
+            { "text": "red", "bold": true, "color": "#E41E31", "size": 11 },
+            { "text": ". It says 'Deterministic form.'", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[Point to the red callout box at the bottom]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"Here's why. When we first built this, we let the AI handle ticket creation end to end. It was unreliable. Sometimes it would skip the description. Sometimes it would create a ticket without an email. Sometimes it would ask for the email ", "size": 11 },
+            { "text": "after", "italic": true, "size": 11 },
+            { "text": " already submitting the ticket. For something as important as a support ticket, 'sometimes works' isn't good enough.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "So we made a design decision: when the AI calls create_support_ticket, the server ", "size": 11 },
+            { "text": "intercepts it", "bold": true, "size": 11 },
+            { "text": " and renders a fixed React form instead — description field, email field, submit button. No AI involved. It calls the API directly.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "The result? The AI does what it's great at — understanding the issue, categorizing it, attempting resolution. And a deterministic form handles what needs to be reliable. It works every time.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "This is our design principle in action.\"", "size": 11, "italic": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[CLICK to Slide 14]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+
+        { "type": "pageBreak" },
+
+
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Slide 14: Voice, Streaming, and Smart Prompts"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Display: ", "bold": true, "color": "#999999", "size": 10 },
+            { "text": "Five feature cards in a grid: Voice Input, SSE Streaming, Dynamic Prompts, Resizable Panel, Chat Persistence.", "color": "#999999", "size": 10, "italic": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"These are the experience details that make the assistant feel polished and production-ready, not like a proof of concept.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Voice Input", "bold": true, "size": 11 },
+            { "text": " — tap the microphone, speak naturally, and your words appear in the input field in real time. It uses the browser's built-in speech recognition, so there are zero server calls. It's fast, private, and works in Chrome, Edge, and Safari.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "SSE Streaming", "bold": true, "size": 11 },
+            { "text": " — when the customer sends a message, they don't stare at a loading spinner. The response streams token by token, and products appear the instant each tool completes. There's a subtle 18-millisecond delay between tokens to create a natural typing feel. And if streaming ever fails, it falls back gracefully to a non-streaming response.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Dynamic Prompts", "bold": true, "size": 11 },
+            { "text": " — instead of showing the same generic suggestions, we generate context-aware pills from the actual search results. 'Show Black only,' 'Under $50,' 'Sort by best sellers.' These update on every response.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Plus a ", "size": 11 },
+            { "text": "resizable panel", "bold": true, "size": 11 },
+            { "text": " that remembers your preferred size, and ", "size": 11 },
+            { "text": "chat history persistence", "bold": true, "size": 11 },
+            { "text": " so the conversation picks up where you left off when you return.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[CLICK to Slide 15]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+
+        { "type": "pageBreak" },
+
+
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Slide 15: Section Divider — Architecture"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Display: ", "bold": true, "color": "#999999", "size": 10 },
+            { "text": "Red divider. \"04 — Architecture.\" Three modular projects. LLM never touches credentials.", "color": "#999999", "size": 10, "italic": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"Now let me take you under the hood. I'll keep this at the right level for this audience — you'll see how the pieces fit together without getting lost in code.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[CLICK to Slide 16]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+
+        { "type": "pageBreak" },
+
+
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Slide 16: System Architecture"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Display: ", "bold": true, "color": "#999999", "size": 10 },
+            { "text": "Horizontal flow diagram: Seabiscuit PWA → Widget → mcp-uacapi Backend → UACAPI. Technology table below.", "color": "#999999", "size": 10, "italic": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"The system is three modular projects. Follow the flow at the top.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[Point left to right across the flow diagram]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "On the far left, ", "size": 11 },
+            { "text": "Seabiscuit", "bold": true, "size": 11 },
+            { "text": " — our storefront — mounts the chat widget. The widget is built with React 19 and Tailwind and is distributed as an npm package. It sends requests over HTTPS to our backend, ", "size": 11 },
+            { "text": "mcp-uacapi", "bold": true, "size": 11 },
+            { "text": ". That's where the intelligence lives — the HTTP API, the LLM agent, the MCP tools, and the authentication logic. And on the far right, ", "size": 11 },
+            { "text": "UACAPI", "bold": true, "size": 11 },
+            { "text": " — our Commerce API — the source of truth for catalog, pricing, and orders.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "The table below maps each layer to its technology. We're running the LLM through AWS Bedrock using the GPT-OSS-120B model. The tool protocol is MCP — Model Context Protocol — which gives us a structured, read-only interface between the AI and our data. The backend is lightweight Node.js, no framework, just the built-in http module. And the frontend is modern React with TypeScript.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Each layer has a single, clear responsibility. Nothing is tangled.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[CLICK to Slide 17]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+
+        { "type": "pageBreak" },
+
+
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Slide 17: End-to-End Request Lifecycle"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Display: ", "bold": true, "color": "#999999", "size": 10 },
+            { "text": "Eight color-coded boxes arranged in three rows showing the full lifecycle from shopper message to widget render.", "color": "#999999", "size": 10, "italic": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"Let me walk you through what happens in the two or three seconds between a customer sending a message and seeing results.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[Walk through the colored boxes, row by row]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Step 1, the shopper types their message. Step 2, the widget gathers context — the auth token, locale, customer ID — all behind the scenes. Step 3, it opens a streaming connection to the backend.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Step 4, the agent builds the full context — system prompt, conversation history, saved filters, and the new request. Step 5, the LLM reads that context and decides which tools to call. This is where the AI shines — it understands 'black running shoes under a hundred dollars' and translates it into structured search parameters. The server validates those parameters and injects the auth token — the model never sees it.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Step 6, the tool calls UACAPI over GraphQL using static query documents and variables. Step 7, results stream back — products appear immediately as each tool completes, not after the full response is ready. And Step 8, the widget renders everything as structured cards and grids. The AI doesn't generate HTML or markup — it just tells the widget what to display.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "All of this happens in about two to three seconds.\"", "size": 11, "bold": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[CLICK to Slide 18]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+
+        { "type": "pageBreak" },
+
+
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Slide 18: MCP Tools — Read-Only by Design"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Display: ", "bold": true, "color": "#999999", "size": 10 },
+            { "text": "Table with five tools: search_products, get_orders, get_order_detail, create_support_ticket, request_user_input. Each with purpose and auth type.", "color": "#999999", "size": 10, "italic": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"These are the five tools the AI has access to. And there's something important to notice: every single one is ", "size": 11 },
+            { "text": "read-only", "bold": true, "size": 11 },
+            { "text": ".", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "search_products searches the catalog using the shopper's own token, so pricing and availability are correct for that customer. get_orders and get_order_detail use the server-side integration token — the one that never reaches the browser. create_support_ticket is interesting — look at the purpose column: 'Intercepted.' The AI can request it, but the server replaces it with the deterministic form we talked about. And request_user_input renders interactive controls like chips and text inputs.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "The model cannot write data to UACAPI. It can only read. This is by design.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[CLICK to Slide 19]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+
+        { "type": "pageBreak" },
+
+
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Slide 19: Section Divider — Security and Trust"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Display: ", "bold": true, "color": "#999999", "size": 10 },
+            { "text": "Red divider. \"05 — Security and Trust.\"", "color": "#999999", "size": 10, "italic": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"I know security is top of mind for everyone when we talk about AI systems handling customer data. So let me be specific about what we've built.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[CLICK to Slide 20]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+
+        { "type": "pageBreak" },
+
+
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Slide 20: Security by Design"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Display: ", "bold": true, "color": "#999999", "size": 10 },
+            { "text": "Eight security cards in a 2x4 grid: Read-Only Tools, No GraphQL Injection, Credential Isolation, Token Never Reaches LLM, Integration Token Server-Side, Bounded Sessions, Deterministic Tickets, Stable Output Contracts.", "color": "#999999", "size": 10, "italic": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"Eight security principles. Let me highlight the ones that matter most.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[Point to each card as you mention it]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "First: ", "size": 11 },
+            { "text": "the token never reaches the LLM", "bold": true, "size": 11 },
+            { "text": ". This is non-negotiable. Authentication is injected at the tool-call boundary only. The AI model sees the customer's question — it never sees their token.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Second: ", "size": 11 },
+            { "text": "credential isolation", "bold": true, "size": 11 },
+            { "text": ". The shopper's token is used for product search — so they see their correct pricing. The integration token is used for orders — and it only lives on the server, never in the browser.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Third: ", "size": 11 },
+            { "text": "no GraphQL injection", "bold": true, "size": 11 },
+            { "text": ". Every query to UACAPI uses static documents with parameterized variables. There's no string interpolation, no possibility of injection.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Fourth: ", "size": 11 },
+            { "text": "bounded sessions", "bold": true, "size": 11 },
+            { "text": ". We cap conversation memory at 20 turns and 500 total sessions. This prevents context overflow and keeps memory footprint predictable.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "And the one we already discussed: ", "size": 11 },
+            { "text": "deterministic ticket creation", "bold": true, "size": 11 },
+            { "text": ". The AI cannot create support tickets. It can only trigger the form.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Every one of these was a deliberate architectural decision, not an afterthought. Security is baked in, not bolted on.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[CLICK to Slide 21]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+
+        { "type": "pageBreak" },
+
+
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Slide 21: Section Divider — Live Demo Flow"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Display: ", "bold": true, "color": "#999999", "size": 10 },
+            { "text": "Red divider. \"06 — Live Demo Flow.\"", "color": "#999999", "size": 10, "italic": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"Alright. Enough slides. Let me show you this in action. I'm going to walk through a real shopping scenario on the Seabiscuit storefront.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[CLICK to Slide 22]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+
+        { "type": "pageBreak" },
+
+
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Slide 22: Demo Script"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Display: ", "bold": true, "color": "#999999", "size": 10 },
+            { "text": "Seven numbered steps: Open Widget, Product Search, Refine, Compare, Order Tracking, Support, Voice.", "color": "#999999", "size": 10, "italic": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Tip: Keep this slide visible while you switch to the live Seabiscuit storefront on another screen or tab. Walk through each step below as you perform it live.", "italic": true, "color": "#999999", "size": 10 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "STEP 1 — OPEN THE WIDGET", "bold": true, "size": 11, "color": "#E41E31" }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"I'm on the Seabiscuit storefront, logged in as a customer. Let me open the shopping assistant.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[Open the chat widget]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"See that greeting? It says 'Good morning, Ankush' — it knows my name, it knows the time of day, and if I'm on a product page, it'll offer to help with that specific product. This is the personalized welcome experience.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "STEP 2 — PRODUCT SEARCH", "bold": true, "size": 11, "color": "#E41E31" }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"Let me search for something. I'll type: 'show me black running shoes under 100 dollars.'\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[Type and send the message. Wait for the response to stream.]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"Watch how the response streams in. The text appears token by token, and the product cards appear immediately as the search completes. Each card shows the product image, name, price, colors, and rating. And notice the suggested prompts at the bottom — 'Show Black only,' 'Under $50' — those are generated from the actual search data.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "STEP 3 — REFINE", "bold": true, "size": 11, "color": "#E41E31" }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"Now I'll click 'Mens only.'\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[Click the refine chip. Wait for updated results.]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"The results update and all my previous filters are still applied — black, under $100, running shoes, and now men's. Three messages, four filters, all accumulated. This is deterministic server-side merging. The AI didn't have to remember anything.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "STEP 4 — COMPARE", "bold": true, "size": 11, "color": "#E41E31" }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"Let me select three of these products for comparison.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[Tap the + button on three product cards. Show the Compare Bar appearing. Click \"Compare.\"]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"See the floating Compare Bar? It shows my selections. Now I hit Compare. The drawer opens — compact cards at the top, and here comes the AI analysis. Key Differences, Best For, and a Verdict. This is the kind of guidance that turns browsers into buyers.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "STEP 5 — ORDER TRACKING", "bold": true, "size": 11, "color": "#E41E31" }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[Close the comparison drawer]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"Now let me switch to order tracking. I'll type: 'show my recent orders.'\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[Type and send. Wait for order cards to appear.]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"Here are my recent orders — status, items, and totals. Let me expand one.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[Click an order card to expand it. Then click \"Track.\"]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"There's the full breakdown — subtotal, shipping, tax, grand total. And when I hit Track, I get the real carrier tracking information. That clickable link takes me directly to the carrier's tracking page. This is live data from our UACAPI.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "STEP 6 — SUPPORT", "bold": true, "size": 11, "color": "#E41E31" }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"Now let me show the support experience. I'll say: 'I need help with an order.'\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[Type and send. Walk through the chips: select a category, select an order, respond to the resolution attempt.]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"Watch the flow. The AI asks what kind of issue — I'll pick 'Order issue.' It shows my recent orders as chips — I'll select one. It tries to resolve the issue by showing tracking. I'll say it's not resolved. And now — here it is — the deterministic ticket form appears inline. Description, email pre-filled, submit. No AI involved in this step. I fill in the description, hit submit, and there's my confirmation with a reference number.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "This is the hybrid approach working exactly as designed — AI for understanding, deterministic code for reliability.\"", "size": 11, "bold": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "STEP 7 — VOICE INPUT", "bold": true, "size": 11, "color": "#E41E31" }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"One last thing. See the microphone icon? Let me tap it.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[Tap the mic button. Speak: \"Show me winter jackets.\" Let the transcript fill the input. Send it.]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"The red pulse shows it's listening. My words appear in real time in the input field. I stop, and the transcript is ready to send. Zero server calls for the speech recognition — it's all browser-native.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[Switch back to the presentation slides]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[CLICK to Slide 23]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+
+        { "type": "pageBreak" },
+
+
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Slide 23: Section Divider — Vision and Next Steps"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Display: ", "bold": true, "color": "#999999", "size": 10 },
+            { "text": "Red divider. \"07 — Vision and Next Steps.\"", "color": "#999999", "size": 10, "italic": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"So you've seen what we built. You've seen it work. Now let me talk about where we go from here.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[CLICK to Slide 24]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+
+        { "type": "pageBreak" },
+
+
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Slide 24: Roadmap and Opportunities"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Display: ", "bold": true, "color": "#999999", "size": 10 },
+            { "text": "Two columns: Near-Term Enhancements and Strategic Vision. Red callout box at bottom with the 60%+ conversion opportunity.", "color": "#999999", "size": 10, "italic": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"What you just saw is the foundation. Here's how we build on it.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Near term — on the left — we can close the purchase loop by enabling add-to-cart directly from the chat. Personalized recommendations based on browsing history. Multi-language support to expand globally. An analytics dashboard to measure every query, conversion, and drop-off. And an A/B testing framework so we can optimize response strategies.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Longer term — on the right — we see proactive engagement based on shopper behavior: if someone is dwelling on a page, offer help automatically. Size recommendation integration so customers buy with confidence. Automated return and exchange flows. And eventually, cross-channel deployment — the same assistant on web, mobile app, even in-store kiosks.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[Point to the red callout at the bottom]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "And here's the bottom line. Let me bring it back to where we started. Amazon's data shows that customers who use conversational AI are ", "size": 11 },
+            { "text": "60 percent more likely to convert", "bold": true, "color": "#E41E31", "size": 11 },
+            { "text": ". We now have the platform to capture that same uplift for Under Armour. The architecture is in place. The features are built. The security is baked in.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[CLICK to Slide 25]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+
+        { "type": "pageBreak" },
+
+
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Slide 25: Closing — Ready for Demo"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Display: ", "bold": true, "color": "#999999", "size": 10 },
+            { "text": "Dark slide with UA branding. \"Ready for Demo.\" Subtitle: \"Built, tested, and ready to transform how our customers shop.\"", "color": "#999999", "size": 10, "italic": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[PAUSE — take a breath, look at the room]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "\"Let me leave you with this.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "We started this project with a simple idea: what if every customer who visits UA.com could have the same experience they'd get from walking into one of our stores and talking to our best associate? Someone who understands what they need, remembers their preferences, helps them compare options, tracks their orders, and handles their concerns.", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "That's what this is. It's built. It's tested. It's secure. And it's ready.", "size": 11, "bold": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Thank you. I'd love to take your questions.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 10 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "[END OF PRESENTATION — Open the floor for Q&A]", "italic": true, "color": "#E41E31", "size": 10 }
+          ]
+        },
+
+        { "type": "pageBreak" },
+
+
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Appendix: Anticipating Questions"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Below are likely questions from leadership and suggested answers to keep in your back pocket.", "color": "#555555", "size": 10, "italic": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 6 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Q: \"What happens if the AI gives a wrong answer or hallucinates?\"", "bold": true, "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "A: \"The AI never generates product data — it can only surface what UACAPI returns. Product names, prices, images, and availability all come from our commerce API, not the model. The AI's role is limited to understanding intent, selecting tools, and writing the conversational wrapper. So if a product shows up, it's real. If a price is displayed, it's correct. The risk of hallucination is limited to the conversational text, which is short summaries around structured data.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Q: \"What's the cost per interaction?\"", "bold": true, "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "A: \"We're using AWS Bedrock with the GPT-OSS-120B model. The cost scales with usage, but because our tools are read-only and the model calls are bounded to a maximum of 8 turns with 3 tool calls each, we have predictable per-interaction costs. The bounded session design keeps costs controlled, and we can tune the model size or add caching as we scale.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Q: \"How does this compare to what Amazon is doing with Rufus?\"", "bold": true, "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "A: \"Same concept, tailored to our stack. Amazon has Rufus embedded across their entire shopping experience. We've built the same conversational commerce capability for the UA storefront, but integrated directly with UACAPI and our product catalog. Our advantage is that we can deeply customize the experience for UA's brand, products, and customer base. Amazon proved the model works at scale — we're applying it to our context.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Q: \"Is customer data being sent to the AI model?\"", "bold": true, "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "A: \"The model receives the shopper's message and tool results — product listings, order summaries. It never receives credentials, tokens, email addresses, or payment data. Authentication is injected at the tool-call boundary only. The integration token for orders never leaves the server. And session memory is bounded and trimmed.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Q: \"How quickly can we roll this out to customers?\"", "bold": true, "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "A: \"The widget is distributed as an npm package. Seabiscuit mounts it with a single component tag and a few props — server URL, auth callback, locale. The backend runs as a standalone Node service. We can start with a limited rollout — a percentage of traffic or specific locales — and measure impact before going wider. The architecture supports that kind of gradual deployment.\"", "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Q: \"What if the AI model goes down?\"", "bold": true, "size": 11 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "A: \"The assistant is an enhancement, not a replacement. If the model is unavailable, the chat experience gracefully shows an error and the rest of the storefront continues to work normally. The direct API endpoints — /search, /orders, /order-detail — don't require the LLM at all, so we could fall back to those if needed. The storefront never depends on the assistant for core shopping functionality.\"", "size": 11 }
+          ]
+        }
+      ]
+    }
+  ]
+}

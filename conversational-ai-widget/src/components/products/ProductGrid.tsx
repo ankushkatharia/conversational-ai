@@ -7,10 +7,14 @@ import { ProductCard } from "./ProductCard";
 export function ProductGrid({
   products,
   onSelect,
+  compareIds,
+  onToggleCompare,
   className,
 }: {
   products: Product[];
   onSelect?: (product: Product) => void;
+  compareIds?: Set<string>;
+  onToggleCompare?: (product: Product) => void;
   className?: string;
 }) {
   return (
@@ -21,7 +25,13 @@ export function ProductGrid({
       )}
     >
       {products.map((product) => (
-        <ProductCard key={product.id} product={product} onSelect={onSelect} />
+        <ProductCard
+          key={product.id}
+          product={product}
+          onSelect={onSelect}
+          compareSelected={compareIds?.has(product.id)}
+          onToggleCompare={onToggleCompare}
+        />
       ))}
     </div>
   );

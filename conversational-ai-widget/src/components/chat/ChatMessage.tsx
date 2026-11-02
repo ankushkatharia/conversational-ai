@@ -7,13 +7,16 @@ import type {
   ChatMessage as ChatMessageType,
   OrderDetail,
   Product,
+  SupportTicket,
 } from "../../lib/types";
+import type { McpClient } from "../../lib/mcp-client";
 import { cn } from "../../lib/utils";
 import { ProductGrid } from "../products/ProductGrid";
 import { OrderList } from "../orders/OrderList";
 import { OrderTrackingPanel } from "../orders/OrderTrackingPanel";
 import { OrderTrackingCard } from "../orders/OrderTrackingCard";
 import { SupportTicketCard } from "../help/SupportTicketCard";
+import { TicketFormCard } from "../help/TicketFormCard";
 import { ChatInteraction } from "./ChatInteraction";
 import { SuggestedPrompts } from "./SuggestedPrompts";
 import { RefinePanel } from "./RefinePanel";
@@ -28,6 +31,10 @@ export function ChatMessage({
   onViewTracking,
   onViewOrderDetail,
   trackingOrderNo,
+  compareIds,
+  onToggleCompare,
+  client,
+  onTicketCreated,
   streaming,
 }: {
   message: ChatMessageType;
@@ -42,6 +49,10 @@ export function ChatMessage({
   onViewOrderDetail: (detail: OrderDetail) => void;
   /** Order number whose tracking is currently loading (for inline spinners). */
   trackingOrderNo: string | null;
+  compareIds?: Set<string>;
+  onToggleCompare?: (product: Product) => void;
+  client?: McpClient;
+  onTicketCreated?: (ticket: SupportTicket) => void;
   streaming?: boolean;
 }) {
   const isUser = message.role === "user";
@@ -149,7 +160,16 @@ export function ChatMessage({
           </div>
         )}
 
-        {interaction && (
+        {interaction && interaction.type === "ticket_form" && client && (
+          <div>
+            <TicketFormCard
+              interaction={interaction}
+              client={client}
+            />
+          </div>
+        )}
+
+        {interaction && interaction.type !== "ticket_form" && (
           <div>
             <ChatInteraction
               interaction={interaction}
@@ -173,7 +193,12 @@ export function ChatMessage({
 
         {products.length > 0 && (
           <div>
-            <ProductGrid products={products} onSelect={onSelectProduct} />
+            <ProductGrid
+              products={products}
+              onSelect={onSelectProduct}
+              compareIds={compareIds}
+              onToggleCompare={onToggleCompare}
+            />
           </div>
         )}
 

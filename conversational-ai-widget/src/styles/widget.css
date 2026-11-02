@@ -260,6 +260,76 @@
   }
 }
 
+/* Message entrance: messages slide up and fade in. */
+@keyframes ua-msg-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ua-cai .ua-cai-msg-in {
+  animation: ua-msg-in 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Drawer backdrop fade. */
+@keyframes ua-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ua-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* Drawer panel slide. */
+@keyframes ua-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes ua-slide-down {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(24px) scale(0.97);
+  }
+}
+
+.ua-cai .ua-cai-backdrop-in  { animation: ua-fade-in 0.2s ease both; }
+.ua-cai .ua-cai-backdrop-out { animation: ua-fade-out 0.15s ease both; }
+.ua-cai .ua-cai-drawer-in    { animation: ua-slide-up 0.28s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.ua-cai .ua-cai-drawer-out   { animation: ua-slide-down 0.2s cubic-bezier(0.4, 0, 1, 1) both; }
+
+/* Order card expand/collapse: animated height via grid-rows trick. */
+.ua-cai .ua-cai-expand {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ua-cai .ua-cai-expand[data-open="true"] {
+  grid-template-rows: 1fr;
+}
+
+.ua-cai .ua-cai-expand > div {
+  overflow: hidden;
+}
+
 @keyframes ua-bounce {
   0%,
   80%,
@@ -302,6 +372,19 @@
     opacity: 1;
     transform: scale(1);
   }
+}
+
+@keyframes ua-mic-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(220, 0, 25, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(220, 0, 25, 0);
+  }
+}
+
+.ua-cai .ua-cai-mic-pulse {
+  animation: ua-mic-pulse 1.4s ease-in-out infinite;
 }
 
 /*

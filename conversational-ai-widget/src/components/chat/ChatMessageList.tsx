@@ -4,10 +4,13 @@ import { useEffect, useRef } from "react";
 import { Bot } from "lucide-react";
 
 import type {
+  ChatbotWidgetProps,
   ChatMessage as ChatMessageType,
   OrderDetail,
   Product,
+  SupportTicket,
 } from "../../lib/types";
+import type { McpClient } from "../../lib/mcp-client";
 import { ChatMessage } from "./ChatMessage";
 import { ChatEmptyState } from "./ChatEmptyState";
 import { ProductSkeletonGrid } from "../products/ProductSkeleton";
@@ -26,7 +29,12 @@ export function ChatMessageList({
   onViewTracking,
   onViewOrderDetail,
   onOpenHelp,
+  pageContext,
   trackingOrderNo,
+  compareIds,
+  onToggleCompare,
+  client,
+  onTicketCreated,
 }: {
   messages: ChatMessageType[];
   /** True while waiting for the assistant before any tokens have streamed. */
@@ -42,7 +50,12 @@ export function ChatMessageList({
   onViewOrderDetail: (detail: OrderDetail) => void;
   /** Opens the Help / Queries wizard (from the empty-state entry). */
   onOpenHelp: () => void;
+  pageContext?: ChatbotWidgetProps["pageContext"];
   trackingOrderNo: string | null;
+  compareIds?: Set<string>;
+  onToggleCompare?: (product: Product) => void;
+  client?: McpClient;
+  onTicketCreated?: (ticket: SupportTicket) => void;
 }) {
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -55,6 +68,7 @@ export function ChatMessageList({
       <ChatEmptyState
         userName={userName}
         userAvatarUrl={userAvatarUrl}
+        pageContext={pageContext}
         onSelect={onSuggestion}
         onOpenHelp={onOpenHelp}
       />
@@ -70,8 +84,8 @@ export function ChatMessageList({
     >
       <div className="flex w-full flex-col gap-6 px-4 py-6">
         {messages.map((message) => (
+          <div key={message.id} className="ua-cai-msg-in">
           <ChatMessage
-            key={message.id}
             message={message}
             streaming={message.id === streamingId}
             onSelectProduct={onSelectProduct}
@@ -81,11 +95,16 @@ export function ChatMessageList({
             onViewTracking={onViewTracking}
             onViewOrderDetail={onViewOrderDetail}
             trackingOrderNo={trackingOrderNo}
+            compareIds={compareIds}
+            onToggleCompare={onToggleCompare}
+            client={client}
+            onTicketCreated={onTicketCreated}
           />
+          </div>
         ))}
 
         {pending && (
-          <div className="flex gap-3">
+          <div className="ua-cai-msg-in flex gap-3">
             <span
               aria-hidden="true"
               className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground"

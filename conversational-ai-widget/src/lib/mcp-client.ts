@@ -26,11 +26,54 @@ import type {
 } from "./types";
 import { makeId } from "./utils";
 
-const DEFAULT_SUGGESTIONS = [
-  "Show me more like this",
-  "Compare these products",
-  "Filter under $50",
-];
+/**
+ * Builds context-aware follow-up suggestions from the live search refinements.
+ * Falls back to generic prompts when no refinements are available.
+ */
+function buildSuggestions(
+  refinements?: RefinementSuggestions,
+  filters?: AppliedFilters,
+): string[] {
+  const suggestions: string[] = [];
+  if (!refinements) return suggestions;
+
+  const colorGroup = refinements.refinements.find((g) => g.field === "color");
+  if (colorGroup) {
+    const unselected = colorGroup.values
+      .filter((v) => !v.selected && v.count > 0)
+      .slice(0, 2);
+    for (const v of unselected) {
+      suggestions.push(`Show me ${v.label.toLowerCase()} ones`);
+    }
+  }
+
+  if (!filters?.maxPrice) {
+    const priceGroup = refinements.refinements.find((g) => g.field === "price");
+    if (priceGroup) {
+      const cheapest = priceGroup.values.find((v) => !v.selected && v.count > 0);
+      if (cheapest?.delta?.maxPrice) {
+        suggestions.push(`Under $${cheapest.delta.maxPrice}`);
+      }
+    }
+  }
+
+  const genderGroup = refinements.refinements.find((g) => g.field === "gender");
+  if (genderGroup && !filters?.gender) {
+    const top = genderGroup.values.find((v) => !v.selected && v.count > 0);
+    if (top) {
+      suggestions.push(`${top.label} only`);
+    }
+  }
+
+  const trendingSort = refinements.sorts.find(
+    (s) => !s.selected && (s.id === "top-sellers" || s.id === "now-trending"),
+  );
+  if (trendingSort) {
+    suggestions.push("Sort by best sellers");
+  }
+
+  return suggestions.slice(0, 4);
+}
 
 type PriceBand = { min?: number; max?: number } | null;
 
@@ -38,6 +81,7 @@ type BackendProduct = {
   id?: string;
   style?: string;
   name?: string;
+  description?: string | null;
   url?: string;
   orderable?: boolean;
   currency?: string;
@@ -103,6 +147,7 @@ function mapBackendProduct(raw: unknown): Product | null {
   return {
     id: String(p.id ?? p.style ?? Math.random().toString(36).slice(2)),
     name: String(p.name ?? "Product"),
+    description: p.description ?? undefined,
     brand: "Under Armour",
     price,
     originalPrice,
@@ -297,6 +342,17 @@ function sanitizeInteraction(raw: unknown): ChatInteraction | null {
     };
   }
 
+  if (i.type === "ticket_form") {
+    return {
+      type: "ticket_form" as const,
+      prompt,
+      category: (str(i.category) ?? "other") as HelpCategory,
+      orderNumber: str(i.orderNumber),
+      prefillEmail: str(i.prefillEmail),
+      contactMethod: str(i.contactMethod) === "call" ? ("call" as const) : ("ticket" as const),
+    };
+  }
+
   return null;
 }
 
@@ -406,7 +462,10 @@ export class McpClient {
       orderDetail,
       supportTicket,
       interaction,
-      suggestions: DEFAULT_SUGGESTIONS,
+      suggestions: buildSuggestions(
+        sanitizeSuggestions(data.suggestions),
+        data.filters,
+      ),
       refinements: sanitizeSuggestions(data.suggestions),
       filters: data.filters,
     };
@@ -506,10 +565,193 @@ export class McpClient {
   }
 
   /**
-   * Sends a message and invokes `onEvent` for each simulated streaming event.
+   * Calls the LLM-powered `/compare` endpoint to get an intelligent product
+   * comparison analysis. Returns the markdown analysis string, or null on error.
+   */
+  async compareProducts(
+    products: Product[],
+    signal?: AbortSignal,
+  ): Promise<string | null> {
+    try {
+      const res = await fetch(`${this.baseUrl}/compare`, {
+        method: "POST",
+        headers: await this.buildHeaders(),
+        body: JSON.stringify({
+          products: products.map((p) => ({
+            name: p.name,
+            brand: p.brand,
+            description: p.description,
+            price: p.price,
+            originalPrice: p.originalPrice,
+            availability: p.availability,
+            availableColors: p.availableColors,
+            availableSizes: p.availableSizes,
+          })),
+        }),
+        signal,
+      });
+      if (!res.ok) return null;
+      const data = (await res.json()) as { analysis?: string };
+      return data.analysis ?? null;
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Sends a message and consumes real Server-Sent Events from POST /agent/stream.
+   * Falls back to the non-streaming `/agent` endpoint when the SSE endpoint is
+   * unavailable (e.g. 404 on older server versions).
    * Pass an `AbortSignal` to cancel generation.
    */
   async streamMessage(
+    sessionId: string,
+    message: string,
+    onEvent: (event: ChatStreamEvent) => void,
+    signal?: AbortSignal,
+  ): Promise<void> {
+    const headers = await this.buildHeaders();
+    // Accept is text/event-stream for the SSE endpoint.
+    headers.accept = "text/event-stream";
+
+    const res = await fetch(`${this.baseUrl}/agent/stream`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ sessionId, prompt: message }),
+      signal,
+    });
+
+    if (!res.ok) {
+      // Fall back to the non-streaming path on server error or if the
+      // SSE endpoint doesn't exist (404).
+      if (res.status === 404) {
+        return this.streamMessageFallback(sessionId, message, onEvent, signal);
+      }
+      throw new McpError("The assistant is unavailable right now.", res.status);
+    }
+
+    const reader = res.body?.getReader();
+    if (!reader) {
+      return this.streamMessageFallback(sessionId, message, onEvent, signal);
+    }
+
+    const decoder = new TextDecoder();
+    let buffer = "";
+
+    try {
+      while (true) {
+        if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const parts = buffer.split("\n\n");
+        buffer = parts.pop() ?? "";
+
+        for (const part of parts) {
+          if (!part.trim()) continue;
+          let eventType = "message";
+          let dataStr = "";
+          for (const line of part.split("\n")) {
+            if (line.startsWith("event: ")) eventType = line.slice(7).trim();
+            else if (line.startsWith("data: ")) dataStr = line.slice(6);
+          }
+          if (!dataStr) continue;
+
+          let data: Record<string, unknown>;
+          try {
+            data = JSON.parse(dataStr);
+          } catch {
+            continue;
+          }
+
+          this.handleSseEvent(eventType, data, onEvent);
+        }
+      }
+    } finally {
+      reader.releaseLock();
+    }
+  }
+
+  /** Maps a single SSE event into the widget's ChatStreamEvent type. */
+  private handleSseEvent(
+    eventType: string,
+    data: Record<string, unknown>,
+    onEvent: (event: ChatStreamEvent) => void,
+  ): void {
+    switch (eventType) {
+      case "status":
+        // Status events are informational; the typing indicator already
+        // shows while waiting so we don't forward these.
+        break;
+      case "token":
+        if (typeof data.value === "string") {
+          onEvent({ type: "token", value: data.value });
+        }
+        break;
+      case "products": {
+        const products = (Array.isArray(data.products) ? data.products : [])
+          .map(mapBackendProduct)
+          .filter((p): p is Product => p !== null);
+        if (products.length) onEvent({ type: "products", products });
+        break;
+      }
+      case "orders": {
+        const orders = sanitizeOrders(data.orders);
+        if (orders.length) onEvent({ type: "orders", orders });
+        break;
+      }
+      case "orderDetail": {
+        const orderDetail = sanitizeOrderDetail(data.orderDetail);
+        if (orderDetail) onEvent({ type: "orderDetail", orderDetail });
+        break;
+      }
+      case "supportTicket": {
+        const ticket = sanitizeSupportTicket(data.supportTicket);
+        if (ticket) onEvent({ type: "supportTicket", supportTicket: ticket });
+        break;
+      }
+      case "interaction": {
+        const interaction = sanitizeInteraction(data.interaction);
+        if (interaction) onEvent({ type: "interaction", interaction });
+        break;
+      }
+      case "suggestions": {
+        const refinements = sanitizeSuggestions(data);
+        if (refinements) {
+          onEvent({ type: "refinements", refinements });
+          const dynamicSuggestions = buildSuggestions(refinements);
+          if (dynamicSuggestions.length) {
+            onEvent({ type: "suggestions", suggestions: dynamicSuggestions });
+          }
+        }
+        break;
+      }
+      case "filters":
+        onEvent({ type: "filters", filters: data as AppliedFilters });
+        break;
+      case "done":
+        onEvent({
+          type: "done",
+          messageId: typeof data.messageId === "string" ? data.messageId : makeId("msg"),
+          createdAt: new Date().toISOString(),
+        });
+        break;
+      case "error":
+        onEvent({
+          type: "error",
+          message: typeof data.message === "string" ? data.message : "An error occurred.",
+        });
+        break;
+    }
+  }
+
+  /**
+   * Fallback: calls the non-streaming `/agent` endpoint and simulates
+   * word-by-word streaming client-side (used when the SSE endpoint is
+   * unavailable, e.g. older server versions).
+   */
+  private async streamMessageFallback(
     sessionId: string,
     message: string,
     onEvent: (event: ChatStreamEvent) => void,

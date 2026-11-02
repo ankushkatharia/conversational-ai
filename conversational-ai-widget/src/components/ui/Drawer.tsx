@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { X } from "lucide-react";
 
 import { cn } from "../../lib/utils";
@@ -36,20 +36,36 @@ export function Drawer({
 }: DrawerProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const previouslyFocused = useRef<HTMLElement | null>(null);
+  const [visible, setVisible] = useState(false);
+  const [exiting, setExiting] = useState(false);
+
+  const startClose = useCallback(() => {
+    setExiting(true);
+    setTimeout(() => {
+      setExiting(false);
+      setVisible(false);
+      onClose();
+    }, 200);
+  }, [onClose]);
 
   useEffect(() => {
-    if (!open) return;
+    if (open) {
+      setVisible(true);
+      setExiting(false);
+    }
+  }, [open]);
+
+  useEffect(() => {
+    if (!visible || exiting) return;
     previouslyFocused.current = document.activeElement as HTMLElement | null;
     const panel = panelRef.current;
     panel?.focus();
-    // Only lock page scroll for viewport-level drawers; a contained drawer lives
-    // inside the chat panel and must not freeze the rest of the page.
     if (!contained) document.body.style.overflow = "hidden";
 
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") {
         e.stopPropagation();
-        onClose();
+        startClose();
         return;
       }
       if (e.key !== "Tab" || !panel) return;
@@ -74,9 +90,9 @@ export function Drawer({
       if (!contained) document.body.style.overflow = "";
       previouslyFocused.current?.focus?.();
     };
-  }, [open, onClose, contained]);
+  }, [visible, exiting, contained, startClose]);
 
-  if (!open) return null;
+  if (!visible) return null;
 
   return (
     <div
@@ -90,9 +106,10 @@ export function Drawer({
       <div
         className={cn(
           "absolute inset-0 bg-black/60",
-          contained && "backdrop-blur-sm animate-in",
+          contained && "backdrop-blur-sm",
+          exiting ? "ua-cai-backdrop-out" : "ua-cai-backdrop-in",
         )}
-        onClick={onClose}
+        onClick={startClose}
         aria-hidden="true"
       />
       <div
@@ -104,18 +121,17 @@ export function Drawer({
         className={cn(
           "bg-surface shadow-2xl focus:outline-none",
           contained
-            ? // Centered modern dialog card, scoped to the chat panel and sized
-              // to fit; grows a little on wider panels (container-query driven).
-              cn(
+            ? cn(
                 "relative flex max-h-full w-full max-w-sm flex-col overflow-hidden",
-                "rounded-2xl border border-border animate-in @lg:max-w-md",
+                "rounded-2xl border border-border @lg:max-w-md",
+                exiting ? "ua-cai-drawer-out" : "ua-cai-drawer-in",
               )
-            : // Viewport-level: bottom sheet on mobile, side sheet on desktop.
-              cn(
+            : cn(
                 "absolute",
                 "inset-x-0 bottom-0 top-16 rounded-t-2xl",
                 "sm:inset-y-0 sm:top-0 sm:w-full sm:max-w-md sm:rounded-none",
                 side === "right" ? "sm:right-0" : "sm:left-0",
+                exiting ? "ua-cai-drawer-out" : "ua-cai-drawer-in",
               ),
         )}
       >
@@ -123,7 +139,7 @@ export function Drawer({
           <h2 className="text-base font-bold uppercase tracking-wide">{title}</h2>
           <button
             type="button"
-            onClick={onClose}
+            onClick={startClose}
             aria-label="Close"
             className="rounded-full p-1.5 text-muted hover:bg-surface-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
@@ -142,7 +158,7 @@ export function Drawer({
           <div className="flex shrink-0 justify-end border-t border-border px-5 py-3">
             <button
               type="button"
-              onClick={onClose}
+              onClick={startClose}
               className="inline-flex h-10 items-center justify-center rounded-full border border-border px-5 text-sm font-semibold text-foreground transition-colors hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               Cancel

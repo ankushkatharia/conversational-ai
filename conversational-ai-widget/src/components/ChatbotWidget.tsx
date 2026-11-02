@@ -27,6 +27,7 @@ export function ChatbotWidget({
   userEmail,
   getAuthToken,
   locale,
+  pageContext,
 }: ChatbotWidgetProps) {
   const [open, setOpen] = useState(false);
   const client = useMemo(
@@ -59,6 +60,7 @@ export function ChatbotWidget({
             userAvatarUrl={userAvatarUrl}
             userKey={userKey}
             userEmail={userEmail}
+            pageContext={pageContext}
             onClose={() => setOpen(false)}
           />
         )}

@@ -1,0 +1,1367 @@
+{
+  "title": "Conversational AI Shopping Assistant — Executive Briefing",
+  "metadata": {
+    "title": "Conversational AI Shopping Assistant — Executive Briefing",
+    "subject": "Architecture, Features, and Strategic Rationale",
+    "creator": "Under Armour Digital Engineering",
+    "description": "Executive briefing on the Conversational AI Shopping Assistant for the Seabiscuit storefront",
+    "keywords": "conversational AI, shopping assistant, MCP, Under Armour, Seabiscuit"
+  },
+  "page": {
+    "orientation": "portrait",
+    "margins": { "top": 1, "right": 1, "bottom": 1, "left": 1 }
+  },
+  "sections": [
+    {
+      "children": [
+        {
+          "type": "paragraph",
+          "alignment": "center",
+          "runs": [
+            { "text": "UNDER ARMOUR", "bold": true, "size": 14, "color": "#E41E31" }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "alignment": "center",
+          "runs": [{ "text": " ", "size": 12 }]
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Conversational AI Shopping Assistant"
+        },
+        {
+          "type": "paragraph",
+          "alignment": "center",
+          "runs": [
+            { "text": "Executive Briefing — Architecture, Features, and Strategic Rationale", "size": 14, "color": "#555555" }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "alignment": "center",
+          "runs": [{ "text": " ", "size": 12 }]
+        },
+        {
+          "type": "paragraph",
+          "alignment": "center",
+          "runs": [
+            { "text": "October 2026 · Confidential", "size": 11, "color": "#999999" }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "alignment": "center",
+          "runs": [{ "text": " ", "size": 12 }]
+        },
+        {
+          "type": "paragraph",
+          "alignment": "center",
+          "runs": [
+            { "text": "Prepared by Digital Engineering", "size": 11, "color": "#999999" }
+          ]
+        },
+        { "type": "pageBreak" },
+
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Table of Contents"
+        },
+        {
+          "type": "paragraph",
+          "text": "1. The Market Imperative — Why Conversational AI Now",
+          "list": { "type": "numbered" }
+        },
+        {
+          "type": "paragraph",
+          "text": "2. Executive Summary",
+          "list": { "type": "numbered" }
+        },
+        {
+          "type": "paragraph",
+          "text": "3. Solution Overview",
+          "list": { "type": "numbered" }
+        },
+        {
+          "type": "paragraph",
+          "text": "4. Product Search and Discovery",
+          "list": { "type": "numbered" }
+        },
+        {
+          "type": "paragraph",
+          "text": "5. AI-Powered Product Comparison",
+          "list": { "type": "numbered" }
+        },
+        {
+          "type": "paragraph",
+          "text": "6. Order History and Tracking",
+          "list": { "type": "numbered" }
+        },
+        {
+          "type": "paragraph",
+          "text": "7. Help and Support",
+          "list": { "type": "numbered" }
+        },
+        {
+          "type": "paragraph",
+          "text": "8. Voice, Streaming, and Smart Prompts",
+          "list": { "type": "numbered" }
+        },
+        {
+          "type": "paragraph",
+          "text": "9. Architecture and Technology",
+          "list": { "type": "numbered" }
+        },
+        {
+          "type": "paragraph",
+          "text": "10. Security Design",
+          "list": { "type": "numbered" }
+        },
+        {
+          "type": "paragraph",
+          "text": "11. Demo Guide",
+          "list": { "type": "numbered" }
+        },
+        {
+          "type": "paragraph",
+          "text": "12. Roadmap and Strategic Vision",
+          "list": { "type": "numbered" }
+        },
+        { "type": "pageBreak" },
+
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "1. The Market Imperative — Why Conversational AI Now"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "The world's largest e-commerce players are proving that AI-powered shopping assistants are not experimental — they are driving measurable conversion, engagement, and revenue at scale. The data from Amazon's 2026 disclosures makes the case undeniable." }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Amazon's AI Commerce Results (2026)"
+        },
+        {
+          "type": "table",
+          "widthPercent": 100,
+          "rows": [
+            [
+              { "text": "Metric", "shading": "#1a1a1a", "paragraphs": [{ "runs": [{ "text": "Metric", "bold": true, "color": "#FFFFFF" }] }] },
+              { "text": "Result", "shading": "#1a1a1a", "paragraphs": [{ "runs": [{ "text": "Result", "bold": true, "color": "#FFFFFF" }] }] }
+            ],
+            [
+              { "text": "Rufus Users" },
+              { "text": "250M+ customers this year; monthly users up 140% YoY, interactions up 210% YoY" }
+            ],
+            [
+              { "text": "Conversion Impact" },
+              { "text": "Customers using Rufus are 60%+ more likely to convert" }
+            ],
+            [
+              { "text": "Review Highlights" },
+              { "text": "Hundreds of millions of impressions weekly; engaged customers up 100% YoY" }
+            ],
+            [
+              { "text": "Hear the Highlights" },
+              { "text": "Expanded from hundreds to millions of products; 7M+ minutes streamed, nearly half listen to full episodes" }
+            ],
+            [
+              { "text": "Photo Search (Lens)" },
+              { "text": "More than doubled since 2023; Lens Live increased engagement by 13%" }
+            ],
+            [
+              { "text": "Size Recommendations" },
+              { "text": "Billions of personalized recommendations generated monthly" }
+            ],
+            [
+              { "text": "Interests Feature" },
+              { "text": "~20% of customers added a recommended item to cart" }
+            ],
+            [
+              { "text": "Alexa+ Shopping" },
+              { "text": "3x more on-device purchases compared to classic Alexa" }
+            ],
+            [
+              { "text": "Buy for Me (Agentic AI)" },
+              { "text": "Grew from 65K products at launch to 500K+; positive customer response for on- and off-Amazon selection" }
+            ]
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "The message is clear: ", "bold": true },
+            { "text": "AI-powered conversational shopping is no longer a forward-looking experiment. It is the competitive baseline. Every major retailer is investing, and customers are responding with measurably higher engagement and conversion." }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "For Under Armour, the question is not whether to invest in conversational AI, but how quickly we can bring it to our shoppers. This document describes the solution we have built to answer that question." }
+          ]
+        },
+        { "type": "pageBreak" },
+
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "2. Executive Summary"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "We have built a fully functional ", "size": 12 },
+            { "text": "Conversational AI Shopping Assistant", "bold": true, "size": 12 },
+            { "text": " embedded in the Under Armour Seabiscuit storefront. The assistant helps shoppers find products, compare items, track orders, and get support through a natural chat experience backed by controlled, read-only server tools.", "size": 12 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Core Design Principle"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "The LLM decides ", "italic": true },
+            { "text": "what", "bold": true, "italic": true },
+            { "text": " information to request and ", "italic": true },
+            { "text": "how", "bold": true, "italic": true },
+            { "text": " to respond conversationally, while deterministic server code and MCP tools decide ", "italic": true },
+            { "text": "how data is retrieved, validated, merged, and rendered", "bold": true, "italic": true },
+            { "text": ". The model never calls UACAPI directly and never receives shopper credentials.", "italic": true }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Key Capabilities Delivered"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Natural Language Product Search", "bold": true },
+            { "text": " — Shoppers search the full UA catalog using conversational language. Filters accumulate across turns through deterministic server-side merge." }
+          ],
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "AI-Powered Product Comparison", "bold": true },
+            { "text": " — Select 2-4 products and receive an instant AI-generated side-by-side analysis with key differences, best-for recommendations, and a verdict." }
+          ],
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Order History and Tracking", "bold": true },
+            { "text": " — Logged-in shoppers view recent orders and track shipments with real carrier tracking data and clickable links." }
+          ],
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Help and Support", "bold": true },
+            { "text": " — Guided conversational flow for issue categorization, with a deterministic ticket form for reliable submission." }
+          ],
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Voice Input", "bold": true },
+            { "text": " — Browser-native speech-to-text using the Web Speech API. Zero server calls." }
+          ],
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Real-Time SSE Streaming", "bold": true },
+            { "text": " — Token-by-token delivery with structured data streaming as each tool completes." }
+          ],
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Dynamic Suggested Prompts", "bold": true },
+            { "text": " — Context-aware suggestion pills generated from live UACAPI refinement data." }
+          ],
+          "list": { "type": "bullet" }
+        },
+        { "type": "pageBreak" },
+
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "3. Solution Overview"
+        },
+        {
+          "type": "paragraph",
+          "text": "The solution is composed of three modular projects with clear separation of concerns:"
+        },
+        {
+          "type": "table",
+          "widthPercent": 100,
+          "rows": [
+            [
+              { "text": "Project", "shading": "#1a1a1a", "paragraphs": [{ "runs": [{ "text": "Project", "bold": true, "color": "#FFFFFF" }] }] },
+              { "text": "Role", "shading": "#1a1a1a", "paragraphs": [{ "runs": [{ "text": "Role", "bold": true, "color": "#FFFFFF" }] }] }
+            ],
+            [
+              { "text": "conversational-ai-widget", "paragraphs": [{ "runs": [{ "text": "conversational-ai-widget", "bold": true }] }] },
+              { "text": "Embeddable React chat UI distributed as an npm package. Renders product cards, order cards, drawers, forms, and suggested prompts." }
+            ],
+            [
+              { "text": "mcp-uacapi", "paragraphs": [{ "runs": [{ "text": "mcp-uacapi", "bold": true }] }] },
+              { "text": "Node backend containing the HTTP API, LLM agent, MCP tools, and UACAPI GraphQL client. Owns orchestration, auth injection, and filter merge." }
+            ],
+            [
+              { "text": "Seabiscuit PWA", "paragraphs": [{ "runs": [{ "text": "Seabiscuit PWA", "bold": true }] }] },
+              { "text": "Host storefront application that mounts the widget and supplies auth, routing, cart, and page context callbacks." }
+            ]
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Technology Stack"
+        },
+        {
+          "type": "table",
+          "widthPercent": 100,
+          "rows": [
+            [
+              { "text": "Layer", "shading": "#1a1a1a", "paragraphs": [{ "runs": [{ "text": "Layer", "bold": true, "color": "#FFFFFF" }] }] },
+              { "text": "Technology", "shading": "#1a1a1a", "paragraphs": [{ "runs": [{ "text": "Technology", "bold": true, "color": "#FFFFFF" }] }] }
+            ],
+            [
+              { "text": "LLM" },
+              { "text": "AWS Bedrock using openai.gpt-oss-120b through an OpenAI-compatible client" }
+            ],
+            [
+              { "text": "Protocol" },
+              { "text": "Model Context Protocol (MCP) over stdio" }
+            ],
+            [
+              { "text": "Backend" },
+              { "text": "Node.js using built-in http, no framework" }
+            ],
+            [
+              { "text": "Frontend" },
+              { "text": "React 19, TypeScript, Tailwind CSS v4" }
+            ],
+            [
+              { "text": "Build" },
+              { "text": "tsup for the widget, tsc for the MCP server" }
+            ],
+            [
+              { "text": "Commerce API" },
+              { "text": "UACAPI GraphQL" }
+            ]
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "End-to-End Request Lifecycle"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Step 1: ", "bold": true },
+            { "text": "The shopper enters a message in the widget." }
+          ],
+          "list": { "type": "numbered" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Step 2: ", "bold": true },
+            { "text": "The widget resolves getAuthToken(), reads locale and user/page context, and calls POST /agent/stream." }
+          ],
+          "list": { "type": "numbered" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Step 3: ", "bold": true },
+            { "text": "http.ts parses headers: Authorization, x-ua-locale, x-ua-customer-no, and x-ua-user-email." }
+          ],
+          "list": { "type": "numbered" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Step 4: ", "bold": true },
+            { "text": "agent.ts builds the model messages from the system prompt, session history, saved filters, and the current request." }
+          ],
+          "list": { "type": "numbered" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Step 5: ", "bold": true },
+            { "text": "The LLM requests MCP tools. The server validates and merges arguments, then injects auth only at the tool-call boundary." }
+          ],
+          "list": { "type": "numbered" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Step 6: ", "bold": true },
+            { "text": "Tools validate input with Zod, build GraphQL variables, call UACAPI, and map raw responses into stable outputs." }
+          ],
+          "list": { "type": "numbered" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Step 7: ", "bold": true },
+            { "text": "The agent returns a short response plus structured data: products, orders, interactions, suggestions, and applied filters." }
+          ],
+          "list": { "type": "numbered" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Step 8: ", "bold": true },
+            { "text": "The widget renders structured data as cards, drawers, chips, forms, and prompt suggestions rather than relying on the model to create UI markup." }
+          ],
+          "list": { "type": "numbered" }
+        },
+        { "type": "pageBreak" },
+
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "4. Product Search and Discovery"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Shoppers search the UA catalog in natural language. The assistant translates intent into structured search filters and returns real product cards from UACAPI." }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "User Experience"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "The shopper types a query such as \"show me black running shoes under $100\". The assistant calls search_products with structured filters (query, color, maxPrice). The widget renders a responsive product grid with image, name, price, discount badge, available colors and sizes, and rating. \"View details\" opens a product detail drawer with full specifications. An external-link action opens the product page on UA.com." }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Search Capabilities"
+        },
+        {
+          "type": "paragraph",
+          "text": "Free-text query (\"running shoes\", \"winter jackets\")",
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "text": "Category browsing by categoryId",
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "text": "Color filter by color group (Black, Blue, Red, etc.)",
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "text": "Gender filter (Mens, Womens, Boys, Girls, Unisex)",
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "text": "Price range with minimum and maximum values",
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "text": "Sort options: top-sellers, now-trending, price-low-high, price-high-low, newest, top-rated",
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Multi-Turn Refinement System"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "The refinement system is one of the most important design decisions in the assistant. Filters accumulate across conversation turns through ", "size": 12 },
+            { "text": "deterministic server-side merge", "bold": true, "size": 12 },
+            { "text": ", not LLM memory. This means a shopper can say \"running shoes\" then \"under $100\" then \"only black\" and all three constraints are reliably maintained.", "size": 12 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Dynamic refine chips appear after search results, generated from live UACAPI refinement data (colors, genders, price ranges, sort options).",
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "text": "Using reset: true clears all accumulated filters when the shopper switches to a completely different product type.",
+          "list": { "type": "bullet" }
+        },
+        { "type": "pageBreak" },
+
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "5. AI-Powered Product Comparison"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Shoppers select two to four products from search results and receive an AI-generated side-by-side comparison with key differences, best-for recommendations, and a verdict." }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "How It Works"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Step 1: ", "bold": true },
+            { "text": "Search for products (e.g., \"show me running shoes\")." }
+          ],
+          "list": { "type": "numbered" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Step 2: ", "bold": true },
+            { "text": "Select products using the + button on each product card image (maximum four)." }
+          ],
+          "list": { "type": "numbered" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Step 3: ", "bold": true },
+            { "text": "A floating CompareBar appears above the message composer with selected product thumbnails." }
+          ],
+          "list": { "type": "numbered" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Step 4: ", "bold": true },
+            { "text": "Click \"Compare\" to open the ComparisonDrawer. The drawer shows compact product cards followed by an AI Analysis section." }
+          ],
+          "list": { "type": "numbered" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "AI Analysis Output"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Key Differences", "bold": true },
+            { "text": " — A bullet list comparing material, cushioning, weight, fit, and price." }
+          ],
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Best For", "bold": true },
+            { "text": " — Who each product suits best based on activity, budget, and preferences." }
+          ],
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Verdict", "bold": true },
+            { "text": " — A clear recommendation to help the shopper decide." }
+          ],
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "The widget calls POST /compare with product data (name, brand, price, colors, availability). The server sends product data to the LLM with a structured comparison prompt. The LLM returns markdown analysis capped at approximately 250 words with low temperature (0.3) for consistency. The widget renders the analysis with react-markdown." }
+          ]
+        },
+        { "type": "pageBreak" },
+
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "6. Order History and Tracking"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Logged-in shoppers can view recent orders and track shipments with real carrier tracking data and links." }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "User Experience"
+        },
+        {
+          "type": "paragraph",
+          "text": "\"Show my recent orders\" renders an order list with status, items, and totals.",
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "text": "Each order card expands with animation to show item details and price breakdown (subtotal, shipping, tax, discounts, grand total).",
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "text": "The \"Track\" button fetches carrier name, tracking number, tracking link, and shipment dates.",
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "text": "\"Track another order\" provides a text input for any order number.",
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "text": "The tracking drawer shows order status, per-shipment tracking number, clickable carrier link, shipped date, estimated delivery date, and delivered date when available.",
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Secure Data Flow"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Order history and tracking require server-side integration credentials for the shield-gated orders resolver. The ", "size": 12 },
+            { "text": "get_orders", "bold": true, "size": 12 },
+            { "text": " tool fetches via the UACAPI orders() resolver using the integration token. The ", "size": 12 },
+            { "text": "get_order_detail_by_order_number", "bold": true, "size": 12 },
+            { "text": " tool fetches fulfillment groups with shipment tracking. The customerNo (UUID) identifies the shopper and is supplied from the x-ua-customer-no header. Shopper tokens are not used for this query path — the integration token lives only in backend environment configuration.", "size": 12 }
+          ]
+        },
+        { "type": "pageBreak" },
+
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "7. Help and Support"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "The support experience helps shoppers create tickets or request callbacks. It has two entry points: an in-chat conversational flow and a standalone Help drawer opened from the lifebuoy icon." }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "In-Chat Flow: LLM-Guided Steps Plus Deterministic Form"
+        },
+        {
+          "type": "table",
+          "widthPercent": 100,
+          "rows": [
+            [
+              { "text": "Step", "shading": "#1a1a1a", "paragraphs": [{ "runs": [{ "text": "Step", "bold": true, "color": "#FFFFFF" }] }] },
+              { "text": "Driven By", "shading": "#1a1a1a", "paragraphs": [{ "runs": [{ "text": "Driven By", "bold": true, "color": "#FFFFFF" }] }] },
+              { "text": "What Happens", "shading": "#1a1a1a", "paragraphs": [{ "runs": [{ "text": "What Happens", "bold": true, "color": "#FFFFFF" }] }] }
+            ],
+            [
+              { "text": "1. Category" },
+              { "text": "LLM with chips" },
+              { "text": "Shows \"Order issue\", \"Payment issue\", \"Product issue\", \"Return/Refund\", and \"Something else\"" }
+            ],
+            [
+              { "text": "2. Order selection" },
+              { "text": "LLM with chips" },
+              { "text": "For order issues, recent orders are fetched and shown as selectable chips" }
+            ],
+            [
+              { "text": "3. Resolution attempt" },
+              { "text": "LLM with chips" },
+              { "text": "Shows order tracking and asks whether the issue was resolved" }
+            ],
+            [
+              { "text": "4. Ticket creation" },
+              { "paragraphs": [{ "runs": [{ "text": "Deterministic form", "bold": true, "color": "#E41E31" }] }] },
+              { "text": "Inline form collects description and email and submits directly to the API" }
+            ]
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Why Step 4 Is Deterministic"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "LLM-driven multi-step data collection was unreliable for ticket creation — the model would skip steps, create tickets without descriptions, or ask for email after the ticket was already created. The solution: when the model calls create_support_ticket, the server intercepts it and emits a ticket_form interaction instead. The widget renders a fixed React form that calls POST /support-ticket directly. This is ", "size": 12 },
+            { "text": "reliable every time", "bold": true, "size": 12 },
+            { "text": ".", "size": 12 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Help Drawer (Standalone)"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "The Help drawer is a fully deterministic guided wizard accessed from the chat header. For order issues, the flow is: Category, Describe + Order number, Track (optional), Contact method, Submit. For all other issues: Category, Contact method + Describe + Email, Submit. It pre-fills email when the shopper is logged in, supports \"Email ticket\" and \"Call me back\" contact methods, and shows a confirmation card with reference, topic, description, and email." }
+          ]
+        },
+        { "type": "pageBreak" },
+
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "8. Voice, Streaming, and Smart Prompts"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Voice Input (Speech-to-Text)"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Shoppers can speak instead of typing. Voice input uses the browser Web Speech API and does not require server calls. When the message input is empty, a microphone button appears. Tapping starts recording and shows a red pulse animation. The transcript fills the input field in real time. Tapping again stops recording and leaves the transcript ready to send. Supported in Chrome, Edge, and Safari; gracefully hidden when unavailable." }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Real-Time SSE Streaming"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "The assistant streams its response token-by-token via Server-Sent Events (SSE) and sends structured data (products, orders, interactions) as soon as each tool completes, rather than waiting for the full response. A natural 18ms delay between tokens creates a typing effect. If the streaming endpoint returns non-200, the system falls back to the non-streaming /agent endpoint with client-side simulated streaming." }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Dynamic Suggested Prompts"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Instead of hardcoded suggestions, the widget generates context-aware prompts from the latest search results. Examples include \"Show Black only\", \"Under $50\", \"Mens only\", and \"Sort by best sellers\". The buildSuggestions() function picks the most popular unselected value from each refinement group (color, gender, price) and adds trending or best-seller sort suggestions. Limited to four suggestions and updated on every search response." }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Additional UX Features"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Resizable Chat Panel: ", "bold": true },
+            { "text": "On desktop, shoppers can resize the chat panel by dragging edges (left for width, top for height, top-left for both). Size persists in localStorage. On mobile, the widget renders as a full-width bottom sheet." }
+          ],
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Chat History Persistence: ", "bold": true },
+            { "text": "Chat history is saved in localStorage and scoped by userId. On login/logout/account switch, the previous user's history is cleared. Server-side session memory is bounded to 20 turns and 500 sessions." }
+          ],
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Proactive Welcome Messages: ", "bold": true },
+            { "text": "Context-aware greetings based on time of day, returning user detection, and page context (PDP, PLP, cart, order pages each get tailored greetings and quick actions)." }
+          ],
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Animated Transitions: ", "bold": true },
+            { "text": "Smooth CSS animations for message entrance (slide up + fade), order card expand/collapse, drawer open/close, typing indicator, and mic pulse recording animation." }
+          ],
+          "list": { "type": "bullet" }
+        },
+        { "type": "pageBreak" },
+
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "9. Architecture and Technology"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "System Architecture"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "The widget runs inside Seabiscuit and communicates with mcp-uacapi over HTTPS. The backend owns the LLM orchestration, MCP tool execution, authentication injection, deterministic filter merge, and UACAPI GraphQL access. The architecture follows a clear layered design:" }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "table",
+          "widthPercent": 100,
+          "rows": [
+            [
+              { "text": "Layer", "shading": "#1a1a1a", "paragraphs": [{ "runs": [{ "text": "Layer", "bold": true, "color": "#FFFFFF" }] }] },
+              { "text": "Module", "shading": "#1a1a1a", "paragraphs": [{ "runs": [{ "text": "Module", "bold": true, "color": "#FFFFFF" }] }] },
+              { "text": "Responsibility", "shading": "#1a1a1a", "paragraphs": [{ "runs": [{ "text": "Responsibility", "bold": true, "color": "#FFFFFF" }] }] }
+            ],
+            [
+              { "text": "Host PWA" },
+              { "text": "Seabiscuit" },
+              { "text": "Mounts ChatbotWidget, supplies mcpServerUrl, getAuthToken(), locale" }
+            ],
+            [
+              { "text": "Widget UI" },
+              { "text": "conversational-ai-widget/src/components" },
+              { "text": "ChatPanel, product cards/grid, order list, drawers, forms, interactions" }
+            ],
+            [
+              { "text": "Widget Client" },
+              { "text": "conversational-ai-widget/src/lib/mcp-client.ts" },
+              { "text": "Adds auth + locale headers, calls POST /agent, maps to UI models" }
+            ],
+            [
+              { "text": "HTTP API" },
+              { "text": "mcp-uacapi/src/http.ts" },
+              { "text": "Routes, parses auth/locale/customerNo, in-memory sessions" }
+            ],
+            [
+              { "text": "Agent" },
+              { "text": "mcp-uacapi/src/agent.ts" },
+              { "text": "LLM tool-calling loop, filter accumulation, auth injection" }
+            ],
+            [
+              { "text": "MCP Server" },
+              { "text": "mcp-uacapi/src/index.ts" },
+              { "text": "Registers read-only tools over stdio" }
+            ],
+            [
+              { "text": "Tools" },
+              { "text": "mcp-uacapi/src/tools/*" },
+              { "text": "Zod validation + stable output mapping" }
+            ],
+            [
+              { "text": "UACAPI Client" },
+              { "text": "mcp-uacapi/src/uacapi/client.ts" },
+              { "text": "GraphQL transport, context headers, token selection" }
+            ],
+            [
+              { "text": "Commerce API" },
+              { "text": "UACAPI" },
+              { "text": "Source of truth for catalog, pricing, orders" }
+            ]
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "MCP Tools (Read-Only)"
+        },
+        {
+          "type": "paragraph",
+          "text": "All MCP tools are read-only from the model's perspective. The LLM cannot write directly to UACAPI."
+        },
+        {
+          "type": "table",
+          "widthPercent": 100,
+          "rows": [
+            [
+              { "text": "Tool", "shading": "#1a1a1a", "paragraphs": [{ "runs": [{ "text": "Tool", "bold": true, "color": "#FFFFFF" }] }] },
+              { "text": "Purpose", "shading": "#1a1a1a", "paragraphs": [{ "runs": [{ "text": "Purpose", "bold": true, "color": "#FFFFFF" }] }] },
+              { "text": "Auth", "shading": "#1a1a1a", "paragraphs": [{ "runs": [{ "text": "Auth", "bold": true, "color": "#FFFFFF" }] }] }
+            ],
+            [
+              { "text": "search_products" },
+              { "text": "Product catalog search with query, filters, sort, price range" },
+              { "text": "Shopper token" }
+            ],
+            [
+              { "text": "get_orders" },
+              { "text": "Order history with status, items, totals" },
+              { "text": "Integration token + customerNo" }
+            ],
+            [
+              { "text": "get_order_detail_by_order_number" },
+              { "text": "Order detail with shipment tracking data" },
+              { "text": "Integration token + customerNo" }
+            ],
+            [
+              { "text": "create_support_ticket" },
+              { "text": "Intercepted — renders deterministic ticket form" },
+              { "text": "User email from headers" }
+            ],
+            [
+              { "text": "request_user_input" },
+              { "text": "Renders inline interactive controls (chips, text input, confirm)" },
+              { "text": "N/A" }
+            ]
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "API Endpoints"
+        },
+        {
+          "type": "table",
+          "widthPercent": 100,
+          "rows": [
+            [
+              { "text": "Method", "shading": "#1a1a1a", "paragraphs": [{ "runs": [{ "text": "Method", "bold": true, "color": "#FFFFFF" }] }] },
+              { "text": "Path", "shading": "#1a1a1a", "paragraphs": [{ "runs": [{ "text": "Path", "bold": true, "color": "#FFFFFF" }] }] },
+              { "text": "Purpose", "shading": "#1a1a1a", "paragraphs": [{ "runs": [{ "text": "Purpose", "bold": true, "color": "#FFFFFF" }] }] },
+              { "text": "LLM?", "shading": "#1a1a1a", "paragraphs": [{ "runs": [{ "text": "LLM?", "bold": true, "color": "#FFFFFF" }] }] }
+            ],
+            [
+              { "text": "GET" },
+              { "text": "/health" },
+              { "text": "Liveness check" },
+              { "text": "No" }
+            ],
+            [
+              { "text": "POST" },
+              { "text": "/agent" },
+              { "text": "Full LLM + tools (non-streaming)" },
+              { "text": "Yes" }
+            ],
+            [
+              { "text": "POST" },
+              { "text": "/agent/stream" },
+              { "text": "Full LLM + tools (SSE streaming)" },
+              { "text": "Yes" }
+            ],
+            [
+              { "text": "POST" },
+              { "text": "/search" },
+              { "text": "Direct product search (no LLM)" },
+              { "text": "No" }
+            ],
+            [
+              { "text": "POST" },
+              { "text": "/orders" },
+              { "text": "Direct order history (no LLM)" },
+              { "text": "No" }
+            ],
+            [
+              { "text": "POST" },
+              { "text": "/order-detail" },
+              { "text": "Direct order detail + tracking (no LLM)" },
+              { "text": "No" }
+            ],
+            [
+              { "text": "POST" },
+              { "text": "/support-ticket" },
+              { "text": "Direct ticket creation (no LLM)" },
+              { "text": "No" }
+            ],
+            [
+              { "text": "POST" },
+              { "text": "/compare" },
+              { "text": "LLM-powered product comparison" },
+              { "text": "Yes (analysis)" }
+            ]
+          ]
+        },
+        { "type": "pageBreak" },
+
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "10. Security Design"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Security is built into every layer of the architecture. The system follows a defense-in-depth approach with multiple overlapping safeguards." }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "table",
+          "widthPercent": 100,
+          "rows": [
+            [
+              { "text": "Principle", "shading": "#1a1a1a", "paragraphs": [{ "runs": [{ "text": "Principle", "bold": true, "color": "#FFFFFF" }] }] },
+              { "text": "Implementation", "shading": "#1a1a1a", "paragraphs": [{ "runs": [{ "text": "Implementation", "bold": true, "color": "#FFFFFF" }] }] }
+            ],
+            [
+              { "paragraphs": [{ "runs": [{ "text": "Read-only tools", "bold": true }] }] },
+              { "text": "All MCP tools are annotated with readOnlyHint: true. The LLM cannot write to UACAPI." }
+            ],
+            [
+              { "paragraphs": [{ "runs": [{ "text": "No GraphQL injection", "bold": true }] }] },
+              { "text": "GraphQL uses static documents and variables only, never string interpolation." }
+            ],
+            [
+              { "paragraphs": [{ "runs": [{ "text": "Credential isolation", "bold": true }] }] },
+              { "text": "Shopper token is used for search; integration token is used for orders. Tokens never cross boundaries." }
+            ],
+            [
+              { "paragraphs": [{ "runs": [{ "text": "Token never reaches LLM", "bold": true }] }] },
+              { "text": "Authentication is injected only at the tool-call boundary. The model never sees credentials." }
+            ],
+            [
+              { "paragraphs": [{ "runs": [{ "text": "Integration token server-side", "bold": true }] }] },
+              { "text": "The integration token lives only in backend environment configuration. It never reaches the browser." }
+            ],
+            [
+              { "paragraphs": [{ "runs": [{ "text": "Bounded sessions", "bold": true }] }] },
+              { "text": "Session memory is capped at 20 turns and 500 sessions with trimmed assistant content." }
+            ],
+            [
+              { "paragraphs": [{ "runs": [{ "text": "Deterministic ticket creation", "bold": true }] }] },
+              { "text": "The LLM cannot directly create tickets; it can only trigger the deterministic ticket form." }
+            ],
+            [
+              { "paragraphs": [{ "runs": [{ "text": "Stable output contracts", "bold": true }] }] },
+              { "text": "The widget consumes stable mapped outputs rather than raw UACAPI responses." }
+            ]
+          ]
+        },
+        { "type": "pageBreak" },
+
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "11. Demo Guide"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Use the following script to walk through each feature during the live demo:" }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Step 1: Open the Widget", "bold": true },
+            { "text": " — Open the chat widget on the Seabiscuit storefront. The assistant greets the user with a personalized, time-aware message (\"Good morning, Ankush!\") and shows page-context-aware quick actions." }
+          ],
+          "list": { "type": "numbered" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Step 2: Product Search", "bold": true },
+            { "text": " — Type \"show me black running shoes under $100\". The assistant returns a responsive product grid with images, prices, ratings, and available colors/sizes. Point out the dynamic refine chips that appear below the results." }
+          ],
+          "list": { "type": "numbered" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Step 3: Refinement", "bold": true },
+            { "text": " — Click the \"Mens only\" refine chip. Show that filters accumulate (color + price + gender). Mention this is deterministic server-side merge, not dependent on LLM memory." }
+          ],
+          "list": { "type": "numbered" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Step 4: Product Comparison", "bold": true },
+            { "text": " — Select 3 products using the + button. Show the floating CompareBar. Click \"Compare\" to open the ComparisonDrawer with the AI analysis (Key Differences, Best For, Verdict)." }
+          ],
+          "list": { "type": "numbered" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Step 5: Order Tracking", "bold": true },
+            { "text": " — Type \"show my recent orders\". Expand an order card to show item details and price breakdown. Click \"Track\" to show real carrier tracking data with clickable links." }
+          ],
+          "list": { "type": "numbered" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Step 6: Support Flow", "bold": true },
+            { "text": " — Type \"I need help with an order\". Walk through the category selection (chips), order selection, resolution attempt, and finally the deterministic ticket form. Submit to show the confirmation card." }
+          ],
+          "list": { "type": "numbered" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Step 7: Voice Input", "bold": true },
+            { "text": " — Tap the microphone button. Speak a query. Show the real-time transcript filling the input field. Send the message." }
+          ],
+          "list": { "type": "numbered" }
+        },
+        { "type": "pageBreak" },
+
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "12. Roadmap and Strategic Vision"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Near-Term Enhancements"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Add-to-cart from chat", "bold": true },
+            { "text": " — Complete the purchase loop by allowing shoppers to add products with variant selection directly from the chat." }
+          ],
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Personalized recommendations", "bold": true },
+            { "text": " — Leverage browsing history and purchase data to suggest relevant products proactively." }
+          ],
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Multi-language support", "bold": true },
+            { "text": " — Extend locale-aware responses to support additional languages and regional catalogs." }
+          ],
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Analytics dashboard", "bold": true },
+            { "text": " — Track queries, conversions, drop-offs, and popular product categories to measure impact." }
+          ],
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "A/B testing framework", "bold": true },
+            { "text": " — Test different response strategies, prompt styles, and UI treatments to optimize conversion." }
+          ],
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Strategic Vision"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Proactive engagement", "bold": true },
+            { "text": " — Trigger contextual assistance based on shopper behavior signals (long dwell time, cart abandonment, repeated searches)." }
+          ],
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Size recommendation integration", "bold": true },
+            { "text": " — Combine AI sizing with the conversational interface for confident purchase decisions." }
+          ],
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Return/exchange automation", "bold": true },
+            { "text": " — Extend the support flow to handle returns and exchanges end-to-end." }
+          ],
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Cross-channel deployment", "bold": true },
+            { "text": " — Bring the assistant to mobile app, in-store kiosks, and additional digital touchpoints." }
+          ],
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Conversion attribution and ROI measurement", "bold": true },
+            { "text": " — Build attribution models to quantify the assistant's impact on revenue and customer satisfaction." }
+          ],
+          "list": { "type": "bullet" }
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "The Opportunity"
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Amazon's data shows that customers who use conversational AI during shopping are ", "size": 12 },
+            { "text": "60%+ more likely to convert", "bold": true, "color": "#E41E31", "size": 12 },
+            { "text": ". With 250 million customers using Rufus and interactions up 210% year-over-year, the trajectory is clear: conversational AI is becoming the primary interface for digital commerce.", "size": 12 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "We now have a working platform that brings this same capability to Under Armour shoppers. The architecture is secure, modular, and ready to scale. The features are built, tested, and ready to demo.", "size": 12 }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [{ "text": " ", "size": 8 }]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            { "text": "Let's see it in action.", "bold": true, "size": 14, "color": "#E41E31" }
+          ]
+        }
+      ]
+    }
+  ]
+}

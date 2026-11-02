@@ -32,7 +32,8 @@
 
 import http from 'node:http';
 
-import { Agent, ChatTurn, createAgent, RequestAuthContext, SearchFilterState } from './agent.js';
+import OpenAI from 'openai';
+import { Agent, AgentProgressEvent, ChatTurn, createAgent, MODEL, RequestAuthContext, resolveOpenAiCredentials, SearchFilterState } from './agent.js';
 
 const PORT = Number.parseInt(process.env.API_PORT ?? '8787', 10);
 
@@ -156,6 +157,10 @@ async function main(): Promise<void> {
 			'  POST /agent   { "prompt": "..." } | { "sessionId": "s1", "prompt": "..." } | { "messages": [...] }',
 		);
 		// eslint-disable-next-line no-console
+		console.error(
+			'  POST /agent/stream  (SSE) same body as /agent; streams status, tokens, structured data',
+		);
+		// eslint-disable-next-line no-console
 		console.error('  POST /search  { "query": "...", "categoryId": "...", "limit": 10, "sort": "top-sellers" }');
 		// eslint-disable-next-line no-console
 		console.error('  POST /orders  { "limit": 3, "customerNo": "5454545454", "siteId": "US" }');
@@ -165,6 +170,8 @@ async function main(): Promise<void> {
 		console.error(
 			'  POST /support-ticket  { "category": "order", "description": "...", "preferredContact": "ticket", "contactEmail": "..." }',
 		);
+		// eslint-disable-next-line no-console
+		console.error('  POST /compare  { "products": [ {...}, {...} ] }  (LLM-powered product comparison)');
 	});
 }
 
@@ -258,6 +265,156 @@ async function handle(
 		}
 
 		sendJson(res, 200, result);
+		return;
+	}
+
+	if (method === 'POST' && path === '/agent/stream') {
+		const body = await readJsonBody(req);
+		const authContext = parseAuthContext(req);
+
+		const explicitSessionId =
+			typeof body.sessionId === 'string' && body.sessionId.trim()
+				? body.sessionId.trim()
+				: null;
+		const clientManagedHistory = Array.isArray(body.messages);
+
+		let prompt = '';
+		let history: ChatTurn[] = [];
+
+		if (Array.isArray(body.messages)) {
+			const turns = (body.messages as unknown[])
+				.filter(
+					(m): m is { role: string; content: string } =>
+						!!m &&
+						typeof m === 'object' &&
+						typeof (m as { role?: unknown }).role === 'string' &&
+						typeof (m as { content?: unknown }).content === 'string',
+				)
+				.filter((m) => m.role === 'user' || m.role === 'assistant')
+				.map((m) => ({ role: m.role as 'user' | 'assistant', content: m.content.trim() }))
+				.filter((m) => m.content.length > 0);
+
+			const lastUserIdx = [...turns].reverse().findIndex((m) => m.role === 'user');
+			if (lastUserIdx === -1) {
+				sendJson(res, 400, { error: 'messages must include at least one user turn.' });
+				return;
+			}
+			const idx = turns.length - 1 - lastUserIdx;
+			prompt = turns[idx].content;
+			history = turns.slice(0, idx);
+		} else if (typeof body.prompt === 'string') {
+			prompt = body.prompt.trim();
+		}
+
+		if (!prompt) {
+			sendJson(res, 400, { error: 'Body must include a non-empty "prompt" or "messages".' });
+			return;
+		}
+
+		const sessionId =
+			explicitSessionId ?? (clientManagedHistory ? null : defaultSessionId());
+
+		const stored = sessionId ? sessions.get(sessionId) : undefined;
+		const effectiveHistory = [...(stored?.history ?? []), ...history];
+		const initialFilters = stored?.filters ?? {};
+
+		res.writeHead(200, {
+			'content-type': 'text/event-stream',
+			'cache-control': 'no-cache',
+			'connection': 'keep-alive',
+			'x-accel-buffering': 'no',
+		});
+
+		const sse = (event: string, data: unknown) => {
+			res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+		};
+
+		// Track which structured data was already streamed via onProgress so
+		// we don't duplicate it after the agent finishes.
+		let streamedProducts = false;
+		let streamedOrders = false;
+		let streamedOrderDetail = false;
+		let streamedSupportTicket = false;
+		let streamedInteraction = false;
+		let streamedSuggestions = false;
+
+		const onProgress = (evt: AgentProgressEvent) => {
+			switch (evt.type) {
+				case 'status':
+					sse('status', { message: evt.message });
+					break;
+				case 'products':
+					sse('products', { products: evt.products });
+					streamedProducts = true;
+					break;
+				case 'orders':
+					sse('orders', { orders: evt.orders });
+					streamedOrders = true;
+					break;
+				case 'orderDetail':
+					sse('orderDetail', { orderDetail: evt.orderDetail });
+					streamedOrderDetail = true;
+					break;
+				case 'supportTicket':
+					sse('supportTicket', { supportTicket: evt.supportTicket });
+					streamedSupportTicket = true;
+					break;
+				case 'interaction':
+					sse('interaction', { interaction: evt.interaction });
+					streamedInteraction = true;
+					break;
+				case 'suggestions':
+					sse('suggestions', evt.suggestions);
+					streamedSuggestions = true;
+					break;
+			}
+		};
+
+		try {
+			const result = await agent.runAgent(prompt, effectiveHistory, initialFilters, authContext, onProgress);
+
+			// Stream the answer text word-by-word with a small delay so the
+			// browser receives them incrementally instead of in one burst.
+			const words = (result.answer ?? '').match(/\S+\s*/g) ?? [];
+			for (const word of words) {
+				sse('token', { value: word });
+				await new Promise(r => setTimeout(r, 18));
+			}
+
+			// Send any structured data that was NOT already streamed via onProgress.
+			if (!streamedProducts && result.products.length) sse('products', { products: result.products });
+			if (!streamedOrders && result.orders.length) sse('orders', { orders: result.orders });
+			if (!streamedOrderDetail && result.orderDetail) sse('orderDetail', { orderDetail: result.orderDetail });
+			if (!streamedSupportTicket && result.supportTicket) sse('supportTicket', { supportTicket: result.supportTicket });
+			if (!streamedInteraction && result.interaction) sse('interaction', { interaction: result.interaction });
+			if (!streamedSuggestions && (result.suggestions.refinements.length || result.suggestions.sorts.length)) {
+				sse('suggestions', result.suggestions);
+			}
+			if (Object.keys(result.filters).length) sse('filters', result.filters);
+
+			sse('done', { messageId: `msg_${Date.now().toString(36)}` });
+			res.end();
+
+			if (sessionId) {
+				const updatedHistory: ChatTurn[] = [
+					...effectiveHistory,
+					{ role: 'user' as const, content: prompt },
+					{ role: 'assistant' as const, content: result.answer ?? '' },
+				].slice(-SESSION_MAX_TURNS);
+				sessions.delete(sessionId);
+				sessions.set(sessionId, { history: updatedHistory, filters: result.filters });
+				while (sessions.size > MAX_SESSIONS) {
+					const oldest = sessions.keys().next().value;
+					if (oldest === undefined) break;
+					sessions.delete(oldest);
+				}
+			}
+		} catch (err) {
+			const msg = err instanceof Error ? err.message : String(err);
+			sse('error', { message: msg });
+			res.end();
+		}
+
 		return;
 	}
 
@@ -366,6 +523,70 @@ async function handle(
 
 		const result = await agent.callTool('create_support_ticket', args, authContext);
 		sendJson(res, 200, result);
+		return;
+	}
+
+	if (method === 'POST' && path === '/compare') {
+		const body = await readJsonBody(req);
+		const products = Array.isArray(body.products) ? body.products : [];
+		if (products.length < 2) {
+			sendJson(res, 400, { error: 'Provide at least 2 products to compare.' });
+			return;
+		}
+
+		const productSummaries = products
+			.map(
+				(p: Record<string, unknown>, i: number) =>
+					`Product ${i + 1}: "${p.name ?? 'Unknown'}"` +
+					(p.brand ? ` by ${p.brand}` : '') +
+					(p.description ? `\nDescription: ${p.description}` : '') +
+					(p.price != null ? `\nPrice: $${p.price}` : '') +
+					(p.originalPrice != null ? ` (was $${p.originalPrice})` : '') +
+					(Array.isArray(p.availableColors) && p.availableColors.length
+						? `\nColors: ${(p.availableColors as string[]).join(', ')}`
+						: '') +
+					(p.availability ? `\nAvailability: ${p.availability}` : ''),
+			)
+			.join('\n\n');
+
+		const comparePrompt = [
+			'You are an expert product analyst for Under Armour. Compare these products for a shopper.',
+			'Write a concise, helpful comparison in this exact format:',
+			'',
+			'## Key Differences',
+			'A bullet list of the most important differences (price, features, use case, technology).',
+			'',
+			'## Best For',
+			'For each product, one sentence on who it is best for or what activity it suits.',
+			'',
+			'## Verdict',
+			'One short paragraph recommending which to pick and why, or when each shines.',
+			'',
+			'Rules:',
+			'- Use ONLY facts from the product data below. Never invent features.',
+			'- If descriptions are missing, compare based on name, price, colors, and availability.',
+			'- Keep the total response under 250 words.',
+			'- Use markdown formatting.',
+			'',
+			'---',
+			productSummaries,
+		].join('\n');
+
+		try {
+			const { apiKey, baseURL } = resolveOpenAiCredentials();
+			const openai = new OpenAI({ apiKey, baseURL });
+			const completion = await openai.chat.completions.create({
+				model: MODEL,
+				messages: [{ role: 'user', content: comparePrompt }],
+				temperature: 0.3,
+			});
+			const analysis = completion.choices?.[0]?.message?.content ?? '';
+			sendJson(res, 200, { analysis });
+		} catch (err) {
+			const message = err instanceof Error ? err.message : String(err);
+			console.error('[/compare] LLM error:', message);
+			sendJson(res, 500, { error: 'Could not generate comparison analysis.' });
+		}
 		return;
 	}
 

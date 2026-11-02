@@ -36,6 +36,12 @@ export function SupportTicketCard({ ticket }: { ticket: SupportTicket }) {
             <dd className="truncate font-mono font-semibold text-foreground">{ticket.orderNumber}</dd>
           </div>
         )}
+        {ticket.description && (
+          <div className="flex flex-col gap-0.5">
+            <dt className="text-muted">Issue</dt>
+            <dd className="text-foreground leading-relaxed">{ticket.description}</dd>
+          </div>
+        )}
         {ticket.contactEmail && (
           <div className="flex items-center justify-between gap-3">
             <dt className="flex items-center gap-1 text-muted">

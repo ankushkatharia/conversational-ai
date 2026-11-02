@@ -129,6 +129,16 @@ export type ChatInteraction =
       confirmLabel?: string;
       /** Message text sent back when the button is tapped. */
       confirmValue?: string;
+    }
+  | {
+      type: "ticket_form";
+      prompt: string;
+      /** Pre-filled from the conversation context. */
+      category?: HelpCategory;
+      orderNumber?: string;
+      /** Pre-filled when the shopper is logged in. */
+      prefillEmail?: string;
+      contactMethod?: HelpContactMethod;
     };
 
 /** Payload the widget sends to create a support ticket / contact request. */
@@ -319,6 +329,21 @@ export type ChatbotWidgetProps = {
    * fallback recipient when the shopper does not type one. Omit for guests.
    */
   userEmail?: string;
+
+  /**
+   * Optional page context so the widget can tailor its greeting and suggested
+   * actions. The host passes whatever it knows about the current page.
+   */
+  pageContext?: {
+    /** The type of page the shopper is on. */
+    pageType?: "home" | "plp" | "pdp" | "cart" | "checkout" | "order" | "other";
+    /** Category or collection name, e.g. "Running Shoes", "Men's Tops". */
+    categoryName?: string;
+    /** Product name when on a PDP. */
+    productName?: string;
+    /** Number of items in the cart. */
+    cartItemCount?: number;
+  };
 
   /**
    * Supplies the current authentication token for the MCP/UACAPI backend. The

@@ -53,7 +53,7 @@ interface OpenAiCredentials {
  * the file per request lets you refresh an expired Bedrock token in `.env`
  * without restarting the server.
  */
-function resolveOpenAiCredentials(): OpenAiCredentials {
+export function resolveOpenAiCredentials(): OpenAiCredentials {
 	// Candidate .env locations: project root (relative to dist/agent.js) and cwd.
 	const here = fileURLToPath(new URL('.', import.meta.url));
 	const candidates = [`${here}../.env`, `${process.cwd()}/.env`];
@@ -94,7 +94,7 @@ function resolveOpenAiCredentials(): OpenAiCredentials {
 	return { apiKey, baseURL, source: keyFromFile ? envPath : 'process.env' };
 }
 
-const MODEL = process.env.OPENAI_MODEL ?? 'openai.gpt-oss-120b';
+export const MODEL = process.env.OPENAI_MODEL ?? 'openai.gpt-oss-120b';
 const MAX_TURNS = 8;
 /**
  * Hard cap on tool executions per request. Once reached we force a text-only
@@ -173,6 +173,39 @@ const SYSTEM_PROMPT = [
 	'  tracking link(s) in a short natural-language reply. If the order is not found',
 	'  (null), say so plainly in one sentence.',
 	'',
+	'Size Recommendation (Fit Finder):',
+	'- When the shopper asks for size help, "find my size", "what size", or',
+	'  selects "Get size recommendation", start this simple 2-step flow.',
+	'  Do NOT call `get_orders`. Do NOT guess or invent any size.',
+	'',
+	'- Step 1 (category): call `request_user_input` type "chips" with:',
+	'  Shoes (value "Shoes"), T-Shirts & Tops (value "T-Shirts & Tops"),',
+	'  Pants & Bottoms (value "Pants & Bottoms"), Jackets & Outerwear (value',
+	'  "Jackets & Outerwear"). Write "What are you shopping for?" then STOP.',
+	'',
+	'- Step 2 (options): When the shopper picks a category, write this EXACT',
+	'  message (replace {category} with the chosen category):',
+	'  "Sorry, we don\'t have a size recommendation for you yet. You can browse',
+	'  all {category} or select How to measure to help find your size."',
+	'  Do NOT change this message. Do NOT add anything else. Copy it exactly.',
+	'  Then call `request_user_input` type "chips" with exactly two chips:',
+	'  "Browse {category}" (value "Show me {category}") and',
+	'  "How to measure" (value "How do I measure myself for {category}?").',
+	'  STOP. Do NOT write anything after the chips.',
+	'',
+	'- When "Browse {category}" is picked: call `search_products` with the',
+	'  category as query (no size filter). Show all results normally.',
+	'',
+	'- When "How to measure" is picked: give brief measurement tips:',
+	'  SHOES: "Stand on paper, mark heel and longest toe, measure length in',
+	'    inches. Compare to the UA size chart on underarmour.com."',
+	'  TOPS/JACKETS: "Measure your chest around the fullest part. For sleeve,',
+	'    measure from center back of neck to wrist with arm slightly bent."',
+	'  BOTTOMS: "Measure your natural waist (narrowest part) and inseam (inner',
+	'    leg, crotch to ankle). Compare to the UA size chart."',
+	'  After the tips, call `request_user_input` type "chips" with:',
+	'  "Browse {category}" (value "Show me {category}").',
+	'',
 	'Help / Queries (fast 4-step inline flow):',
 	'- Drive the entire flow with `request_user_input` (chips, text input) inside',
 	'  the chat. ONE step per turn, ONE short sentence alongside each tool call.',
@@ -197,18 +230,14 @@ const SYSTEM_PROMPT = [
 	'  my issue" (value "resolved") and "I still need help" (value "need_help").',
 	'  If the shopper picks "resolved", end the flow with a friendly goodbye.',
 	'',
-	'- Step 4 (contact method + submit): call `request_user_input` type "chips"',
-	'  with: "Create a ticket" (value "Create a ticket") and "Call me back" (value',
-	'  "Please call me back"). For a ticket: if the auth context has `userEmail`,',
-	'  use it directly; otherwise call `request_user_input` type "text_input",',
-	'  inputType "email" to collect it. For a call: collect the phone number via',
-	'  `request_user_input` type "text_input", inputType "phone". Then call',
-	'  `create_support_ticket` immediately — no extra confirm step needed.',
-	'',
-	'- `create_support_ticket` needs: `category`, `description`, `preferredContact`',
-	'  ("ticket" | "call"), and `contactEmail` (ticket) or `contactPhone` (call).',
-	'  Call it at most once per request. After it returns, confirm the ticket',
-	'  reference in one short sentence; the app also shows a confirmation card.',
+	'- Step 4 (create ticket): when the shopper indicates they still need help,',
+	'  call `create_support_ticket` with the category, a brief description',
+	'  (summarize the conversation context), and preferredContact "ticket".',
+	'  The system will intercept this and show a form to the shopper where they',
+	'  can write their issue in detail and confirm their email. Just write a short',
+	'  message like "Please fill in the form below to submit your ticket."',
+	'  Do NOT call `request_user_input` for email or description collection.',
+	'  Do NOT call any other tools after `create_support_ticket`.',
 	'',
 	'Stopping rules (important):',
 	'- Call `search_products` at most twice per user request.',
@@ -296,6 +325,18 @@ export function mergeFilters(
 	return merged;
 }
 
+/** Progress event emitted during an agent run for SSE streaming. */
+export type AgentProgressEvent =
+  | { type: 'status'; message: string }
+  | { type: 'tool_start'; tool: string }
+  | { type: 'tool_done'; tool: string }
+  | { type: 'products'; products: Product[] }
+  | { type: 'orders'; orders: Order[] }
+  | { type: 'orderDetail'; orderDetail: OrderDetail }
+  | { type: 'supportTicket'; supportTicket: SupportTicket }
+  | { type: 'interaction'; interaction: ChatInteraction }
+  | { type: 'suggestions'; suggestions: SearchSuggestions };
+
 /** Result of a single agent run. */
 export interface AgentRunResult {
 	/** Final natural-language answer from the model (conversational text only). */
@@ -370,6 +411,7 @@ export interface Agent {
 		history?: ChatTurn[],
 		initialFilters?: SearchFilterState,
 		auth?: RequestAuthContext,
+		onProgress?: (event: AgentProgressEvent) => void,
 	): Promise<AgentRunResult>;
 	/** Calls an MCP tool directly (no LLM); returns the tool result payload. */
 	callTool(name: string, args: Record<string, unknown>, auth?: RequestAuthContext): Promise<unknown>;
@@ -427,6 +469,15 @@ function stringifyToolResult(result: McpToolResult): string {
 	return text || '(no content)';
 }
 
+/** Human-readable status labels emitted as SSE progress events per tool. */
+const STATUS_LABELS: Record<string, string> = {
+	search_products: 'Searching the catalog...',
+	get_orders: 'Looking up your orders...',
+	get_order_detail_by_order_number: 'Fetching order details...',
+	create_support_ticket: 'Creating your ticket...',
+	request_user_input: 'Preparing options...',
+};
+
 /**
  * Creates and connects an agent: spawns the MCP server, connects the client,
  * and wires up the OpenAI model client. Reuse the returned object across many
@@ -459,6 +510,7 @@ export async function createAgent(): Promise<Agent> {
 		history: ChatTurn[] = [],
 		initialFilters: SearchFilterState = {},
 		auth?: RequestAuthContext,
+		onProgress?: (event: AgentProgressEvent) => void,
 	): Promise<AgentRunResult> {
 		// Build a fresh client each run using the current .env credentials, so an
 		// expired Bedrock token can be refreshed without restarting the process.
@@ -499,9 +551,155 @@ export async function createAgent(): Promise<Agent> {
 		const toolCalls: { name: string; arguments: unknown }[] = [];
 		let toolCallsMade = 0;
 
+		// ---- Deterministic size-flow handling (no LLM involved) ----
+		const SIZE_CATEGORIES: Record<string, string> = {
+			'Shoes': 'shoes',
+			'T-Shirts & Tops': 'tops',
+			'Pants & Bottoms': 'bottoms',
+			'Jackets & Outerwear': 'jackets',
+		};
+		const MEASURE_TIPS: Record<string, string> = {
+			shoes: 'Stand on paper, mark your heel and longest toe, then measure the length in inches. Compare to the UA size chart on underarmour.com.',
+			tops: 'Measure your chest around the fullest part. For sleeve length, measure from center back of neck to your wrist with arm slightly bent. Compare to the UA size chart.',
+			bottoms: 'Measure your natural waist (narrowest part of your torso) and your inseam (inner leg from crotch to ankle). Compare to the UA size chart.',
+			jackets: 'Measure your chest around the fullest part. For sleeve length, measure from center back of neck to your wrist with arm slightly bent. Compare to the UA size chart.',
+		};
+
+		const trimmedPrompt = prompt.trim();
+
+		// Step 2: user picked a size category → check orders then respond deterministically
+		if (SIZE_CATEGORIES[trimmedPrompt]) {
+			const cat = trimmedPrompt;
+			const key = SIZE_CATEGORIES[cat];
+
+			// Known UA size tokens for deterministic SKU parsing.
+			const APPAREL_SIZES = ['XXS', 'XS', 'SM', 'MD', 'LG', 'XL', 'XXL', '2XL', '3XL', '4XL', '5XL'];
+			const SHOE_SIZES = ['5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '14', '15'];
+			const WAIST_SIZES = ['28', '29', '30', '31', '32', '33', '34', '36', '38', '40', '42', '44'];
+			// Bottoms use both apparel sizes (SM/MD/LG for joggers/fleece) and waist sizes.
+			const BOTTOM_SIZES = [...APPAREL_SIZES, ...WAIST_SIZES];
+			// Category keywords to match product names.
+			const CAT_KEYWORDS: Record<string, RegExp> = {
+				shoes: /\b(shoes?|runners?|hovr|phantom|charged|assert|rogue|velociti|surge|bandit|infinite|pursuit|slides?|sandals?|cleats?)\b/i,
+				tops: /\b(t-?shirts?|tee|shirts?|polo|tank|tops?|tech tee|iso-?chill|heatgear|compression)\b/i,
+				bottoms: /\b(pants?|shorts?|joggers?|bottoms?|leggings?|tights?|fleece|icon|rival|unstoppable|sweats?|trousers?)\b/i,
+				jackets: /\b(jackets?|hoodi(e|es)|sweatshirts?|zip|pullover|windbreaker|storm|coldgear|outerwear|vest)\b/i,
+			};
+			const validSizes = key === 'shoes' ? SHOE_SIZES : key === 'bottoms' ? BOTTOM_SIZES : APPAREL_SIZES;
+			const DISPLAY_SIZE: Record<string, string> = { XXS: 'XXS', XS: 'XS', SM: 'S', MD: 'M', LG: 'L', XL: 'XL', XXL: 'XXL', '2XL': '2XL', '3XL': '3XL' };
+
+			let foundSize: string | null = null;
+
+			// Try to extract size from order history.
+			try {
+				console.log(`[size-flow] Fetching orders for category: ${key}`);
+				const orderResult = (await mcp.callTool({
+					name: 'get_orders',
+					arguments: auth ? { limit: 10, auth } : { limit: 10 },
+				})) as McpToolResult;
+				const sc = orderResult.structuredContent as { orders?: { items: { name: string | null; sku: string | null }[] }[] } | undefined;
+				const orderCount = sc?.orders?.length ?? 0;
+				console.log(`[size-flow] Got ${orderCount} orders`);
+				if (sc?.orders) {
+					for (const order of sc.orders) {
+						for (const item of order.items ?? []) {
+							const name = item.name ?? '';
+							const sku = item.sku ?? '';
+							console.log(`[size-flow] Item: name="${name}" sku="${sku}" matches=${CAT_KEYWORDS[key]?.test(name)}`);
+							// Check if item matches the selected category.
+							if (!CAT_KEYWORDS[key]?.test(name)) continue;
+							// Try to extract size from SKU (format: style-color-SIZE).
+							const parts = sku.split('-');
+							console.log(`[size-flow] SKU parts: [${parts.join(', ')}] (${parts.length} parts)`);
+							if (parts.length >= 3) {
+								const lastPart = parts[parts.length - 1].toUpperCase();
+								console.log(`[size-flow] Last SKU part: "${lastPart}" valid=${validSizes.includes(lastPart)}`);
+								if (validSizes.includes(lastPart) || validSizes.includes(lastPart.replace(',', '.'))) {
+									foundSize = DISPLAY_SIZE[lastPart] ?? lastPart;
+									console.log(`[size-flow] Found size: ${foundSize}`);
+									break;
+								}
+							}
+						}
+						if (foundSize) break;
+					}
+				}
+			} catch (err) {
+				console.error(`[size-flow] Order fetch failed:`, err);
+			}
+			console.log(`[size-flow] Final result: foundSize=${foundSize}`);
+
+			if (foundSize) {
+				return {
+					answer: `Based on your last purchases, your ${cat.toLowerCase()} size is **${foundSize}**.`,
+					products: collectedProducts,
+					suggestions: collectedSuggestions,
+					orders: collectedOrders,
+					orderDetail: collectedOrderDetail,
+					supportTicket: collectedSupportTicket,
+					interaction: {
+						type: 'chips' as const,
+						prompt: 'Choose an option',
+						options: [
+							{ label: `Browse ${cat}`, value: `Show me ${cat}` },
+							{ label: 'How to measure', value: `How do I measure myself for ${key}?` },
+						],
+					},
+					toolCalls: [],
+					filters: filterState,
+				};
+			}
+
+			return {
+				answer: `Sorry, we don't have a size recommendation for you yet. You can browse all ${cat.toLowerCase()} or select **How to measure** to help find your size.`,
+				products: collectedProducts,
+				suggestions: collectedSuggestions,
+				orders: collectedOrders,
+				orderDetail: collectedOrderDetail,
+				supportTicket: collectedSupportTicket,
+				interaction: {
+					type: 'chips' as const,
+					prompt: 'Choose an option',
+					options: [
+						{ label: `Browse ${cat}`, value: `Show me ${cat}` },
+						{ label: 'How to measure', value: `How do I measure myself for ${key}?` },
+					],
+				},
+				toolCalls: [],
+				filters: filterState,
+			};
+		}
+
+		// "How to measure" → deterministic measurement tips
+		const measureMatch = trimmedPrompt.match(/how do i measure myself for (shoes|tops|bottoms|jackets)\??/i);
+		if (measureMatch) {
+			const key = measureMatch[1].toLowerCase() as keyof typeof MEASURE_TIPS;
+			const catLabel = key === 'shoes' ? 'Shoes' : key === 'tops' ? 'T-Shirts & Tops' : key === 'bottoms' ? 'Pants & Bottoms' : 'Jackets & Outerwear';
+			return {
+				answer: MEASURE_TIPS[key],
+				products: collectedProducts,
+				suggestions: collectedSuggestions,
+				orders: collectedOrders,
+				orderDetail: collectedOrderDetail,
+				supportTicket: collectedSupportTicket,
+				interaction: {
+					type: 'chips' as const,
+					prompt: 'Choose an option',
+					options: [
+						{ label: `Browse ${catLabel}`, value: `Show me ${catLabel}` },
+					],
+				},
+				toolCalls: [],
+				filters: filterState,
+			};
+		}
+		// ---- End deterministic size-flow handling ----
+
 		for (let turn = 0; turn < MAX_TURNS; turn += 1) {
 			// Once the tool-call budget is spent, force a text-only answer.
 			const toolChoice = toolCallsMade >= MAX_TOOL_CALLS ? 'none' : 'auto';
+
+			onProgress?.({ type: 'status', message: toolCallsMade === 0 ? 'Thinking...' : 'Processing...' });
 
 			let completion;
 			try {
@@ -555,10 +753,56 @@ export async function createAgent(): Promise<Agent> {
 				};
 			}
 
-			for (const call of requestedCalls) {
+			// When the model emits both `request_user_input` and
+			// `create_support_ticket` in the same turn, we must only execute
+			// `request_user_input` (to collect the description/email first) and
+			// skip the ticket creation. Reorder so `request_user_input` runs first,
+			// then mark `create_support_ticket` as skipped.
+			const hasUserInput = requestedCalls.some(
+				(c) => c.type === 'function' && c.function.name === 'request_user_input',
+			);
+			const hasTicket = requestedCalls.some(
+				(c) => c.type === 'function' && c.function.name === 'create_support_ticket',
+			);
+			const skipTicketThisTurn = hasUserInput && hasTicket;
+
+			// Reorder: execute `request_user_input` before other tools so the
+			// description/email prompt always wins over premature ticket creation.
+			const sortedCalls = [...requestedCalls].sort((a, b) => {
+				const aName = a.type === 'function' ? a.function.name : '';
+				const bName = b.type === 'function' ? b.function.name : '';
+				if (aName === 'request_user_input') return -1;
+				if (bName === 'request_user_input') return 1;
+				return 0;
+			});
+
+			let stopAfterThisCall = false;
+
+			for (const call of sortedCalls) {
 				if (call.type !== 'function') continue;
-				toolCallsMade += 1;
+
 				const name = call.function.name;
+
+				// Skip create_support_ticket when request_user_input is also
+				// in this batch (model tried to do both at once).
+				if (skipTicketThisTurn && name === 'create_support_ticket') {
+					messages.push({
+						role: 'tool',
+						tool_call_id: call.id,
+						content: 'Skipped: collect the description/email from the shopper first, then create the ticket on the next turn.',
+					});
+					continue;
+				}
+
+				if (stopAfterThisCall) {
+					messages.push({
+						role: 'tool',
+						tool_call_id: call.id,
+						content: 'Skipped: a terminal tool was already called this turn.',
+					});
+					continue;
+				}
+				toolCallsMade += 1;
 				let args: Record<string, unknown> = {};
 				try {
 					args = call.function.arguments ? JSON.parse(call.function.arguments) : {};
@@ -566,8 +810,41 @@ export async function createAgent(): Promise<Agent> {
 					args = {};
 				}
 
-				// Log exactly what the model decided to call before any merging, so
-				// you can see how the LLM turned the prompt into tool arguments.
+				// Gate: intercept create_support_ticket and emit a deterministic
+				// ticket_form interaction instead. The widget renders a fixed form
+				// (description + email + submit) that calls the API directly, so the
+				// LLM is never involved in the multi-step collection.
+				if (name === 'create_support_ticket') {
+					const category = typeof args.category === 'string' ? args.category : 'other';
+					const orderNum = typeof args.orderNumber === 'string' ? args.orderNumber : undefined;
+					const method = typeof args.preferredContact === 'string' ? args.preferredContact : 'ticket';
+					const ticketFormInteraction: ChatInteraction = {
+						type: 'ticket_form',
+						prompt: method === 'call'
+							? 'Please fill in the details for your call-back request:'
+							: 'Please fill in the details for your support ticket:',
+						category,
+						orderNumber: orderNum,
+						prefillEmail: auth?.userEmail,
+						contactMethod: method === 'call' ? 'call' : 'ticket',
+					};
+					collectedInteraction = ticketFormInteraction;
+					onProgress?.({ type: 'interaction', interaction: ticketFormInteraction });
+					messages.push({
+						role: 'tool',
+						tool_call_id: call.id,
+						content:
+							'A support ticket form has been shown to the shopper inline. ' +
+							'They will fill in their issue description and email, then submit it directly. ' +
+							'Do NOT call create_support_ticket or request_user_input again. ' +
+							'Write a short message like "Please fill in the form below to create your ticket."',
+					});
+					// eslint-disable-next-line no-console
+					console.error(`[agent] Intercepted create_support_ticket -> emitted ticket_form`);
+					stopAfterThisCall = true;
+					continue;
+				}
+
 				// eslint-disable-next-line no-console
 				console.error(`[agent] model requested: ${name}(${JSON.stringify(args)})`);
 
@@ -587,6 +864,9 @@ export async function createAgent(): Promise<Agent> {
 				// eslint-disable-next-line no-console
 				console.error(`[agent] effective tool args (after merge): ${name}(${JSON.stringify(effectiveArgs)})`);
 
+				onProgress?.({ type: 'tool_start', tool: name });
+				onProgress?.({ type: 'status', message: STATUS_LABELS[name] ?? `Running ${name}...` });
+
 				let resultText: string;
 				try {
 					// Inject the shopper auth/locale ONLY at the call boundary — never
@@ -604,27 +884,32 @@ export async function createAgent(): Promise<Agent> {
 							| undefined;
 						if (sc?.products && sc.products.length > 0) {
 							collectedProducts = sc.products;
+							onProgress?.({ type: 'products', products: collectedProducts });
 						}
 						if (sc?.suggestions) {
 							collectedSuggestions = sc.suggestions;
+							onProgress?.({ type: 'suggestions', suggestions: collectedSuggestions });
 						}
 					}
 					if (name === 'get_orders') {
 						const sc = result.structuredContent as { orders?: Order[] } | undefined;
 						if (sc?.orders && sc.orders.length > 0) {
 							collectedOrders = sc.orders;
+							onProgress?.({ type: 'orders', orders: collectedOrders });
 						}
 					}
 					if (name === 'get_order_detail_by_order_number') {
 						const sc = result.structuredContent as { order?: OrderDetail | null } | undefined;
 						if (sc?.order) {
 							collectedOrderDetail = sc.order;
+							onProgress?.({ type: 'orderDetail', orderDetail: collectedOrderDetail });
 						}
 					}
 					if (name === 'create_support_ticket') {
 						const sc = result.structuredContent as { ticket?: SupportTicket } | undefined;
 						if (sc?.ticket) {
 							collectedSupportTicket = sc.ticket;
+							onProgress?.({ type: 'supportTicket', supportTicket: collectedSupportTicket });
 						}
 					}
 					if (name === 'request_user_input') {
@@ -633,6 +918,7 @@ export async function createAgent(): Promise<Agent> {
 							| undefined;
 						if (sc?.interaction) {
 							collectedInteraction = sc.interaction;
+							onProgress?.({ type: 'interaction', interaction: collectedInteraction });
 						}
 					}
 				} catch (err) {
@@ -640,6 +926,11 @@ export async function createAgent(): Promise<Agent> {
 				}
 
 				messages.push({ role: 'tool', tool_call_id: call.id, content: resultText });
+				onProgress?.({ type: 'tool_done', tool: name });
+
+				if (name === 'request_user_input' || name === 'create_support_ticket') {
+					stopAfterThisCall = true;
+				}
 			}
 		}
 

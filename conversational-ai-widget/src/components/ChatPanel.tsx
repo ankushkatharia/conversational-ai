@@ -3,13 +3,14 @@
 import {
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import { Bot, LifeBuoy, Maximize2, Minimize2, PenSquare, X } from "lucide-react";
 
-import type { ChatMessage, OrderDetail, Product, SupportTicket } from "../lib/types";
+import type { ChatbotWidgetProps, ChatMessage, OrderDetail, Product, SupportTicket } from "../lib/types";
 import type { McpClient } from "../lib/mcp-client";
 import { makeId } from "../lib/utils";
 import { useChat } from "../hooks/useChat";
@@ -19,6 +20,8 @@ import { ProductDetailDrawer } from "./products/ProductDetailDrawer";
 import { OrderTrackingDrawer } from "./orders/OrderTrackingDrawer";
 import { OrderDetailDrawer } from "./orders/OrderDetailDrawer";
 import { HelpDrawer } from "./help/HelpDrawer";
+import { ComparisonDrawer } from "./products/ComparisonDrawer";
+import { CompareBar } from "./products/CompareBar";
 
 const SIZE_STORAGE_KEY = "ua-cai-panel-size";
 const DEFAULT_SIZE = { w: 400, h: 640 };
@@ -53,6 +56,7 @@ export function ChatPanel({
   userAvatarUrl,
   userKey,
   userEmail,
+  pageContext,
   onClose,
 }: {
   client: McpClient;
@@ -63,6 +67,7 @@ export function ChatPanel({
   userKey?: string | null;
   /** Signed-in shopper email; pre-fills the Help / Queries ticket form. */
   userEmail?: string;
+  pageContext?: ChatbotWidgetProps["pageContext"];
   onClose: () => void;
 }) {
   const chat = useChat(client, userKey);
@@ -82,6 +87,9 @@ export function ChatPanel({
   // Order-detail dialog state (items/totals/address, no tracking).
   const [orderDetailOpen, setOrderDetailOpen] = useState(false);
   const [orderDetailData, setOrderDetailData] = useState<OrderDetail | null>(null);
+
+  const [compareIds, setCompareIds] = useState<Set<string>>(new Set());
+  const [compareOpen, setCompareOpen] = useState(false);
 
   const [isDesktop, setIsDesktop] = useState(
     () =>
@@ -272,6 +280,25 @@ export function ChatPanel({
     [chat],
   );
 
+  const toggleCompare = useCallback((product: Product) => {
+    setCompareIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(product.id)) {
+        next.delete(product.id);
+      } else if (next.size < 4) {
+        next.add(product.id);
+      }
+      return next;
+    });
+  }, []);
+
+  const compareProducts = useMemo(() => {
+    const allProducts = chat.messages.flatMap((m) => m.products ?? []);
+    return [...compareIds]
+      .map((id) => allProducts.find((p) => p.id === id))
+      .filter((p): p is Product => p !== undefined);
+  }, [compareIds, chat.messages]);
+
   const streaming = chat.streamingId !== null;
 
   return (
@@ -380,7 +407,23 @@ export function ChatPanel({
         onViewTracking={viewTracking}
         onViewOrderDetail={viewOrderDetail}
         onOpenHelp={() => setHelpOpen(true)}
+        pageContext={pageContext}
         trackingOrderNo={trackingOrderNo}
+        compareIds={compareIds}
+        onToggleCompare={toggleCompare}
+        client={client}
+        onTicketCreated={handleTicketCreated}
+      />
+
+      <CompareBar
+        products={compareProducts}
+        onCompare={() => setCompareOpen(true)}
+        onRemove={(id) => setCompareIds((prev) => {
+          const next = new Set(prev);
+          next.delete(id);
+          return next;
+        })}
+        onClear={() => setCompareIds(new Set())}
       />
 
       <div className="shrink-0 border-t border-border bg-surface px-4 py-3">
@@ -424,6 +467,13 @@ export function ChatPanel({
         client={client}
         userEmail={userEmail}
         onTicketCreated={handleTicketCreated}
+      />
+
+      <ComparisonDrawer
+        open={compareOpen}
+        onClose={() => setCompareOpen(false)}
+        products={compareProducts}
+        client={client}
       />
     </div>
   );

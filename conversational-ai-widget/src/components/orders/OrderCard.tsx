@@ -81,77 +81,79 @@ export function OrderCard({
         </div>
       </div>
 
-      {expanded && (
-        <div className="space-y-3 border-t border-border px-4 py-3">
-          {order.items.length > 1 && (
-            <ul className="space-y-2">
-              {order.items.map((item) => (
-                <li
-                  key={`${order.orderNo}-${item.sku}`}
-                  className="flex items-center gap-3"
-                >
-                  <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-lg bg-white">
-                    {item.imageUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={item.imageUrl}
-                        alt={item.name}
-                        className="h-full w-full object-cover"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-surface-muted text-muted">
-                        <Package className="h-4 w-4" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-[13px] font-semibold text-foreground">
-                      {item.name}
-                    </p>
-                    <p className="truncate text-[11px] text-muted">
-                      SKU {item.sku} · Qty {item.quantity}
-                    </p>
-                  </div>
-                  <span className="shrink-0 text-[13px] font-semibold text-foreground">
-                    {formatPrice(item.price * item.quantity, order.currency)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-
-          <dl className="space-y-1.5 border-y border-dashed border-border py-3 text-[12.5px]">
-            <TotalRow
-              label="Subtotal"
-              value={formatPrice(order.totals.subtotal, order.currency)}
-            />
-            {order.totals.discount !== 0 && (
-              <TotalRow
-                label="Discount"
-                value={formatPrice(order.totals.discount, order.currency)}
-                valueClassName="text-emerald-400"
-              />
+      <div className="ua-cai-expand" data-open={expanded}>
+        <div>
+          <div className="space-y-3 border-t border-border px-4 py-3">
+            {order.items.length > 1 && (
+              <ul className="space-y-2">
+                {order.items.map((item) => (
+                  <li
+                    key={`${order.orderNo}-${item.sku}`}
+                    className="flex items-center gap-3"
+                  >
+                    <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-lg bg-white">
+                      {item.imageUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={item.imageUrl}
+                          alt={item.name}
+                          className="h-full w-full object-cover"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center bg-surface-muted text-muted">
+                          <Package className="h-4 w-4" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-[13px] font-semibold text-foreground">
+                        {item.name}
+                      </p>
+                      <p className="truncate text-[11px] text-muted">
+                        SKU {item.sku} · Qty {item.quantity}
+                      </p>
+                    </div>
+                    <span className="shrink-0 text-[13px] font-semibold text-foreground">
+                      {formatPrice(item.price * item.quantity, order.currency)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             )}
-            <TotalRow
-              label="Shipping"
-              value={formatPrice(order.totals.shipping, order.currency)}
-            />
-            <TotalRow
-              label="Tax"
-              value={formatPrice(order.totals.tax, order.currency)}
-            />
-            <div className="flex items-center justify-between pt-1 text-sm font-extrabold text-foreground">
-              <dt>Total</dt>
-              <dd>{formatPrice(order.totals.grandTotal, order.currency)}</dd>
-            </div>
-          </dl>
 
-          <p className="font-mono text-[11px] tracking-tight text-muted">
-            {order.orderNo}
-          </p>
+            <dl className="space-y-1.5 border-y border-dashed border-border py-3 text-[12.5px]">
+              <TotalRow
+                label="Subtotal"
+                value={formatPrice(order.totals.subtotal, order.currency)}
+              />
+              {order.totals.discount !== 0 && (
+                <TotalRow
+                  label="Discount"
+                  value={formatPrice(order.totals.discount, order.currency)}
+                  valueClassName="text-emerald-400"
+                />
+              )}
+              <TotalRow
+                label="Shipping"
+                value={formatPrice(order.totals.shipping, order.currency)}
+              />
+              <TotalRow
+                label="Tax"
+                value={formatPrice(order.totals.tax, order.currency)}
+              />
+              <div className="flex items-center justify-between pt-1 text-sm font-extrabold text-foreground">
+                <dt>Total</dt>
+                <dd>{formatPrice(order.totals.grandTotal, order.currency)}</dd>
+              </div>
+            </dl>
+
+            <p className="font-mono text-[11px] tracking-tight text-muted">
+              {order.orderNo}
+            </p>
+          </div>
         </div>
-      )}
+      </div>
 
       <div
         className={cn(

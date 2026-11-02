@@ -1,0 +1,1090 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      .slide {
+        font-family: Arial, Helvetica, sans-serif;
+        color: #1a1a1a;
+        padding: 0;
+        background: #ffffff;
+        box-sizing: border-box;
+        overflow: hidden;
+        position: relative;
+      }
+
+      /* ---- Title slide ---- */
+      .slide.title-slide {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        color: #ffffff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 56px 64px;
+      }
+      .slide.title-slide .ua-brand {
+        font-size: 14px;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: #E41E31;
+        font-weight: 700;
+        margin-bottom: 20px;
+      }
+      .slide.title-slide h1 {
+        font-size: 42px;
+        font-weight: 800;
+        margin: 0 0 12px;
+        line-height: 1.15;
+      }
+      .slide.title-slide .subtitle {
+        font-size: 22px;
+        color: rgba(255,255,255,0.75);
+        margin: 0 0 32px;
+        line-height: 1.4;
+      }
+      .slide.title-slide .meta {
+        font-size: 15px;
+        color: rgba(255,255,255,0.5);
+      }
+      .title-accent {
+        position: absolute;
+        top: 0; right: 0;
+        width: 200px; height: 100%;
+        background: linear-gradient(180deg, #E41E31 0%, #B8162A 100%);
+        opacity: 0.15;
+      }
+
+      /* ---- Section divider ---- */
+      .slide.section-divider {
+        background: #E41E31;
+        color: #ffffff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 56px 64px;
+      }
+      .slide.section-divider .section-num {
+        font-size: 64px;
+        font-weight: 800;
+        opacity: 0.25;
+        margin-bottom: 8px;
+      }
+      .slide.section-divider h1 {
+        font-size: 40px;
+        font-weight: 800;
+        margin: 0 0 12px;
+      }
+      .slide.section-divider .section-desc {
+        font-size: 20px;
+        opacity: 0.85;
+        max-width: 560px;
+        line-height: 1.5;
+      }
+
+      /* ---- Content slide ---- */
+      .slide.content {
+        padding: 44px 56px;
+      }
+      .slide.content h1 {
+        font-size: 32px;
+        font-weight: 800;
+        margin: 0 0 28px;
+        color: #1a1a1a;
+      }
+      .slide.content h2 {
+        font-size: 24px;
+        font-weight: 700;
+        margin: 0 0 16px;
+        color: #1a1a1a;
+      }
+
+      /* Red left accent bar */
+      .red-bar {
+        position: absolute;
+        left: 0; top: 0;
+        width: 6px; height: 100%;
+        background: #E41E31;
+      }
+
+      /* ---- Stat cards ---- */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .stat-card {
+        background: #f8f8f8;
+        border-radius: 10px;
+        padding: 20px 24px;
+        border-left: 4px solid #E41E31;
+      }
+      .stat-card .stat-value {
+        font-size: 32px;
+        font-weight: 800;
+        color: #E41E31;
+        margin-bottom: 4px;
+      }
+      .stat-card .stat-label {
+        font-size: 14px;
+        color: #555;
+        line-height: 1.4;
+      }
+
+      /* ---- Bullet list ---- */
+      .slide.content ul {
+        font-size: 20px;
+        line-height: 1.7;
+        padding-left: 20px;
+        margin: 0;
+      }
+      .slide.content ul li {
+        margin-bottom: 8px;
+      }
+
+      /* ---- Feature boxes ---- */
+      .feature-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .feature-box {
+        background: #f8f8f8;
+        border-radius: 10px;
+        padding: 18px 20px;
+      }
+      .feature-box .feature-icon {
+        font-size: 24px;
+        margin-bottom: 6px;
+      }
+      .feature-box .feature-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 4px;
+      }
+      .feature-box .feature-desc {
+        font-size: 13px;
+        color: #555;
+        line-height: 1.4;
+      }
+
+      /* ---- Tech table ---- */
+      .tech-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 16px;
+      }
+      .tech-table th {
+        text-align: left;
+        padding: 10px 14px;
+        background: #1a1a1a;
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 14px;
+      }
+      .tech-table td {
+        padding: 10px 14px;
+        border-bottom: 1px solid #eee;
+      }
+      .tech-table tr:nth-child(even) td {
+        background: #f9f9f9;
+      }
+
+      /* ---- Highlight text ---- */
+      .accent { color: #E41E31; font-weight: 700; }
+      .bold { font-weight: 700; }
+      .muted { color: #777; font-size: 14px; }
+
+      /* ---- Flow diagram ---- */
+      .flow-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+      .flow-box {
+        background: #f0f0f0;
+        border-radius: 8px;
+        padding: 12px 16px;
+        font-size: 14px;
+        font-weight: 600;
+        text-align: center;
+        flex: 1;
+      }
+      .flow-box.highlight {
+        background: #E41E31;
+        color: #ffffff;
+      }
+      .flow-box.dark {
+        background: #1a1a1a;
+        color: #ffffff;
+      }
+      .flow-arrow {
+        font-size: 20px;
+        color: #999;
+        flex-shrink: 0;
+      }
+
+      /* ---- Security pill ---- */
+      .security-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .security-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        background: #f8f8f8;
+        border-radius: 8px;
+        padding: 14px 16px;
+      }
+      .security-icon {
+        font-size: 22px;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+      .security-text {
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      .security-text .bold {
+        display: block;
+        font-weight: 700;
+        font-size: 15px;
+        margin-bottom: 2px;
+      }
+
+      /* ---- Closing ---- */
+      .slide.closing {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        color: #ffffff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 56px 64px;
+      }
+      .slide.closing h1 {
+        font-size: 40px;
+        font-weight: 800;
+        margin: 0 0 16px;
+      }
+      .slide.closing .closing-sub {
+        font-size: 20px;
+        color: rgba(255,255,255,0.7);
+        max-width: 520px;
+        line-height: 1.5;
+      }
+
+      /* ---- Two-column ---- */
+      .two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 28px;
+      }
+      .col-box {
+        background: #f8f8f8;
+        border-radius: 10px;
+        padding: 24px;
+      }
+      .col-box h3 {
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0 0 12px;
+        color: #E41E31;
+      }
+      .col-box ul {
+        font-size: 15px;
+        line-height: 1.6;
+        padding-left: 18px;
+        margin: 0;
+      }
+
+      /* timeline */
+      .timeline {
+        display: flex;
+        align-items: flex-start;
+        gap: 0;
+        margin-top: 8px;
+      }
+      .timeline-step {
+        flex: 1;
+        text-align: center;
+        position: relative;
+        padding: 0 8px;
+      }
+      .timeline-step .step-num {
+        width: 36px; height: 36px;
+        border-radius: 50%;
+        background: #E41E31;
+        color: #fff;
+        font-weight: 800;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 8px;
+      }
+      .timeline-step .step-title {
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .timeline-step .step-desc {
+        font-size: 12px;
+        color: #777;
+        line-height: 1.4;
+      }
+      .timeline-line {
+        width: 100%;
+        height: 2px;
+        background: #ddd;
+        position: absolute;
+        top: 18px;
+        left: 50%;
+        z-index: 0;
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- ======== SLIDE 1: Title ======== -->
+    <section class="slide title-slide">
+      <div class="title-accent"></div>
+      <div class="ua-brand">UNDER ARMOUR</div>
+      <h1>Conversational AI<br/>Shopping Assistant</h1>
+      <div class="subtitle">Transforming the Digital Shopping Experience<br/>with AI-Powered Conversational Commerce</div>
+      <div class="meta">Executive Briefing &middot; October 2026 &middot; Confidential</div>
+    </section>
+
+    <!-- ======== SLIDE 2: Agenda ======== -->
+    <section class="slide content">
+      <div class="red-bar"></div>
+      <h1>Agenda</h1>
+      <div style="display: grid; grid-template-columns: 40px 1fr; gap: 12px 16px; font-size: 20px; line-height: 1.8; align-items: center;">
+        <span class="accent" style="font-size: 28px; font-weight: 800;">01</span>
+        <span>Why Conversational AI — The Market Imperative</span>
+        <span class="accent" style="font-size: 28px; font-weight: 800;">02</span>
+        <span>What We Built — Solution Overview</span>
+        <span class="accent" style="font-size: 28px; font-weight: 800;">03</span>
+        <span>Feature Deep Dive — Search, Compare, Orders, Support</span>
+        <span class="accent" style="font-size: 28px; font-weight: 800;">04</span>
+        <span>Architecture and Technology</span>
+        <span class="accent" style="font-size: 28px; font-weight: 800;">05</span>
+        <span>Security and Trust</span>
+        <span class="accent" style="font-size: 28px; font-weight: 800;">06</span>
+        <span>Live Demo Flow</span>
+        <span class="accent" style="font-size: 28px; font-weight: 800;">07</span>
+        <span>Vision and Next Steps</span>
+      </div>
+    </section>
+
+    <!-- ======== SLIDE 3: Section — Market Imperative ======== -->
+    <section class="slide section-divider">
+      <div class="section-num">01</div>
+      <h1>Why Conversational AI</h1>
+      <div class="section-desc">The industry's largest players are proving that AI-powered shopping assistants drive conversion, engagement, and revenue at scale.</div>
+    </section>
+
+    <!-- ======== SLIDE 4: Amazon Data ======== -->
+    <section class="slide content">
+      <div class="red-bar"></div>
+      <h1>Amazon's AI Commerce Results <span class="muted">(2026)</span></h1>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value">250M+</div>
+          <div class="stat-label">Customers used Rufus this year; monthly users up <span class="accent">140% YoY</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">60%+</div>
+          <div class="stat-label">Higher conversion rate for shoppers who use Rufus during their shopping journey</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">210%</div>
+          <div class="stat-label">Year-over-year increase in Rufus interactions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">3x</div>
+          <div class="stat-label">More on-device purchases when Alexa+ customers explore items vs. classic Alexa</div>
+        </div>
+      </div>
+      <p style="font-size: 14px; color: #999; margin-top: 16px; text-align: right;">Source: Amazon public disclosures, 2026</p>
+    </section>
+
+    <!-- ======== SLIDE 5: More Amazon data ======== -->
+    <section class="slide content">
+      <div class="red-bar"></div>
+      <h1>AI is Reshaping Every Shopping Touchpoint</h1>
+      <ul>
+        <li><span class="accent">Review highlights</span> receive hundreds of millions of impressions weekly; engaged customers up <span class="bold">100% YoY</span></li>
+        <li><span class="accent">Hear the Highlights</span> expanded from hundreds to millions of products — 7M+ minutes streamed, nearly half listen to full episodes</li>
+        <li><span class="accent">Photo search</span> in Amazon Lens more than doubled since 2023; Lens Live increased engagement by 13%</li>
+        <li><span class="accent">Personalized sizing</span> — billions of AI-powered size recommendations generated monthly</li>
+        <li><span class="accent">Interests feature</span> — ~20% of customers added a recommended item to cart</li>
+        <li><span class="accent">Buy for Me</span> (agentic AI) grew from 65K products at launch to 500K+, with positive customer response</li>
+      </ul>
+      <p style="font-size: 16px; color: #E41E31; font-weight: 700; margin-top: 20px;">The message is clear: AI-powered shopping is no longer optional. It's the competitive baseline.</p>
+    </section>
+
+    <!-- ======== SLIDE 6: Section — What We Built ======== -->
+    <section class="slide section-divider">
+      <div class="section-num">02</div>
+      <h1>What We Built</h1>
+      <div class="section-desc">An AI shopping assistant embedded in the Seabiscuit storefront that helps shoppers find products, compare items, track orders, and get support through natural conversation.</div>
+    </section>
+
+    <!-- ======== SLIDE 7: Solution Overview ======== -->
+    <section class="slide content">
+      <div class="red-bar"></div>
+      <h1>Solution at a Glance</h1>
+      <div class="feature-grid">
+        <div class="feature-box">
+          <div class="feature-icon">🔍</div>
+          <div class="feature-title">Natural Language Product Search</div>
+          <div class="feature-desc">Shoppers search the catalog in plain English. Filters accumulate across turns — no forms, no dropdowns.</div>
+        </div>
+        <div class="feature-box">
+          <div class="feature-icon">⚖️</div>
+          <div class="feature-title">AI-Powered Product Comparison</div>
+          <div class="feature-desc">Select 2-4 products. Get an instant AI-generated analysis with key differences, best-for, and a verdict.</div>
+        </div>
+        <div class="feature-box">
+          <div class="feature-icon">📦</div>
+          <div class="feature-title">Order History and Tracking</div>
+          <div class="feature-desc">View recent orders, expand details, and track shipments with real carrier data and links.</div>
+        </div>
+        <div class="feature-box">
+          <div class="feature-icon">🎧</div>
+          <div class="feature-title">Support Ticket Creation</div>
+          <div class="feature-desc">Guided conversational flow plus a deterministic ticket form. Reliable every time.</div>
+        </div>
+        <div class="feature-box">
+          <div class="feature-icon">🎤</div>
+          <div class="feature-title">Voice Input</div>
+          <div class="feature-desc">Speak instead of type. Browser-native Speech-to-Text, zero server calls.</div>
+        </div>
+        <div class="feature-box">
+          <div class="feature-icon">⚡</div>
+          <div class="feature-title">Real-Time Streaming</div>
+          <div class="feature-desc">Token-by-token SSE streaming with structured data delivered as tools complete. Feels instant.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======== SLIDE 8: Core Principle ======== -->
+    <section class="slide content">
+      <div class="red-bar"></div>
+      <h1>Design Principle</h1>
+      <div style="background: #f8f8f8; border-radius: 12px; padding: 28px 32px; margin-bottom: 20px; border-left: 5px solid #E41E31;">
+        <p style="font-size: 22px; line-height: 1.6; margin: 0; font-style: italic; color: #333;">
+          "The LLM decides <span class="accent">what</span> to request and <span class="accent">how</span> to respond conversationally. Deterministic server code decides <span class="accent">how data is retrieved, validated, merged, and rendered</span>."
+        </p>
+      </div>
+      <div class="two-col" style="margin-top: 16px;">
+        <div class="col-box">
+          <h3>AI Handles</h3>
+          <ul>
+            <li>Understanding shopper intent</li>
+            <li>Choosing which tools to call</li>
+            <li>Generating natural responses</li>
+            <li>Product comparison analysis</li>
+            <li>Guiding support conversations</li>
+          </ul>
+        </div>
+        <div class="col-box">
+          <h3>Deterministic Code Handles</h3>
+          <ul>
+            <li>Data retrieval via GraphQL</li>
+            <li>Filter merge across turns</li>
+            <li>Authentication injection</li>
+            <li>Ticket form rendering</li>
+            <li>UI card and grid rendering</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======== SLIDE 9: Section — Feature Deep Dive ======== -->
+    <section class="slide section-divider">
+      <div class="section-num">03</div>
+      <h1>Feature Deep Dive</h1>
+      <div class="section-desc">Each feature is designed to reduce shopping friction and drive conversion through natural, intelligent interaction.</div>
+    </section>
+
+    <!-- ======== SLIDE 10: Product Search ======== -->
+    <section class="slide content">
+      <div class="red-bar"></div>
+      <h1>Product Search and Discovery</h1>
+      <div class="two-col">
+        <div>
+          <h2 style="margin-top: 0;">How It Works</h2>
+          <ul style="font-size: 16px;">
+            <li>Shopper types: <span class="accent">"black running shoes under $100"</span></li>
+            <li>AI extracts: query, color, price range</li>
+            <li>Server calls UACAPI with structured filters</li>
+            <li>Widget renders product cards with image, price, rating, colors, sizes</li>
+          </ul>
+          <h2>Multi-Turn Refinement</h2>
+          <ul style="font-size: 16px;">
+            <li>Filters accumulate: "running shoes" → "under $100" → "only black"</li>
+            <li>Server-side deterministic merge, not LLM memory</li>
+            <li>Dynamic refine chips from live UACAPI data</li>
+            <li><span class="bold">reset: true</span> clears for new context</li>
+          </ul>
+        </div>
+        <div>
+          <h2 style="margin-top: 0;">Search Capabilities</h2>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;">
+            <span style="background: #E41E31; color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 14px; font-weight: 600;">Free-text query</span>
+            <span style="background: #1a1a1a; color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 14px; font-weight: 600;">Category browsing</span>
+            <span style="background: #E41E31; color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 14px; font-weight: 600;">Color filter</span>
+            <span style="background: #1a1a1a; color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 14px; font-weight: 600;">Gender filter</span>
+            <span style="background: #E41E31; color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 14px; font-weight: 600;">Price range</span>
+            <span style="background: #1a1a1a; color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 14px; font-weight: 600;">Sort options</span>
+          </div>
+          <h2>Sort Options</h2>
+          <ul style="font-size: 16px;">
+            <li>Top sellers</li>
+            <li>Now trending</li>
+            <li>Price low → high / high → low</li>
+            <li>Newest arrivals</li>
+            <li>Top rated</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======== SLIDE 11: Product Comparison ======== -->
+    <section class="slide content">
+      <div class="red-bar"></div>
+      <h1>AI-Powered Product Comparison</h1>
+      <div style="margin-bottom: 20px;">
+        <div class="timeline" style="margin-bottom: 24px;">
+          <div class="timeline-step">
+            <div class="step-num">1</div>
+            <div class="step-title">Search</div>
+            <div class="step-desc">Find products via natural language</div>
+          </div>
+          <div class="timeline-step">
+            <div class="step-num">2</div>
+            <div class="step-title">Select</div>
+            <div class="step-desc">Tap + on 2-4 product cards</div>
+          </div>
+          <div class="timeline-step">
+            <div class="step-num">3</div>
+            <div class="step-title">Compare</div>
+            <div class="step-desc">Click Compare in the floating bar</div>
+          </div>
+          <div class="timeline-step">
+            <div class="step-num">4</div>
+            <div class="step-title">AI Analysis</div>
+            <div class="step-desc">Key differences, best for, verdict</div>
+          </div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="col-box">
+          <h3>What the AI Generates</h3>
+          <ul>
+            <li><span class="bold">Key Differences</span> — material, cushioning, weight, fit</li>
+            <li><span class="bold">Best For</span> — who each product suits</li>
+            <li><span class="bold">Verdict</span> — clear recommendation</li>
+          </ul>
+        </div>
+        <div class="col-box">
+          <h3>Technical Details</h3>
+          <ul>
+            <li>POST /compare endpoint</li>
+            <li>Structured prompt, ~250 words max</li>
+            <li>Low temperature (0.3) for consistency</li>
+            <li>Rendered with react-markdown</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======== SLIDE 12: Order History and Tracking ======== -->
+    <section class="slide content">
+      <div class="red-bar"></div>
+      <h1>Order History and Tracking</h1>
+      <div class="two-col">
+        <div>
+          <h2 style="margin-top: 0;">Capabilities</h2>
+          <ul style="font-size: 16px;">
+            <li><span class="bold">"Show my recent orders"</span> — instant order list</li>
+            <li>Animated expand/collapse for order details</li>
+            <li>Price breakdown: subtotal, shipping, tax, discounts</li>
+            <li>Real carrier tracking: number, link, dates</li>
+            <li>"Track another order" — enter any order number</li>
+          </ul>
+          <h2>Tracking Details</h2>
+          <ul style="font-size: 16px;">
+            <li>Carrier name and tracking number</li>
+            <li>Clickable carrier tracking link</li>
+            <li>Shipped date</li>
+            <li>Estimated delivery date</li>
+            <li>Delivered date (when available)</li>
+          </ul>
+        </div>
+        <div>
+          <h2 style="margin-top: 0;">Secure Data Flow</h2>
+          <div style="background: #fff; border: 2px solid #eee; border-radius: 10px; padding: 20px;">
+            <div style="text-align: center; margin-bottom: 12px;">
+              <span style="background: #E41E31; color: #fff; padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 700;">Integration Token</span>
+            </div>
+            <p style="font-size: 14px; color: #555; text-align: center; margin: 0 0 16px;">Server-side only. Never reaches browser or LLM.</p>
+            <div style="text-align: center; margin-bottom: 12px;">
+              <span style="background: #1a1a1a; color: #fff; padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 700;">Customer UUID</span>
+            </div>
+            <p style="font-size: 14px; color: #555; text-align: center; margin: 0;">Supplied via x-ua-customer-no header for identity verification.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======== SLIDE 13: Help and Support ======== -->
+    <section class="slide content">
+      <div class="red-bar"></div>
+      <h1>Help and Support — Hybrid AI + Deterministic</h1>
+      <p style="font-size: 17px; color: #555; margin: 0 0 16px;">Two entry points: conversational in-chat flow and standalone Help drawer.</p>
+      <div style="margin-bottom: 16px;">
+        <table class="tech-table">
+          <tr>
+            <th>Step</th>
+            <th>Driven By</th>
+            <th>What Happens</th>
+          </tr>
+          <tr>
+            <td><span class="bold">1. Category</span></td>
+            <td>LLM + chips</td>
+            <td>Order, Payment, Product, Return/Refund, Other</td>
+          </tr>
+          <tr>
+            <td><span class="bold">2. Order selection</span></td>
+            <td>LLM + chips</td>
+            <td>Fetches recent orders as selectable chips</td>
+          </tr>
+          <tr>
+            <td><span class="bold">3. Resolution</span></td>
+            <td>LLM + chips</td>
+            <td>Shows tracking, asks if resolved</td>
+          </tr>
+          <tr>
+            <td><span class="bold">4. Ticket creation</span></td>
+            <td style="color: #E41E31; font-weight: 700;">Deterministic form</td>
+            <td>Fixed React form — description + email + submit</td>
+          </tr>
+        </table>
+      </div>
+      <div style="background: #FFF3F3; border-radius: 8px; padding: 14px 18px; border-left: 4px solid #E41E31;">
+        <p style="font-size: 15px; margin: 0; line-height: 1.5;">
+          <span class="bold">Why Step 4 is deterministic:</span> LLM was unreliable for multi-step data collection — skipping steps, creating tickets without descriptions. The server intercepts <code>create_support_ticket</code> and renders a fixed React form instead. <span class="accent">Reliable every time.</span>
+        </p>
+      </div>
+    </section>
+
+    <!-- ======== SLIDE 14: Voice, Streaming, Prompts ======== -->
+    <section class="slide content">
+      <div class="red-bar"></div>
+      <h1>Voice and Smart Prompts</h1>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div style="background: #f8f8f8; border-radius: 10px; padding: 20px; text-align: center;">
+          <div style="font-size: 36px; margin-bottom: 8px;">🎤</div>
+          <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Voice Input</div>
+          <ul style="text-align: left; font-size: 13px; line-height: 1.6; padding-left: 16px; margin: 0;">
+            <li>Web Speech API — zero server calls</li>
+            <li>Real-time transcript in input</li>
+            <li>Red pulse animation while recording</li>
+            <li>Chrome, Edge, Safari</li>
+          </ul>
+        </div>
+        <div style="background: #f8f8f8; border-radius: 10px; padding: 20px; text-align: center;">
+          <div style="font-size: 36px; margin-bottom: 8px;">💡</div>
+          <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Dynamic Prompts</div>
+          <ul style="text-align: left; font-size: 13px; line-height: 1.6; padding-left: 16px; margin: 0;">
+            <li>Generated from live search results</li>
+            <li>"Show Black only", "Under $50"</li>
+            <li>Up to 4 context-aware suggestions</li>
+            <li>Updated on every search response</li>
+          </ul>
+        </div>
+      </div>
+      <div style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div style="background: #f8f8f8; border-radius: 10px; padding: 20px; text-align: center;">
+          <div style="font-size: 36px; margin-bottom: 8px;">↔️</div>
+          <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Resizable Panel</div>
+          <p style="font-size: 13px; color: #555; margin: 0; line-height: 1.5;">Drag edges to resize. Expand/collapse toggle. Size persists in localStorage. Mobile: full-width bottom sheet at 88vh.</p>
+        </div>
+        <div style="background: #f8f8f8; border-radius: 10px; padding: 20px; text-align: center;">
+          <div style="font-size: 36px; margin-bottom: 8px;">💾</div>
+          <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Chat Persistence</div>
+          <p style="font-size: 13px; color: #555; margin: 0; line-height: 1.5;">History in localStorage scoped per user. Server memory: 20 turns, 500 sessions. Filters persist until reset.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======== SLIDE 14.5: Differentiating Features ======== -->
+    <section class="slide content">
+      <div class="red-bar"></div>
+      <h1>What Sets Us Apart</h1>
+      <p style="font-size: 16px; color: #555; margin: 0 0 18px;">The standout features that go beyond basic search and orders.</p>
+
+      <h2 style="font-size: 18px; color: #059669; margin-bottom: 10px;">Live Today</h2>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 24px;">
+        <div class="feature-box" style="border-left: 4px solid #059669;">
+          <div class="feature-icon">⚖️</div>
+          <div class="feature-title">AI-Powered Compare</div>
+          <div class="feature-desc">Side-by-side product analysis with key differences, best-for, and a verdict — not just a spec sheet.</div>
+        </div>
+        <div class="feature-box" style="border-left: 4px solid #059669;">
+          <div class="feature-icon">🎤</div>
+          <div class="feature-title">Voice-to-Speech</div>
+          <div class="feature-desc">Shoppers speak naturally instead of typing. Real-time transcript, zero server calls.</div>
+        </div>
+        <div class="feature-box" style="border-left: 4px solid #059669;">
+          <div class="feature-icon">🎧</div>
+          <div class="feature-title">Customer Service Access</div>
+          <div class="feature-desc">Guided issue resolution right in chat, with a reliable handoff for ticket creation.</div>
+        </div>
+      </div>
+
+      <h2 style="font-size: 18px; color: #E41E31; margin-bottom: 10px;">Coming Next</h2>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;">
+        <div class="feature-box" style="border-left: 4px solid #E41E31;">
+          <div class="feature-icon">🎯</div>
+          <div class="feature-title">Recommendations</div>
+          <div class="feature-desc">Suggestions based on browsing and purchase history, surfaced right in the chat.</div>
+        </div>
+        <div class="feature-box" style="border-left: 4px solid #E41E31;">
+          <div class="feature-icon">🛍️</div>
+          <div class="feature-title">Bundling</div>
+          <div class="feature-desc">"Complete the look" and cross-sell bundles suggested automatically during search.</div>
+        </div>
+        <div class="feature-box" style="border-left: 4px solid #E41E31;">
+          <div class="feature-icon">🎨</div>
+          <div class="feature-title">Theme-Based Shopping</div>
+          <div class="feature-desc">Curated picks around a theme — "gym essentials," "winter running kit" — generated on the fly.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======== SLIDE 15: Section — Architecture ======== -->
+    <section class="slide section-divider">
+      <div class="section-num">04</div>
+      <h1>Architecture</h1>
+      <div class="section-desc">Three modular projects. Clean separation of concerns. The LLM never touches credentials or raw APIs.</div>
+    </section>
+
+    <!-- ======== SLIDE 16: Architecture Overview ======== -->
+    <section class="slide content">
+      <div class="red-bar"></div>
+      <h1>System Architecture</h1>
+      <div style="margin-bottom: 16px;">
+        <div class="flow-row">
+          <div class="flow-box" style="background: #EEF2FF; border: 2px solid #4f46e5;">
+            <div style="font-size: 11px; color: #4f46e5; margin-bottom: 2px;">FRONTEND</div>
+            <div>Seabiscuit PWA</div>
+            <div style="font-size: 11px; color: #777;">Mounts ChatbotWidget</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-box" style="background: #EEF2FF; border: 2px solid #4f46e5;">
+            <div style="font-size: 11px; color: #4f46e5; margin-bottom: 2px;">WIDGET</div>
+            <div>conversational-ai-widget</div>
+            <div style="font-size: 11px; color: #777;">React 19 + Tailwind v4</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-box highlight">
+            <div style="font-size: 11px; margin-bottom: 2px;">BACKEND</div>
+            <div>mcp-uacapi</div>
+            <div style="font-size: 11px; opacity: 0.8;">HTTP + Agent + MCP Tools</div>
+          </div>
+          <div class="flow-arrow" style="color: #fff;">→</div>
+          <div class="flow-box dark">
+            <div style="font-size: 11px; color: #999; margin-bottom: 2px;">COMMERCE</div>
+            <div>UACAPI</div>
+            <div style="font-size: 11px; color: #777;">GraphQL</div>
+          </div>
+        </div>
+      </div>
+      <table class="tech-table" style="font-size: 14px;">
+        <tr>
+          <th style="width: 140px;">Layer</th>
+          <th style="width: 180px;">Technology</th>
+          <th>Responsibility</th>
+        </tr>
+        <tr>
+          <td><span class="bold">LLM</span></td>
+          <td>AWS Bedrock (GPT-OSS-120B)</td>
+          <td>Intent understanding, tool selection, natural language responses</td>
+        </tr>
+        <tr>
+          <td><span class="bold">Protocol</span></td>
+          <td>MCP over stdio</td>
+          <td>Structured, read-only tool interface between agent and UACAPI</td>
+        </tr>
+        <tr>
+          <td><span class="bold">Backend</span></td>
+          <td>Node.js (built-in http)</td>
+          <td>HTTP API, LLM orchestration, auth injection, filter merge</td>
+        </tr>
+        <tr>
+          <td><span class="bold">Frontend</span></td>
+          <td>React 19 + TypeScript + Tailwind v4</td>
+          <td>Chat UI, product cards, order cards, drawers, forms</td>
+        </tr>
+        <tr>
+          <td><span class="bold">Commerce</span></td>
+          <td>UACAPI GraphQL</td>
+          <td>Catalog, pricing, orders, tracking, customer identity</td>
+        </tr>
+      </table>
+    </section>
+
+    <!-- ======== SLIDE 17: Request Lifecycle ======== -->
+    <section class="slide content">
+      <div class="red-bar"></div>
+      <h1>End-to-End Request Lifecycle</h1>
+      <div style="font-size: 15px; line-height: 1.4;">
+        <div style="display: flex; align-items: stretch; gap: 10px; margin-bottom: 10px;">
+          <div style="background: #E41E31; color: #fff; border-radius: 8px; padding: 12px 16px; flex: 1; min-width: 0;">
+            <div style="font-weight: 800; margin-bottom: 4px;">1. Shopper Message</div>
+            <div style="font-size: 13px; opacity: 0.9;">Types query in chat widget</div>
+          </div>
+          <div style="background: #4f46e5; color: #fff; border-radius: 8px; padding: 12px 16px; flex: 1; min-width: 0;">
+            <div style="font-weight: 800; margin-bottom: 4px;">2. Widget Resolves Context</div>
+            <div style="font-size: 13px; opacity: 0.9;">Auth token, locale, customer ID</div>
+          </div>
+          <div style="background: #059669; color: #fff; border-radius: 8px; padding: 12px 16px; flex: 1; min-width: 0;">
+            <div style="font-weight: 800; margin-bottom: 4px;">3. POST /agent/stream</div>
+            <div style="font-size: 13px; opacity: 0.9;">SSE connection to backend</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: stretch; gap: 10px; margin-bottom: 10px;">
+          <div style="background: #1a1a1a; color: #fff; border-radius: 8px; padding: 12px 16px; flex: 1; min-width: 0;">
+            <div style="font-weight: 800; margin-bottom: 4px;">4. Agent Builds Messages</div>
+            <div style="font-size: 13px; opacity: 0.9;">System prompt + history + filters + request</div>
+          </div>
+          <div style="background: #7c3aed; color: #fff; border-radius: 8px; padding: 12px 16px; flex: 1; min-width: 0;">
+            <div style="font-weight: 800; margin-bottom: 4px;">5. LLM Selects Tools</div>
+            <div style="font-size: 13px; opacity: 0.9;">MCP tools validated + auth injected</div>
+          </div>
+          <div style="background: #b45309; color: #fff; border-radius: 8px; padding: 12px 16px; flex: 1; min-width: 0;">
+            <div style="font-weight: 800; margin-bottom: 4px;">6. UACAPI GraphQL</div>
+            <div style="font-size: 13px; opacity: 0.9;">Static queries + variables only</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: stretch; gap: 10px;">
+          <div style="background: #059669; color: #fff; border-radius: 8px; padding: 12px 16px; flex: 1; min-width: 0;">
+            <div style="font-weight: 800; margin-bottom: 4px;">7. Stream Results</div>
+            <div style="font-size: 13px; opacity: 0.9;">Products/orders stream as tools complete</div>
+          </div>
+          <div style="background: #E41E31; color: #fff; border-radius: 8px; padding: 12px 16px; flex: 1; min-width: 0;">
+            <div style="font-weight: 800; margin-bottom: 4px;">8. Widget Renders</div>
+            <div style="font-size: 13px; opacity: 0.9;">Cards, grids, drawers — structured data, not LLM markup</div>
+          </div>
+          <div style="flex: 1; min-width: 0;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======== SLIDE 18: MCP Tools ======== -->
+    <section class="slide content">
+      <div class="red-bar"></div>
+      <h1>MCP Tools — Read-Only by Design</h1>
+      <p style="font-size: 16px; color: #555; margin: 0 0 16px;">All tools are annotated <code style="background: #f0f0f0; padding: 2px 6px; border-radius: 4px;">readOnlyHint: true</code>. The LLM cannot write to UACAPI.</p>
+      <table class="tech-table">
+        <tr>
+          <th>Tool</th>
+          <th>Purpose</th>
+          <th>Auth</th>
+        </tr>
+        <tr>
+          <td><span class="bold">search_products</span></td>
+          <td>Catalog search with query, filters, sort, price range</td>
+          <td>Shopper token</td>
+        </tr>
+        <tr>
+          <td><span class="bold">get_orders</span></td>
+          <td>Order history with status, items, totals</td>
+          <td>Integration token + customerNo</td>
+        </tr>
+        <tr>
+          <td><span class="bold">get_order_detail</span></td>
+          <td>Order detail with shipment tracking data</td>
+          <td>Integration token + customerNo</td>
+        </tr>
+        <tr>
+          <td><span class="bold">create_support_ticket</span></td>
+          <td>Intercepted — renders deterministic ticket form</td>
+          <td>User email from headers</td>
+        </tr>
+        <tr>
+          <td><span class="bold">request_user_input</span></td>
+          <td>Renders chips, text inputs, confirm buttons</td>
+          <td>N/A</td>
+        </tr>
+      </table>
+    </section>
+
+    <!-- ======== SLIDE 19: Section — Security ======== -->
+    <section class="slide section-divider">
+      <div class="section-num">05</div>
+      <h1>Security and Trust</h1>
+      <div class="section-desc">Enterprise-grade security built into every layer. The model never sees credentials. Tools are read-only. Ticket creation is deterministic.</div>
+    </section>
+
+    <!-- ======== SLIDE 20: Security Design ======== -->
+    <section class="slide content">
+      <div class="red-bar"></div>
+      <h1>Security by Design</h1>
+      <div class="security-grid">
+        <div class="security-item">
+          <div class="security-icon">🔒</div>
+          <div class="security-text">
+            <span class="bold">Read-Only Tools</span>
+            All MCP tools annotated readOnlyHint: true. The LLM cannot modify any data in UACAPI.
+          </div>
+        </div>
+        <div class="security-item">
+          <div class="security-icon">🛡️</div>
+          <div class="security-text">
+            <span class="bold">No GraphQL Injection</span>
+            Static query documents and variables only. Never string interpolation.
+          </div>
+        </div>
+        <div class="security-item">
+          <div class="security-icon">🔑</div>
+          <div class="security-text">
+            <span class="bold">Credential Isolation</span>
+            Shopper token for search. Integration token for orders. Tokens never cross boundaries.
+          </div>
+        </div>
+        <div class="security-item">
+          <div class="security-icon">🚫</div>
+          <div class="security-text">
+            <span class="bold">Token Never Reaches LLM</span>
+            Auth injected only at the tool-call boundary. The model never sees credentials.
+          </div>
+        </div>
+        <div class="security-item">
+          <div class="security-icon">🏛️</div>
+          <div class="security-text">
+            <span class="bold">Integration Token Server-Side</span>
+            The integration token lives only in backend environment config. Never reaches the browser.
+          </div>
+        </div>
+        <div class="security-item">
+          <div class="security-icon">📏</div>
+          <div class="security-text">
+            <span class="bold">Bounded Sessions</span>
+            20-turn limit, 500 session cap, trimmed assistant content to prevent context overflow.
+          </div>
+        </div>
+        <div class="security-item">
+          <div class="security-icon">📝</div>
+          <div class="security-text">
+            <span class="bold">Deterministic Tickets</span>
+            LLM cannot create tickets directly. It triggers a fixed form — reliable every time.
+          </div>
+        </div>
+        <div class="security-item">
+          <div class="security-icon">📦</div>
+          <div class="security-text">
+            <span class="bold">Stable Output Contracts</span>
+            Widget consumes mapped outputs, not raw UACAPI responses. Schema drift is isolated.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======== SLIDE 21: Section — Demo ======== -->
+    <section class="slide section-divider">
+      <div class="section-num">06</div>
+      <h1>Live Demo Flow</h1>
+      <div class="section-desc">A guided walkthrough showing each feature in action on the Seabiscuit storefront.</div>
+    </section>
+
+    <!-- ======== SLIDE 22: Demo Script ======== -->
+    <section class="slide content">
+      <div class="red-bar"></div>
+      <h1>Demo Script</h1>
+      <div style="display: grid; grid-template-columns: 40px 1fr; gap: 10px 16px; font-size: 17px; line-height: 1.6;">
+        <span style="background: #E41E31; color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">1</span>
+        <span><span class="bold">Open Widget</span> — Personalized greeting: "Good morning, Ankush!" with page-aware context</span>
+
+        <span style="background: #E41E31; color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">2</span>
+        <span><span class="bold">Product Search</span> — "Show me black running shoes under $100" → Product grid with cards</span>
+
+        <span style="background: #E41E31; color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">3</span>
+        <span><span class="bold">Refine</span> — Click "Mens only" chip → Filters accumulate, results update</span>
+
+        <span style="background: #E41E31; color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">4</span>
+        <span><span class="bold">Compare</span> — Select 3 products → Compare → AI analysis with verdict</span>
+
+        <span style="background: #E41E31; color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">5</span>
+        <span><span class="bold">Order Tracking</span> — "Show my recent orders" → Expand order → Track shipment</span>
+
+        <span style="background: #E41E31; color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">6</span>
+        <span><span class="bold">Support</span> — "I need help with an order" → Guided flow → Ticket form</span>
+
+        <span style="background: #E41E31; color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">7</span>
+        <span><span class="bold">Voice</span> — Tap mic → Speak → Transcript fills input → Send</span>
+      </div>
+    </section>
+
+    <!-- ======== SLIDE 23: Section — Vision ======== -->
+    <section class="slide section-divider">
+      <div class="section-num">07</div>
+      <h1>Vision and Next Steps</h1>
+      <div class="section-desc">Where we go from here — expanding capabilities, deepening personalization, and measuring impact.</div>
+    </section>
+
+    <!-- ======== SLIDE 24: Next Steps ======== -->
+    <section class="slide content">
+      <div class="red-bar"></div>
+      <h1>Roadmap and Opportunities</h1>
+      <div class="two-col">
+        <div class="col-box">
+          <h3>Near-Term Enhancements</h3>
+          <ul>
+            <li>Add-to-cart from chat with variant selection</li>
+            <li>Personalized recommendations from browsing history</li>
+            <li>Multi-language support (locale-aware responses)</li>
+            <li>Analytics dashboard — queries, conversions, drop-offs</li>
+            <li>A/B testing framework for response strategies</li>
+          </ul>
+        </div>
+        <div class="col-box">
+          <h3>Strategic Vision</h3>
+          <ul>
+            <li>Proactive engagement based on shopper behavior</li>
+            <li>Size recommendation integration</li>
+            <li>Return/exchange flow automation</li>
+            <li>Cross-channel: web, mobile app, in-store kiosk</li>
+            <li>Conversion attribution and ROI measurement</li>
+          </ul>
+        </div>
+      </div>
+      <div style="background: #f8f8f8; border-radius: 10px; padding: 18px 24px; margin-top: 16px; border-left: 4px solid #E41E31;">
+        <p style="font-size: 16px; margin: 0; line-height: 1.6;">
+          <span class="bold">The opportunity:</span> Amazon's data shows customers who use conversational AI are <span class="accent">60%+ more likely to convert</span>. We now have the platform to capture that same uplift for Under Armour.
+        </p>
+      </div>
+    </section>
+
+    <!-- ======== SLIDE 25: Closing ======== -->
+    <section class="slide closing">
+      <div style="margin-bottom: 24px;">
+        <div style="font-size: 14px; letter-spacing: 4px; text-transform: uppercase; color: #E41E31; font-weight: 700; margin-bottom: 20px;">UNDER ARMOUR</div>
+      </div>
+      <h1>Ready for Demo</h1>
+      <div class="closing-sub">
+        The Conversational AI Shopping Assistant is built, tested, and ready to transform how our customers shop. Let's see it in action.
+      </div>
+      <div style="margin-top: 32px; font-size: 15px; opacity: 0.5;">October 2026 &middot; Confidential</div>
+    </section>
+
+  </body>
+</html>

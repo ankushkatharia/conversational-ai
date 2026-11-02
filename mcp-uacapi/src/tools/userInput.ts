@@ -84,7 +84,7 @@ export interface InteractionOption {
 
 /** Stable, model-independent interaction payload returned to the UI. */
 export interface ChatInteraction {
-	type: InteractionType;
+	type: InteractionType | 'ticket_form';
 	prompt: string;
 	options?: InteractionOption[];
 	inputType?: 'email' | 'phone' | 'text';
@@ -92,6 +92,11 @@ export interface ChatInteraction {
 	submitLabel?: string;
 	confirmLabel?: string;
 	confirmValue?: string;
+	/** ticket_form fields: pre-filled from conversation context. */
+	category?: string;
+	orderNumber?: string;
+	prefillEmail?: string;
+	contactMethod?: 'ticket' | 'call';
 }
 
 export interface RequestUserInputResult {

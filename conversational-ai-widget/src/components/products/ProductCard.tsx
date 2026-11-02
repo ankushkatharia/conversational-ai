@@ -13,10 +13,13 @@ export type ProductCardProps = {
   product: Product;
   /** When provided, "View details" opens the detail drawer for this product. */
   onSelect?: (product: Product) => void;
+  /** When defined, shows a compare checkbox. */
+  compareSelected?: boolean;
+  onToggleCompare?: (product: Product) => void;
   className?: string;
 };
 
-export function ProductCard({ product, onSelect, className }: ProductCardProps) {
+export function ProductCard({ product, onSelect, compareSelected, onToggleCompare, className }: ProductCardProps) {
   const {
     name,
     brand,
@@ -58,6 +61,32 @@ export function ProductCard({ product, onSelect, className }: ProductCardProps) 
           {lowStock && <ProductBadge variant="low">Low stock</ProductBadge>}
           {outOfStock && <ProductBadge variant="out">Sold out</ProductBadge>}
         </div>
+        {onToggleCompare && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleCompare(product);
+            }}
+            aria-label={compareSelected ? `Remove ${name} from comparison` : `Add ${name} to comparison`}
+            className={cn(
+              "absolute right-2 top-2 z-10 flex h-7 w-7 items-center justify-center rounded-lg shadow-md transition-all",
+              compareSelected
+                ? "bg-accent text-white scale-110"
+                : "bg-black/60 text-white/70 hover:bg-black/80 hover:text-white hover:scale-105",
+            )}
+          >
+            {compareSelected ? (
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            ) : (
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v14M5 12h14" />
+              </svg>
+            )}
+          </button>
+        )}
       </div>
 
       <div className="flex flex-1 flex-col gap-1.5 p-3.5">

@@ -105,7 +105,9 @@ export function HelpDrawer({
   function pickCategory(id: HelpCategory) {
     setCategory(id);
     setError(null);
-    setStep("describe");
+    // For order issues, go to the describe step (order number entry).
+    // For everything else, skip straight to contact (which now includes description).
+    setStep(id === "order" ? "describe" : "contact");
   }
 
   async function findOrder() {
@@ -154,6 +156,10 @@ export function HelpDrawer({
 
   async function submit(method: HelpContactMethod) {
     if (!category) return;
+    if (!description.trim()) {
+      setError("Please describe your issue so our team can help.");
+      return;
+    }
     if (method === "ticket" && !EMAIL_RE.test(email.trim())) {
       setError("Enter a valid email so we can follow up on your ticket.");
       return;
@@ -205,7 +211,7 @@ export function HelpDrawer({
               setError(null);
               if (step === "describe") setStep("menu");
               else if (step === "tracking") setStep("describe");
-              else if (step === "contact") setStep("describe");
+              else if (step === "contact") setStep(category === "order" ? "describe" : "menu");
             }}
             className="inline-flex w-fit items-center gap-1.5 text-xs font-semibold text-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
           >
@@ -315,6 +321,9 @@ export function HelpDrawer({
         {step === "contact" && (
           <ContactStep
             selectedLabel={selectedLabel}
+            description={description}
+            setDescription={setDescription}
+            showDescription={category !== "order"}
             email={email}
             setEmail={setEmail}
             phone={phone}
@@ -347,6 +356,12 @@ export function HelpDrawer({
               <Row label="Reference" value={ticket.ref} mono />
               <Row label="Topic" value={ticket.categoryLabel} />
               {ticket.orderNumber && <Row label="Order" value={ticket.orderNumber} mono />}
+              {ticket.description && (
+                <div className="flex flex-col gap-0.5">
+                  <dt className="text-muted">Issue</dt>
+                  <dd className="text-foreground leading-relaxed">{ticket.description}</dd>
+                </div>
+              )}
               {ticket.contactEmail && <Row label="Email" value={ticket.contactEmail} />}
               {ticket.contactPhone && <Row label="Phone" value={ticket.contactPhone} />}
             </dl>
@@ -366,6 +381,9 @@ export function HelpDrawer({
  */
 function ContactStep({
   selectedLabel,
+  description,
+  setDescription,
+  showDescription,
   email,
   setEmail,
   phone,
@@ -376,6 +394,10 @@ function ContactStep({
   onSubmit,
 }: {
   selectedLabel?: string;
+  description: string;
+  setDescription: (v: string) => void;
+  /** Show the description field here (false when it was already filled on a previous step). */
+  showDescription: boolean;
   email: string;
   setEmail: (v: string) => void;
   phone: string;
@@ -385,17 +407,53 @@ function ContactStep({
   busy: boolean;
   onSubmit: (method: HelpContactMethod) => void;
 }) {
-  const [method, setMethod] = useState<"ticket" | "call" | null>(
-    hasUserEmail ? "ticket" : null,
-  );
+  const [method, setMethod] = useState<"ticket" | "call" | null>(null);
 
   return (
     <div className="flex flex-col gap-3">
       <CategoryBadge label={selectedLabel} />
+
+      {/* Description textarea (only for non-order categories, since orders fill it on the describe step) */}
+      {showDescription && (
+        <label className="flex flex-col gap-1.5">
+          <span className="text-xs font-bold uppercase tracking-wide text-muted">
+            Describe your issue
+          </span>
+          <textarea
+            autoFocus
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={3}
+            placeholder="Tell us what happened so our team can help faster..."
+            className="w-full resize-none rounded-xl border border-border bg-surface px-3 py-2.5 text-sm text-foreground placeholder:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          />
+        </label>
+      )}
+
+      {/* Email field (always visible for ticket creation) */}
+      {!hasUserEmail ? (
+        <label className="flex flex-col gap-1.5">
+          <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-muted">
+            <Mail className="h-3.5 w-3.5" /> Your email
+          </span>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            className="w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm text-foreground placeholder:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          />
+        </label>
+      ) : (
+        <p className="rounded-xl border border-border bg-surface-muted px-3 py-2.5 text-sm text-muted">
+          We'll send updates to <span className="font-semibold text-foreground">{email}</span>
+        </p>
+      )}
+
+      {/* Contact method selection */}
       <p className="text-sm font-semibold text-foreground">
         How would you like us to help?
       </p>
-
       <div className="flex gap-2">
         <button
           type="button"
@@ -424,28 +482,6 @@ function ContactStep({
           <span className="text-xs font-semibold">Call me back</span>
         </button>
       </div>
-
-      {method === "ticket" && !hasUserEmail && (
-        <label className="flex flex-col gap-1.5">
-          <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-muted">
-            <Mail className="h-3.5 w-3.5" /> Your email
-          </span>
-          <input
-            autoFocus
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            className="w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm text-foreground placeholder:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          />
-        </label>
-      )}
-
-      {method === "ticket" && hasUserEmail && (
-        <p className="rounded-xl border border-border bg-surface-muted px-3 py-2.5 text-sm text-muted">
-          We'll send updates to <span className="font-semibold text-foreground">{email}</span>
-        </p>
-      )}
 
       {method === "call" && (
         <label className="flex flex-col gap-1.5">

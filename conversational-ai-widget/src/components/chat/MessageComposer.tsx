@@ -1,7 +1,9 @@
 "use client";
 
 import { useRef, useState, type FormEvent, type KeyboardEvent } from "react";
-import { ArrowUp, Square } from "lucide-react";
+import { ArrowUp, Mic, Square } from "lucide-react";
+
+import { useVoiceInput } from "../../hooks/useVoiceInput";
 
 export function MessageComposer({
   onSend,
@@ -16,6 +18,20 @@ export function MessageComposer({
 }) {
   const [value, setValue] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const voice = useVoiceInput((transcript) => {
+    setValue((prev) => {
+      const next = prev ? `${prev} ${transcript}` : transcript;
+      requestAnimationFrame(() => {
+        const el = textareaRef.current;
+        if (el) {
+          el.style.height = "auto";
+          el.style.height = `${Math.min(el.scrollHeight, 160)}px`;
+        }
+      });
+      return next;
+    });
+  });
 
   function autoGrow() {
     const el = textareaRef.current;
@@ -69,6 +85,21 @@ export function MessageComposer({
         placeholder="Message..."
         className="max-h-40 flex-1 resize-none self-center bg-transparent py-2.5 text-[15px] leading-relaxed text-foreground placeholder:text-muted outline-none focus:outline-none focus-visible:outline-none"
       />
+
+      {voice.supported && !streaming && !canSend && (
+        <button
+          type="button"
+          onClick={voice.toggle}
+          aria-label={voice.state === "listening" ? "Stop listening" : "Voice input"}
+          className={
+            voice.state === "listening"
+              ? "ua-cai-mic-pulse flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              : "flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-muted transition-colors hover:bg-surface-muted hover:text-foreground active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          }
+        >
+          <Mic className="h-[18px] w-[18px]" />
+        </button>
+      )}
 
       {streaming ? (
         <button
